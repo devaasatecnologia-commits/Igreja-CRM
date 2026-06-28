@@ -1,28 +1,17 @@
 {
   "name": "igreja-crm-backend",
   "version": "3.0.0",
-<<<<<<< HEAD
-  "description": "CRM Igreja 3.0 - ERP Sacred",
+  "description": "CRM Igreja 3.0 - AASA SAGRADO",
   "main": "dist/server.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
     "setup": "ts-node src/scripts/setup.ts"
-=======
-  "description": "API do Sistema Igreja-CRM - AASA TECNOLOGIA",
-  "main": "dist/server.js",
-  "scripts": {
-    "dev": "nodemon src/server.ts",
-    "build": "tsc",
-    "start": "node dist/server.js",
-    "setup": "npx ts-node src/scripts/setup.ts"
->>>>>>> 9e13619899ddb940e0fbd90656e44c18539d5d9c
   },
   "dependencies": {
     "express": "^4.18.2",
     "cors": "^2.8.5",
-<<<<<<< HEAD
     "mysql2": "^3.9.0",
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2",
@@ -30,7 +19,9 @@
     "qrcode": "^1.5.3",
     "pdfkit": "^0.15.0",
     "multer": "^1.4.5-lts.1",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "helmet": "^7.0.0",
+    "express-rate-limit": "^6.7.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
@@ -42,25 +33,9 @@
     "@types/pdfkit": "^0.13.4",
     "@types/multer": "^1.4.11",
     "@types/uuid": "^9.0.7",
+    "typescript": "^5.3.3",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.3.3"
+    "nodemon": "^3.0.3"
   }
 }
-=======
-    "dotenv": "^16.0.3",
-    "mysql2": "^3.2.0",
-    "jsonwebtoken": "^9.0.0",
-    "bcryptjs": "^2.4.3",
-    "helmet": "^7.0.0",
-    "express-rate-limit": "^6.7.0"
-  },
-  "devDependencies": {
-    "@types/node": "^18.15.0",
-    "@types/express": "^4.17.17",
-    "typescript": "^5.0.0",
-    "nodemon": "^2.0.22",
-    "ts-node": "^10.9.1"
-  }
-}
->>>>>>> 9e13619899ddb940e0fbd90656e44c18539d5d9c
