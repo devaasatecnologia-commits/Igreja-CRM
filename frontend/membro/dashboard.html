@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Portal - AASA SAGRADO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root{--primary:#1a237e;--gold:#f59e0b}
+        body{font-family:'Inter',sans-serif;background:linear-gradient(180deg,#f8faff,#fffbeb);min-height:100vh}
+        .card{background:white;border-radius:20px;padding:22px;border:1px solid #f1f5f9;transition:all .3s;cursor:pointer}
+        .card:hover{transform:translateY(-3px);box-shadow:0 15px 30px rgba(0,0,0,.06)}
+        .card-static{cursor:default}
+        .card-static:hover{transform:none;box-shadow:none}
+        .avatar{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#1a237e,#283593);display:flex;align-items:center;justify-content:center;font-size:28px;color:white;font-weight:bold}
+        .badge{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600}
+        .tab-btn{padding:8px 16px;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:#f1f5f9;color:#64748b;transition:all .2s}
+        .tab-btn.active{background:#1a237e;color:white}
+    </style>
+</head>
+<body class="p-4 lg:p-6">
+    <div class="max-w-5xl mx-auto">
+        
+        <!-- HEADER -->
+        <div class="flex items-center justify-between mb-8 flex-wrap gap-4">
+            <div class="flex items-center gap-4">
+                <div class="avatar" id="membroAvatar">M</div>
+                <div>
+                    <h1 class="text-2xl lg:text-3xl font-serif font-bold" style="color:var(--primary)" id="membroNome">Olá!</h1>
+                    <p class="text-sm" style="color:var(--gold)" id="membroIgreja"></p>
+                </div>
+            </div>
+            <button onclick="logout()" class="px-4 py-2 rounded-xl bg-white border text-sm font-semibold text-gray-600 hover:bg-gray-50">🚪 Sair</button>
+        </div>
+        
+        <!-- MENU RÁPIDO -->
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-8">
+            <div class="card text-center" onclick="location.href='meus-dados.html'">📋<br><span class="text-xs font-semibold">Meus Dados</span></div>
+            <div class="card text-center" onclick="location.href='contribuicoes.html'">💰<br><span class="text-xs font-semibold">Contribuições</span></div>
+            <div class="card text-center" onclick="location.href='meus-documentos.html'">📜<br><span class="text-xs font-semibold">Documentos</span></div>
+            <div class="card text-center" onclick="location.href='solicitacoes.html'">📝<br><span class="text-xs font-semibold">Solicitações</span></div>
+            <div class="card text-center" onclick="mostrarTransparencia()">🏛️<br><span class="text-xs font-semibold">Transparência</span></div>
+        </div>
+        
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- EVENTOS (coluna maior) -->
+            <div class="lg:col-span-2">
+                <div class="card card-static mb-6">
+                    <h3 class="font-bold text-lg mb-4" style="color:var(--primary)">📅 Próximos Eventos</h3>
+                    <div id="proximosEventos" class="space-y-3 max-h-96 overflow-y-auto">
+                        <p class="text-center py-8 text-gray-400">Carregando eventos...</p>
+                    </div>
+                </div>
+                
+                <!-- BLOG -->
+                <div class="card card-static">
+                    <h3 class="font-bold text-lg mb-4" style="color:var(--primary)">📝 Últimas Notícias</h3>
+                    <div id="ultimosPosts" class="space-y-3">
+                        <p class="text-center py-4 text-gray-400">Carregando...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- LATERAL -->
+            <div class="space-y-6">
+                <!-- DÍZIMO RÁPIDO -->
+                <div class="card">
+                    <h3 class="font-bold text-sm mb-3" style="color:var(--primary)">💰 Contribuir Agora</h3>
+                    <input type="number" id="valorDoacao" placeholder="Valor (R$)" class="w-full px-3 py-2 border rounded-lg text-sm mb-2">
+                    <button onclick="doar()" class="w-full py-2 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700">✨ Ofertar</button>
+                </div>
+                
+                <!-- MEUS DOCUMENTOS RÁPIDO -->
+                <div class="card" id="meusDocsRapido">
+                    <h3 class="font-bold text-sm mb-3" style="color:var(--primary)">📜 Meus Documentos</h3>
+                    <p class="text-xs text-gray-400 text-center py-3">Carregando...</p>
+                </div>
+                
+                <!-- SOLICITAÇÕES RÁPIDAS -->
+                <div class="card">
+                    <h3 class="font-bold text-sm mb-3" style="color:var(--primary)">📝 Solicitar</h3>
+                    <div class="space-y-2">
+                        <button onclick="solicitar('carteirinha')" class="w-full text-left px-3 py-2 bg-gray-50 rounded-lg text-xs hover:bg-gray-100">🎫 Carteirinha de Membro</button>
+                        <button onclick="solicitar('certidao_batismo')" class="w-full text-left px-3 py-2 bg-gray-50 rounded-lg text-xs hover:bg-gray-100">💧 Certidão de Batismo</button>
+                        <button onclick="solicitar('carta_transferencia')" class="w-full text-left px-3 py-2 bg-gray-50 rounded-lg text-xs hover:bg-gray-100">📄 Carta de Transferência</button>
+                        <button onclick="solicitar('declaracao')" class="w-full text-left px-3 py-2 bg-gray-50 rounded-lg text-xs hover:bg-gray-100">📋 Declaração de Membro</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- MODAL TRANSPARÊNCIA -->
+    <div id="modalTransparencia" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+        <div class="bg-white rounded-2xl p-6 w-11/12 max-w-2xl max-h-[80vh] overflow-y-auto shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold" style="color:var(--primary)">🏛️ Transparência - Contas da Igreja</h2>
+                <button onclick="document.getElementById('modalTransparencia').style.display='none'" class="text-2xl">&times;</button>
+            </div>
+            <div id="transparenciaConteudo"><p class="text-center py-8 text-gray-400">Carregando...</p></div>
+        </div>
+    </div>
+
+    <script src="../assets/js/config.js"></script>
+    <script>
+        const API = window.API_URL || 'http://localhost:3001/api';
+        const membroData = JSON.parse(localStorage.getItem('membro_data') || '{}');
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!membroData.id) { window.location.href = 'login.html'; return; }
+            document.getElementById('membroNome').textContent = `Olá, ${membroData.nome?.split(' ')[0] || 'Membro'}!`;
+            document.getElementById('membroAvatar').textContent = membroData.nome?.[0] || 'M';
+            document.getElementById('membroIgreja').textContent = localStorage.getItem('igreja_nome') || '';
+            carregarEventos();
+            carregarBlog();
+            carregarMeusDocs();
+        });
+        
+        // ============ DOAÇÃO RÁPIDA ============
+        async function doar() {
+            const valor = document.getElementById('valorDoacao').value;
+            if (!valor || valor <= 0) return Swal.fire({icon:'info',title:'Valor',text:'Informe um valor válido.'});
+            
+            const {isConfirmed} = await Swal.fire({
+                title:'Confirmar Oferta',text:`Deseja contribuir com R$ ${parseFloat(valor).toFixed(2)}?`,
+                icon:'question',showCancelButton:true,confirmButtonText:'Sim',cancelButtonText:'Não'
+            });
+            if (!isConfirmed) return;
+            
+            try {
+                const token = localStorage.getItem('auth_token');
+                await fetch(`${API}/financeiro/lancamentos`,{
+                    method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+                    body:JSON.stringify({tipo:'RECEBER',descricao:`Oferta - ${membroData.nome}`,valor:parseFloat(valor),data_vencimento:new Date().toISOString().split('T')[0],plano_conta_id:3,membro_id:membroData.id})
+                });
+                Swal.fire({toast:true,position:'top-end',icon:'success',title:'Oferta registrada! Deus abençoe! 🙏',showConfirmButton:false,timer:3000});
+            } catch(e) { Swal.fire({icon:'error',title:'Erro',text:'Erro ao registrar'}); }
+        }
+        
+        // ============ SOLICITAÇÕES ============
+        function solicitar(tipo) {
+            const nomes = {carteirinha:'Carteirinha de Membro',certidao_batismo:'Certidão de Batismo',carta_transferencia:'Carta de Transferência',declaracao:'Declaração de Membro'};
+            Swal.fire({title:'Solicitar ' + nomes[tipo],text:'Sua solicitação será enviada à secretaria da igreja.',icon:'info',showCancelButton:true,confirmButtonText:'Solicitar',cancelButtonText:'Cancelar'}).then(r => {
+                if(r.isConfirmed) Swal.fire({icon:'success',title:'Solicitação enviada!',text:'A secretaria analisará seu pedido.'});
+            });
+        }
+        
+        // ============ TRANSPARÊNCIA ============
+        async function mostrarTransparencia() {
+            document.getElementById('modalTransparencia').style.display = 'flex';
+            try {
+                const res = await fetch(`${API}/financeiro/lancamentos?tipo=PAGAR&status=PAGO&limite=20`);
+                const data = await res.json();
+                let html = '<div class="space-y-2">';
+                if(data.lancamentos && data.lancamentos.length > 0) {
+                    data.lancamentos.forEach(l => {
+                        html += `<div class="flex justify-between p-3 bg-gray-50 rounded-xl"><span>${l.descricao}</span><span class="font-bold text-red-600">- R$ ${Number(l.valor).toFixed(2)}</span></div>`;
+                    });
+                } else { html += '<p class="text-center py-4 text-gray-400">Nenhuma conta pública registrada.</p>'; }
+                html += '</div>';
+                document.getElementById('transparenciaConteudo').innerHTML = html;
+            } catch(e) {}
+        }
+        
+        // ============ EVENTOS ============
+        async function carregarEventos() {
+            try {
+                const res = await fetch(`${API}/agenda/proximos?limite=10`);
+                const eventos = await res.json();
+                let html = '';
+                if (Array.isArray(eventos) && eventos.length > 0) {
+                    eventos.forEach(e => {
+                        html += `
+                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
+                            <div><p class="font-semibold text-sm">${e.titulo}</p><p class="text-xs text-gray-400">${new Date(e.data_inicio).toLocaleString('pt-BR')} • ${e.local_evento||''}</p></div>
+                            <button onclick="confirmarPresenca(${e.id})" class="px-3 py-1.5 bg-green-100 text-green-700 rounded-lg text-xs font-semibold hover:bg-green-200">✅ Confirmar</button>
+                        </div>`;
+                    });
+                } else { html = '<p class="text-center py-4 text-gray-400">Nenhum evento próximo</p>'; }
+                document.getElementById('proximosEventos').innerHTML = html;
+            } catch(e) {}
+        }
+        
+        async function confirmarPresenca(eventoId) {
+            try {
+                await fetch(`${API}/agenda/${eventoId}/confirmar`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({membro_id:membroData.id})});
+                Swal.fire({toast:true,position:'top-end',icon:'success',title:'Presença confirmada! 🙏',showConfirmButton:false,timer:2000});
+            } catch(e) { Swal.fire({icon:'error',title:'Erro'}); }
+        }
+        
+        // ============ BLOG ============
+        async function carregarBlog() {
+            try {
+                const res = await fetch(`${API}/blog/posts?limite=3`);
+                const posts = await res.json();
+                let html = '';
+                if (Array.isArray(posts) && posts.length > 0) {
+                    posts.forEach(p => { html += `<div class="p-3 bg-gray-50 rounded-xl"><p class="font-semibold text-sm">${p.titulo}</p><p class="text-xs text-gray-400 mt-1">${p.resumo||''}</p></div>`; });
+                } else { html = '<p class="text-center py-4 text-gray-400">Nenhuma notícia</p>'; }
+                document.getElementById('ultimosPosts').innerHTML = html;
+            } catch(e) {}
+        }
+        
+        // ============ MEUS DOCS ============
+        async function carregarMeusDocs() {
+            document.getElementById('meusDocsRapido').innerHTML = '<h3 class="font-bold text-sm mb-3" style="color:var(--primary)">📜 Meus Documentos</h3><p class="text-xs text-gray-400 text-center py-3">Nenhum documento disponível</p>';
+        }
+        
+        function logout() { localStorage.clear(); window.location.href = 'login.html'; }
+    </script>
+</body>
+</html>

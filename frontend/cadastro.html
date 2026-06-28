@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - CRM Igreja | AASA Tecnologia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --royal: #1a237e;
+            --gold: #f59e0b;
+            --gold-light: #283593;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0a0a0f;
+            position: relative;
+            overflow-y: auto;
+        }
+        
+        .celestial-bg {
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 20% 50%, rgba(74,14,120,0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(245,158,11,0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(14,165,233,0.1) 0%, transparent 50%),
+                linear-gradient(180deg, #0a0a1a 0%, #0f0720 50%, #0a0a1a 100%);
+            z-index: 0;
+        }
+        
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 650px;
+            padding: 30px 0;
+        }
+        
+        .card {
+            background: rgba(15, 7, 32, 0.85);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 0 50px rgba(74, 14, 120, 0.3), 0 0 100px rgba(245, 158, 11, 0.1);
+        }
+        
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo-img {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            object-fit: contain;
+            background: white;
+            padding: 8px;
+            box-shadow: 0 0 30px rgba(245,158,11,0.3);
+            margin-bottom: 12px;
+        }
+        
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+        }
+        
+        .subtitle {
+            color: rgba(255,255,255,0.4);
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        /* Steps */
+        .steps {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 30px;
+        }
+        
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.3);
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        
+        .step.active {
+            background: linear-gradient(135deg, #1a237e, #283593);
+            color: white;
+            border-color: rgba(245,158,11,0.5);
+            box-shadow: 0 0 20px rgba(74,14,120,0.4);
+        }
+        
+        .step.done {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        
+        .step-line {
+            width: 50px;
+            height: 2px;
+            background: rgba(255,255,255,0.1);
+            transition: all 0.3s;
+        }
+        
+        .step-line.done {
+            background: #10b981;
+        }
+        
+        /* Form */
+        .step-content {
+            display: none;
+            animation: fadeSlide 0.4s ease;
+        }
+        
+        .step-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .step-title {
+            color: var(--gold-light);
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
+            .card { padding: 30px 20px; }
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: rgba(255,255,255,0.6);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            color: white;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: rgba(245,158,11,0.5);
+            box-shadow: 0 0 20px rgba(245,158,11,0.08);
+        }
+        
+        .form-group select {
+            background: rgba(15,7,32,0.9);
+        }
+        
+        .form-group select option {
+            background: #1a0a2e;
+            color: white;
+        }
+        
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+            border: none;
+            text-align: center;
+        }
+        
+        .btn-back {
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .btn-back:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .btn-next {
+            background: linear-gradient(135deg, #1a237e, #283593);
+            color: white;
+            border: 1px solid rgba(245,158,11,0.2);
+        }
+        
+        .btn-next:hover {
+            box-shadow: 0 8px 30px rgba(74,14,120,0.4);
+            transform: translateY(-1px);
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            font-size: 16px;
+        }
+        
+        .btn-submit:hover {
+            box-shadow: 0 8px 30px rgba(16,185,129,0.4);
+            transform: translateY(-1px);
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 16px;
+            display: none;
+        }
+        
+        .alert-error {
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.3);
+            color: #fca5a5;
+            display: block;
+        }
+        
+        .alert-success {
+            background: rgba(16,185,129,0.1);
+            border: 1px solid rgba(16,185,129,0.3);
+            color: #6ee7b7;
+            display: block;
+        }
+        
+        .footer-text {
+            text-align: center;
+            margin-top: 20px;
+            color: rgba(255,255,255,0.3);
+            font-size: 13px;
+        }
+        
+        .footer-text a {
+            color: var(--gold-light);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .footer-text a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="celestial-bg"></div>
+    
+    <div class="container">
+        <div class="card">
+            
+            <!-- Logo -->
+            <div class="logo-section">
+                <img src="https://aasatecnologia.com.br/logo.png" alt="AASA" class="logo-img" onerror="this.style.display='none'">
+                <h1>AASA SAGRADO</h1>
+                <p class="subtitle">Cadastro de Nova Igreja</p>
+            </div>
+            
+            <!-- Steps -->
+            <div class="steps">
+                <div class="step active" id="step1">1</div>
+                <div class="step-line" id="line1"></div>
+                <div class="step" id="step2">2</div>
+                <div class="step-line" id="line2"></div>
+                <div class="step" id="step3">3</div>
+            </div>
+            
+            <form id="formCadastro">
+                <!-- PASSO 1 -->
+                <div class="step-content active" id="content1">
+                    <h3 class="step-title">📋 Dados da Igreja</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nome da Igreja *</label>
+                            <input type="text" id="nomeIgreja" placeholder="Ex: Igreja El Shaday" required>
+                        </div>
+                        <div class="form-group">
+                            <label>CNPJ</label>
+                            <input type="text" id="cnpj" placeholder="00.000.000/0000-00">
+                        </div>
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" id="emailIgreja" placeholder="contato@igreja.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Telefone</label>
+                            <input type="text" id="telefoneIgreja" placeholder="(00) 0000-0000">
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo *</label>
+                            <select id="tipoIgreja" required>
+                                <option value="INDEPENDENTE">Igreja Independente</option>
+                                <option value="MATRIZ">Matriz (com filiais)</option>
+                                <option value="FILIAL">Filial de outra igreja</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Plano *</label>
+                            <select id="planoIgreja">
+                                <option value="FREE">🌟 Gratuito</option>
+                                <option value="BASIC">⭐ Básico - R$ 49,90/mês</option>
+                                <option value="PREMIUM">💎 Premium - R$ 99,90/mês</option>
+                                <option value="ENTERPRISE">🏢 Empresarial - R$ 199,90/mês</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="btn-row">
+                        <button type="button" class="btn btn-next" onclick="proximoPasso(2)">Próximo ➡️</button>
+                    </div>
+                </div>
+                
+                <!-- PASSO 2 -->
+                <div class="step-content" id="content2">
+                    <h3 class="step-title">📍 Endereço</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>CEP</label>
+                            <input type="text" id="cep" placeholder="00000-000" onblur="buscarCEP()">
+                        </div>
+                        <div class="form-group">
+                            <label>Estado</label>
+                            <input type="text" id="estado" placeholder="SP">
+                        </div>
+                        <div class="form-group">
+                            <label>Cidade</label>
+                            <input type="text" id="cidade" placeholder="São Paulo">
+                        </div>
+                        <div class="form-group">
+                            <label>Bairro</label>
+                            <input type="text" id="bairro" placeholder="Centro">
+                        </div>
+                        <div class="form-group">
+                            <label>Logradouro</label>
+                            <input type="text" id="logradouro" placeholder="Rua/Avenida">
+                        </div>
+                        <div class="form-group">
+                            <label>Número</label>
+                            <input type="text" id="numero" placeholder="123">
+                        </div>
+                    </div>
+                    <div class="btn-row">
+                        <button type="button" class="btn btn-back" onclick="proximoPasso(1)">⬅️ Voltar</button>
+                        <button type="button" class="btn btn-next" onclick="proximoPasso(3)">Próximo ➡️</button>
+                    </div>
+                </div>
+                
+                <!-- PASSO 3 -->
+                <div class="step-content" id="content3">
+                    <h3 class="step-title">👤 Administrador</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nome Completo *</label>
+                            <input type="text" id="nomeAdmin" placeholder="Pastor/Presidente" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" id="emailAdmin" placeholder="admin@igreja.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Senha *</label>
+                            <input type="password" id="senhaAdmin" placeholder="Mínimo 6 caracteres" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirmar Senha *</label>
+                            <input type="password" id="confirmarSenha" placeholder="Repita a senha" required>
+                        </div>
+                    </div>
+                    <div id="msg" class="alert"></div>
+                    <div class="btn-row">
+                        <button type="button" class="btn btn-back" onclick="proximoPasso(2)">⬅️ Voltar</button>
+                        <button type="submit" class="btn btn-submit">✅ Criar Conta</button>
+                    </div>
+                </div>
+            </form>
+            
+            <div class="footer-text">
+                Já tem conta? <a href="login.html">Fazer Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let passoAtual = 1;
+        
+        function proximoPasso(passo) {
+            passoAtual = passo;
+            
+            // Esconder todos
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.getElementById('content' + passo).classList.add('active');
+            
+            // Atualizar steps
+            for (let i = 1; i <= 3; i++) {
+                const step = document.getElementById('step' + i);
+                step.classList.remove('active', 'done');
+                if (i < passo) step.classList.add('done');
+                if (i === passo) step.classList.add('active');
+            }
+            
+            // Linhas
+            document.getElementById('line1').classList.toggle('done', passo > 1);
+            document.getElementById('line2').classList.toggle('done', passo > 2);
+        }
+        
+        async function buscarCEP() {
+            const cep = document.getElementById('cep').value.replace(/\D/g, '');
+            if (cep.length === 8) {
+                try {
+                    const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                    const data = await res.json();
+                    if (!data.erro) {
+                        document.getElementById('logradouro').value = data.logradouro || '';
+                        document.getElementById('bairro').value = data.bairro || '';
+                        document.getElementById('cidade').value = data.localidade || '';
+                        document.getElementById('estado').value = data.uf || '';
+                    }
+                } catch (e) {}
+            }
+        }
+        
+        document.getElementById('formCadastro').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const senha = document.getElementById('senhaAdmin').value;
+            const confirmar = document.getElementById('confirmarSenha').value;
+            const msg = document.getElementById('msg');
+            
+            if (senha !== confirmar) {
+                msg.className = 'alert alert-error';
+                msg.textContent = '❌ Senhas não conferem!';
+                return;
+            }
+            
+            if (senha.length < 6) {
+                msg.className = 'alert alert-error';
+                msg.textContent = '❌ Senha deve ter no mínimo 6 caracteres!';
+                return;
+            }
+            
+            const dados = {
+                igreja: {
+                    nome: document.getElementById('nomeIgreja').value,
+                    cnpj: document.getElementById('cnpj').value,
+                    email: document.getElementById('emailIgreja').value,
+                    telefone: document.getElementById('telefoneIgreja').value,
+                    tipo: document.getElementById('tipoIgreja').value,
+                    plano: document.getElementById('planoIgreja').value,
+                    cep: document.getElementById('cep').value,
+                    logradouro: document.getElementById('logradouro').value,
+                    numero: document.getElementById('numero').value,
+                    bairro: document.getElementById('bairro').value,
+                    cidade: document.getElementById('cidade').value,
+                    estado: document.getElementById('estado').value
+                },
+                admin: {
+                    nome: document.getElementById('nomeAdmin').value,
+                    email: document.getElementById('emailAdmin').value,
+                    senha: senha
+                }
+            };
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/auth/registrar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dados)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    msg.className = 'alert alert-success';
+                    msg.textContent = '✅ Igreja cadastrada! Redirecionando...';
+                    setTimeout(() => window.location.href = 'login.html', 1500);
+                } else {
+                    msg.className = 'alert alert-error';
+                    msg.textContent = '❌ ' + (result.error || 'Erro ao cadastrar');
+                }
+            } catch (error) {
+                msg.className = 'alert alert-error';
+                msg.textContent = '❌ Erro de conexão com o servidor';
+            }
+        });
+        
+        // Plano da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const plano = urlParams.get('plano');
+        if (plano) {
+            const map = { free: 'FREE', basic: 'BASIC', premium: 'PREMIUM', enterprise: 'ENTERPRISE' };
+            document.getElementById('planoIgreja').value = map[plano] || 'FREE';
+        }
+    </script>
+</body>
+</html>

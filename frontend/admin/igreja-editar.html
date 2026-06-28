@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Igreja - Super Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body{font-family:'Inter',sans-serif;background:#f1f5f9}
+        .card{background:white;border-radius:20px;padding:30px;box-shadow:0 4px 6px rgba(0,0,0,.04)}
+        input,select{width:100%;padding:12px 16px;border:2px solid #e2e8f0;border-radius:12px;font-size:14px;font-family:'Inter',sans-serif}
+        input:focus,select:focus{outline:none;border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.1)}
+        label{display:block;font-size:12px;font-weight:600;color:#64748b;margin-bottom:6px}
+        .btn{padding:12px 28px;border-radius:12px;font-weight:600;font-size:14px;cursor:pointer;border:none;transition:all .3s}
+        .btn-primary{background:#6366f1;color:white}
+        .btn-primary:hover{background:#4f46e5}
+    </style>
+</head>
+<body class="p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-extrabold text-gray-900 mb-8 flex items-center gap-3">
+            <i data-lucide="building-2" class="w-8 h-8 text-indigo-600"></i> Editar Dados da Igreja
+        </h1>
+        
+        <div class="card space-y-6">
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <label>Nome da Igreja *</label>
+                    <input type="text" id="nome" placeholder="Nome completo">
+                </div>
+                <div>
+                    <label>CNPJ</label>
+                    <input type="text" id="cnpj" placeholder="00.000.000/0000-00">
+                </div>
+                <div>
+                    <label>Email</label>
+                    <input type="email" id="email" placeholder="contato@igreja.com">
+                </div>
+                <div>
+                    <label>Telefone</label>
+                    <input type="text" id="telefone" placeholder="(00) 0000-0000">
+                </div>
+                <div>
+                    <label>Cor Primária</label>
+                    <input type="color" id="cor_primaria" value="#1a237e" style="height:44px;padding:4px">
+                </div>
+                <div>
+                    <label>Cor Secundária</label>
+                    <input type="color" id="cor_secundaria" value="#f59e0b" style="height:44px;padding:4px">
+                </div>
+                <div>
+                    <label>URL da Logo</label>
+                    <input type="url" id="logo_url" placeholder="https://...">
+                </div>
+                <div>
+                    <label>Site</label>
+                    <input type="url" id="site" placeholder="https://...">
+                </div>
+            </div>
+            
+            <h3 class="font-bold text-gray-800 mt-6">📍 Endereço</h3>
+            <div class="grid grid-cols-3 gap-4">
+                <div><label>CEP</label><input type="text" id="cep" placeholder="00000-000" onblur="buscarCEP()"></div>
+                <div><label>Estado</label><input type="text" id="estado" placeholder="SC"></div>
+                <div><label>Cidade</label><input type="text" id="cidade" placeholder="Cidade"></div>
+                <div><label>Bairro</label><input type="text" id="bairro" placeholder="Bairro"></div>
+                <div class="col-span-2"><label>Logradouro</label><input type="text" id="logradouro" placeholder="Rua/Avenida"></div>
+                <div><label>Número</label><input type="text" id="numero" placeholder="123"></div>
+            </div>
+            
+            <div class="flex justify-end gap-3 pt-4">
+                <button class="btn bg-gray-100 text-gray-600">Cancelar</button>
+                <button class="btn btn-primary" onclick="salvar()"><i data-lucide="save" class="w-4 h-4"></i> Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = 'http://localhost:3001/api';
+        const token = localStorage.getItem('sa_token');
+        
+        async function init() {
+            lucide.createIcons();
+            // Carregar dados da igreja
+            const igreja = await fetch(API + '/igrejas/minha', {
+                headers: {'Authorization': 'Bearer ' + token}
+            }).then(r => r.json());
+            
+            // Preencher campos
+            Object.keys(igreja).forEach(key => {
+                const el = document.getElementById(key);
+                if (el) el.value = igreja[key] || '';
+            });
+        }
+        
+        async function salvar() {
+            const dados = {};
+            ['nome','cnpj','email','telefone','cor_primaria','cor_secundaria','logo_url','site',
+             'cep','estado','cidade','bairro','logradouro','numero'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) dados[id] = el.value;
+            });
+            
+            await fetch(API + '/igrejas/personalizacao', {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token},
+                body: JSON.stringify(dados)
+            });
+            
+            alert('✅ Dados atualizados com sucesso!');
+            // Atualizar cache
+            const igreja = await fetch(API + '/igrejas/minha', {
+                headers: {'Authorization': 'Bearer ' + token}
+            }).then(r => r.json());
+            localStorage.setItem('igreja', JSON.stringify(igreja));
+        }
+        
+        async function buscarCEP() {
+            const cep = document.getElementById('cep').value.replace(/\D/g, '');
+            if (cep.length === 8) {
+                const data = await fetch(`https://viacep.com.br/ws/${cep}/json/`).then(r => r.json());
+                if (!data.erro) {
+                    document.getElementById('logradouro').value = data.logradouro;
+                    document.getElementById('bairro').value = data.bairro;
+                    document.getElementById('cidade').value = data.localidade;
+                    document.getElementById('estado').value = data.uf;
+                }
+            }
+        }
+        
+        init();
+    </script>
+</body>
+</html>

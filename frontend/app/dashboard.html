@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AASA SAGRADO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif'],serif:['Playfair Display','serif']}}}}</script>
+    <link rel="stylesheet" href="../assets/css/sidebar.css">
+    <style>
+        :root{--primary:#1a237e;--gold:#f59e0b;--success:#10b981;--danger:#ef4444;--warning:#f59e0b;--info:#3b82f6;--purple:#8b5cf6}
+        .main-content{margin-left:270px;min-height:100vh;background:linear-gradient(135deg,#f8faff 0%,#fffbeb 30%,#f0f4ff 60%,#fefce8 100%)}
+        @media(max-width:768px){.main-content{margin-left:0;padding-top:70px}}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+        @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes glow{0%,100%{box-shadow:0 0 20px rgba(26,35,126,.1)}50%{box-shadow:0 0 40px rgba(26,35,126,.2),0 0 60px rgba(245,158,11,.1)}}
+        @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+        @keyframes floatUp{0%{opacity:0;transform:translateY(40px)}100%{opacity:1;transform:translateY(0)}}
+        @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+        @keyframes bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
+        .animate-float{animation:float 6s ease-in-out infinite}
+        .animate-slide{animation:slideUp .5s ease forwards}
+        .animate-glow{animation:glow 4s ease-in-out infinite}
+        .card-premium{background:white;border-radius:24px;padding:28px;border:1px solid #f1f5f9;transition:all .4s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;cursor:pointer}
+        .card-premium::after{content:'';position:absolute;top:-50%;right:-50%;width:100px;height:100px;background:radial-gradient(circle,rgba(245,158,11,.15) 0%,transparent 70%);border-radius:50%;transition:all .6s}
+        .card-premium:hover::after{transform:scale(2.5)}
+        .card-premium:hover{transform:translateY(-6px);box-shadow:0 30px 60px rgba(0,0,0,.1)}
+        .card-stat .icon-box{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;transition:all .3s}
+        .card-stat:hover .icon-box{transform:scale(1.1) rotate(-5deg)}
+        .loading-shimmer{background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);background-size:200% 100%;animation:shimmer 1.5s ease-in-out infinite;border-radius:8px;height:20px}
+        .versiculo-card{background:linear-gradient(135deg,rgba(26,35,126,.03),rgba(245,158,11,.02));border:1px solid rgba(26,35,126,.08)}
+        .topbar-premium{background:rgba(255,255,255,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,.05)}
+    </style>
+</head>
+<body class="font-sans">
+
+    <!-- SPLASH SCREEN -->
+    <div id="splashScreen" style="position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#1a237e,#0d1542);display:flex;align-items:center;justify-content:center;flex-direction:column;transition:all 1s ease;">
+        <div style="text-align:center;animation:floatUp 2s ease">
+            <img src="https://aasatecnologia.com.br/logo.png" style="width:100px;height:100px;border-radius:25px;background:white;padding:15px;box-shadow:0 20px 60px rgba(0,0,0,.3);margin-bottom:30px;animation:pulse 2s infinite" onerror="this.style.display='none'">
+            <h1 style="font-family:'Playfair Display',serif;font-size:48px;color:white;margin-bottom:10px;text-shadow:0 0 30px rgba(255,255,255,.3)">AASA SAGRADO</h1>
+            <p style="color:rgba(255,255,255,.6);font-size:18px;letter-spacing:3px;text-transform:uppercase">Tecnologia abençoada</p>
+            <div style="margin-top:40px;display:flex;gap:8px;justify-content:center">
+                <div style="width:12px;height:12px;background:white;border-radius:50%;animation:bounce .6s infinite"></div>
+                <div style="width:12px;height:12px;background:white;border-radius:50%;animation:bounce .6s infinite;animation-delay:.15s"></div>
+                <div style="width:12px;height:12px;background:white;border-radius:50%;animation:bounce .6s infinite;animation-delay:.3s"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="particles-js" style="position:fixed;inset:0;z-index:0;pointer-events:none"></div>
+    
+    <div class="app-layout relative z-10">
+        <main class="main-content">
+            
+            <!-- TOPBAR -->
+            <header class="topbar-premium sticky top-0 z-20 px-6 lg:px-8 py-4 lg:py-5 flex items-center justify-between flex-wrap gap-3">
+                <div>
+                    <h1 class="text-2xl lg:text-3xl font-serif font-bold tracking-tight flex items-center gap-3" style="color:var(--primary)">
+                        <i data-lucide="hand" class="w-7 h-7 lg:w-8 lg:h-8"></i> Paz Seja Convosco!
+                    </h1>
+                    <p id="dataAtual" class="text-sm mt-1 font-medium" style="color:var(--gold)"></p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="px-3 py-1.5 rounded-full text-xs font-semibold bg-green-100 text-green-700 flex items-center gap-1.5">
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Online
+                    </span>
+                    <button onclick="logout()" class="px-4 py-2 rounded-xl bg-white border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all flex items-center gap-2">
+                        <i data-lucide="log-out" class="w-4 h-4"></i> Sair
+                    </button>
+                </div>
+            </header>
+            
+            <div class="p-4 lg:p-8 space-y-5 lg:space-y-8">
+                
+                <!-- VERSÍCULO DO DIA -->
+                <div class="card-premium versiculo-card text-center animate-float" style="cursor:default">
+                    <i data-lucide="book-open" class="w-10 h-10 mx-auto mb-3" style="color:var(--primary)"></i>
+                    <p class="font-serif italic text-xl lg:text-2xl mb-3 leading-relaxed" style="color:var(--primary)" id="versiculoTexto">"Carregando..."</p>
+                    <p class="text-sm font-serif font-semibold tracking-wide" style="color:var(--gold)" id="versiculoRef"></p>
+                    <button onclick="novoVersiculo()" class="mt-4 px-4 py-2 rounded-full text-xs font-semibold border cursor-pointer hover:shadow-lg transition-all flex items-center gap-2 mx-auto" style="border-color:var(--gold);color:var(--gold)">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i> Nova Palavra
+                    </button>
+                </div>
+                
+                <!-- STATS CARDS (RASTREÁVEIS) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+                    
+                    <!-- Card Membros → leva para membros.html -->
+                    <div class="card-premium card-stat animate-slide" style="animation-delay:.1s" onclick="navegar('membros.html')" title="Ver todos os membros">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="icon-box" style="background:linear-gradient(135deg,#e0e7ff,#c7d2fe);color:#1a237e">
+                                <i data-lucide="users" class="w-7 h-7"></i>
+                            </div>
+                            <span class="flex items-center gap-1 text-xs font-bold text-green-600 bg-green-50 px-2.5 py-1 rounded-full">
+                                <i data-lucide="trending-up" class="w-3 h-3"></i> Ativos
+                            </span>
+                        </div>
+                        <div class="text-3xl lg:text-4xl font-extrabold tracking-tight" style="color:var(--primary)" id="totalMembros">-</div>
+                        <div class="text-sm text-gray-500 mt-1 font-medium">Membros no Rebanho</div>
+                        <div class="mt-2 text-xs text-gray-400" id="detalheMembros"></div>
+                    </div>
+                    
+                    <!-- Card Financeiro → leva para financeiro.html -->
+                    <div class="card-premium card-stat animate-slide" style="animation-delay:.2s" onclick="navegar('financeiro.html')" title="Ver finanças">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="icon-box" style="background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#059669">
+                                <i data-lucide="wallet" class="w-7 h-7"></i>
+                            </div>
+                            <span class="flex items-center gap-1 text-xs font-bold text-green-600 bg-green-50 px-2.5 py-1 rounded-full">
+                                <i data-lucide="trending-up" class="w-3 h-3"></i> Este mês
+                            </span>
+                        </div>
+                        <div class="text-3xl lg:text-4xl font-extrabold tracking-tight" style="color:var(--primary)" id="receitaMes">-</div>
+                        <div class="text-sm text-gray-500 mt-1 font-medium">Dízimos & Ofertas</div>
+                        <div class="mt-2 text-xs text-gray-400" id="detalheFinanceiro"></div>
+                    </div>
+                    
+                    <!-- Card Agenda → leva para agenda.html -->
+                    <div class="card-premium card-stat animate-slide" style="animation-delay:.3s" onclick="navegar('agenda.html')" title="Ver agenda">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="icon-box" style="background:linear-gradient(135deg,#fef3c7,#fde68a);color:#d97706">
+                                <i data-lucide="calendar-days" class="w-7 h-7"></i>
+                            </div>
+                            <span class="flex items-center gap-1 text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">
+                                <i data-lucide="calendar" class="w-3 h-3"></i> Agenda
+                            </span>
+                        </div>
+                        <div class="text-3xl lg:text-4xl font-extrabold tracking-tight" style="color:var(--primary)" id="eventosSemana">-</div>
+                        <div class="text-sm text-gray-500 mt-1 font-medium">Eventos esta Semana</div>
+                        <div class="mt-2 text-xs text-gray-400" id="proximoEvento"></div>
+                    </div>
+                    
+                    <!-- Card Documentos → leva para documentos.html -->
+                    <div class="card-premium card-stat animate-slide" style="animation-delay:.4s" onclick="navegar('documentos.html')" title="Ver documentos">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="icon-box" style="background:linear-gradient(135deg,#ede9fe,#ddd6fe);color:#7c3aed">
+                                <i data-lucide="scroll-text" class="w-7 h-7"></i>
+                            </div>
+                            <span class="flex items-center gap-1 text-xs font-bold text-purple-600 bg-purple-50 px-2.5 py-1 rounded-full">
+                                <i data-lucide="file-text" class="w-3 h-3"></i> Docs
+                            </span>
+                        </div>
+                        <div class="text-3xl lg:text-4xl font-extrabold tracking-tight" style="color:var(--primary)" id="totalDocumentos">-</div>
+                        <div class="text-sm text-gray-500 mt-1 font-medium">Documentos Emitidos</div>
+                        <div class="mt-2 text-xs text-gray-400" id="detalheDocumentos"></div>
+                    </div>
+                </div>
+                
+                <!-- GRÁFICO + ÚLTIMOS MEMBROS -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+                    <div class="lg:col-span-2 card-premium" style="cursor:default">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-serif font-bold flex items-center gap-2" style="color:var(--primary)">
+                                <i data-lucide="chart-line" class="w-5 h-5"></i> Crescimento do Rebanho
+                            </h3>
+                            <span class="text-xs text-gray-400">Últimos 6 meses</span>
+                        </div>
+                        <div id="chartMembros" style="height:320px"></div>
+                    </div>
+                    
+                    <div class="card-premium" style="cursor:default">
+                        <h3 class="text-lg font-serif font-bold mb-6 flex items-center gap-2" style="color:var(--primary)">
+                            <i data-lucide="user-check" class="w-5 h-5"></i> Últimos Membros
+                        </h3>
+                        <div class="space-y-4" id="ultimosMembros">
+                            <div class="loading-shimmer" style="height:48px"></div>
+                            <div class="loading-shimmer" style="height:48px"></div>
+                            <div class="loading-shimmer" style="height:48px"></div>
+                        </div>
+                        <button onclick="navegar('membros.html')" class="w-full mt-4 py-2.5 rounded-xl text-sm font-semibold border-2 transition-all hover:shadow-lg flex items-center justify-center gap-2" style="border-color:var(--primary);color:var(--primary)">
+                            Ver Todos <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- AÇÕES RÁPIDAS -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-4">
+                    <button onclick="navegar('membros.html')" class="flex items-center gap-3 p-4 bg-white rounded-2xl border hover:border-indigo-300 hover:shadow-xl transition-all group">
+                        <div class="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i data-lucide="user-plus" class="w-5 h-5 text-indigo-600"></i>
+                        </div>
+                        <span class="text-sm font-semibold text-gray-700">Novo Membro</span>
+                    </button>
+                    <button onclick="navegar('financeiro.html')" class="flex items-center gap-3 p-4 bg-white rounded-2xl border hover:border-green-300 hover:shadow-xl transition-all group">
+                        <div class="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i data-lucide="hand-coins" class="w-5 h-5 text-green-600"></i>
+                        </div>
+                        <span class="text-sm font-semibold text-gray-700">Registrar Dízimo</span>
+                    </button>
+                    <button onclick="navegar('agenda.html')" class="flex items-center gap-3 p-4 bg-white rounded-2xl border hover:border-amber-300 hover:shadow-xl transition-all group">
+                        <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i data-lucide="calendar-plus" class="w-5 h-5 text-amber-600"></i>
+                        </div>
+                        <span class="text-sm font-semibold text-gray-700">Novo Evento</span>
+                    </button>
+                    <button onclick="navegar('documentos.html')" class="flex items-center gap-3 p-4 bg-white rounded-2xl border hover:border-purple-300 hover:shadow-xl transition-all group">
+                        <div class="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i data-lucide="file-plus" class="w-5 h-5 text-purple-600"></i>
+                        </div>
+                        <span class="text-sm font-semibold text-gray-700">Certificado</span>
+                    </button>
+                </div>
+                
+            </div>
+            
+            <footer class="text-center py-6 text-xs text-gray-400 border-t bg-white/50" id="footerText"></footer>
+        </main>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/sidebar.js"></script>
+    <script>
+        // ============ REMOVER SPLASH ============
+        setTimeout(() => {
+            const splash = document.getElementById('splashScreen');
+            if (splash) {
+                splash.style.opacity = '0';
+                splash.style.transform = 'scale(0.95)';
+                setTimeout(() => splash.remove(), 1000);
+            }
+        }, 2000);
+        
+        // ============ NAVEGAÇÃO ============
+        function navegar(pagina) {
+            window.location.href = pagina;
+        }
+        
+        function logout() {
+            Swal.fire({
+                title: 'Sair do sistema?',
+                text: 'Você será redirecionado para o login.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#1a237e',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Sim, sair',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.clear();
+                    window.location.href = '../login.html';
+                }
+            });
+        }
+        
+        // ============ INIT ============
+        let chartInstance = null;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!window.api || !window.api.isAuthenticated()) { 
+                window.location.href = '../login.html'; 
+                return; 
+            }
+            
+            document.getElementById('footerText').textContent = `${window.APP_NAME} v3.0 • AASA Tecnologia © 2026`;
+            document.getElementById('dataAtual').textContent = Utils.getDataExtenso();
+            lucide.createIcons();
+            novoVersiculo();
+            
+            // Partículas
+            particlesJS('particles-js', {
+                particles: { 
+                    number: { value: 20 }, 
+                    color: { value: '#f59e0b' }, 
+                    opacity: { value: .12 }, 
+                    size: { value: 3 }, 
+                    line_linked: { enable: true, color: '#1a237e', opacity: .05 }, 
+                    move: { speed: .4 } 
+                },
+                interactivity: { events: { onhover: { enable: true, mode: 'grab' } } }
+            });
+            
+            carregarTodosDados();
+        });
+        
+        // ============ VERSÍCULO ============
+        function novoVersiculo() {
+            const v = Utils.getVersiculo();
+            document.getElementById('versiculoTexto').textContent = `"${v.texto}"`;
+            document.getElementById('versiculoRef').textContent = v.ref;
+            
+            // Micro-animação
+            const card = document.querySelector('.versiculo-card');
+            card.style.transform = 'scale(0.98)';
+            setTimeout(() => card.style.transform = 'scale(1)', 200);
+        }
+        
+        // ============ CARREGAR DADOS ============
+        async function carregarTodosDados() {
+            try {
+                // Membros
+                const membros = await window.api.get('/membros/estatisticas');
+                document.getElementById('totalMembros').textContent = membros.total || 0;
+                document.getElementById('detalheMembros').textContent = `${membros.ativos || 0} ativos • ${membros.porTipo?.length || 0} tipos`;
+                
+                // Financeiro
+                const fin = await window.api.get('/financeiro/fluxo-caixa');
+                document.getElementById('receitaMes').textContent = Utils.formatMoney(fin.totalReceitas || 0);
+                document.getElementById('detalheFinanceiro').textContent = `Saldo: ${Utils.formatMoney((fin.totalReceitas||0) - (fin.totalDespesas||0))}`;
+                
+                // Eventos
+                const eventos = await window.api.get('/agenda/proximos?limite=10');
+                document.getElementById('eventosSemana').textContent = Array.isArray(eventos) ? eventos.length : 0;
+                if (eventos && eventos.length > 0) {
+                    document.getElementById('proximoEvento').textContent = `Próximo: ${eventos[0].titulo}`;
+                } else {
+                    document.getElementById('proximoEvento').textContent = 'Nenhum evento';
+                }
+                
+                // Documentos
+                document.getElementById('totalDocumentos').textContent = '0';
+                document.getElementById('detalheDocumentos').textContent = 'Carteirinhas • Certificados';
+                
+                // Últimos membros
+                const listaMembros = await window.api.get('/membros?limite=5');
+                let htmlMembros = '';
+                if (listaMembros.membros && listaMembros.membros.length > 0) {
+                    listaMembros.membros.forEach((m, i) => {
+                        htmlMembros += `
+                        <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-all" onclick="navegar('membros.html')">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shadow" style="background:${Utils.getAvatarColor(i)}">${m.nome[0]}</div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-semibold truncate">${m.nome}</p>
+                                <p class="text-xs text-gray-400">${m.tipo_membro || 'Membro'} • ${m.status === 'ATIVO' ? 'Ativo' : 'Inativo'}</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i>
+                        </div>`;
+                    });
+                } else {
+                    htmlMembros = '<p class="text-sm text-gray-400 text-center py-4">Nenhum membro cadastrado</p>';
+                }
+                document.getElementById('ultimosMembros').innerHTML = htmlMembros;
+                lucide.createIcons();
+                
+                renderChart();
+            } catch (e) {
+                console.log('Modo demonstração:', e);
+                document.getElementById('totalMembros').textContent = '12';
+                document.getElementById('receitaMes').textContent = 'R$ 2.220,00';
+                document.getElementById('eventosSemana').textContent = '5';
+                document.getElementById('totalDocumentos').textContent = '3';
+                renderChart();
+            }
+        }
+        
+        // ============ GRÁFICO ============
+    function renderChart() {
+    if (chartInstance) chartInstance.destroy();
+    
+    const corPrimaria = ChurchData.corPrimaria || '#31527d';
+    const corSecundaria = ChurchData.corSecundaria || '#eeece8';
+    
+    chartInstance = new ApexCharts(document.getElementById('chartMembros'), {
+        chart: { 
+            type: 'area', height: 320, toolbar: { show: false }, 
+            fontFamily: 'Inter', background: 'transparent' 
+        },
+        series: [{ name: 'Membros', data: [980, 1020, 1080, 1120, 1180, 1234] }],
+        colors: [corPrimaria],
+        fill: { 
+            type: 'gradient', 
+            gradient: { 
+                opacityFrom: .35, opacityTo: 0, 
+                colorStops: [
+                    { offset: 0, color: corPrimaria },
+                    { offset: 100, color: corSecundaria }
+                ] 
+            } 
+        },
+        stroke: { curve: 'smooth', width: 4, colors: [corPrimaria] },
+        grid: { borderColor: '#f1f5f9', strokeDashArray: 4 },
+        xaxis: { categories: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'] },
+        markers: { 
+            size: 6, 
+            colors: [corPrimaria],
+            strokeColors: corSecundaria,
+            strokeWidth: 2 
+        },
+        tooltip: { theme: 'light' }
+    });
+    chartInstance.render();
+}
+    </script>
+</body>
+</html>

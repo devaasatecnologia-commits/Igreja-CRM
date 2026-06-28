@@ -1,0 +1,67 @@
+/* ============================================ */
+/* VARIÁVEIS CSS - TEMA PADRÃO                   */
+/* Personalizável por igreja via JavaScript      */
+/* ============================================ */
+
+:root {
+    /* Cores Principais - Podem ser sobrescritas via JS */
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --primary-light: #818cf8;
+    --primary-bg: rgba(99, 102, 241, 0.08);
+    --primary-bg-hover: rgba(99, 102, 241, 0.12);
+    
+    /* Cor de Acento */
+    --accent: #06b6d4;
+    --accent-bg: rgba(6, 182, 212, 0.08);
+    
+    /* Cores de Status */
+    --success: #10b981;
+    --success-bg: rgba(16, 185, 129, 0.1);
+    --danger: #ef4444;
+    --danger-bg: rgba(239, 68, 68, 0.1);
+    --warning: #f59e0b;
+    --warning-bg: rgba(245, 158, 11, 0.1);
+    --info: #3b82f6;
+    --info-bg: rgba(59, 130, 246, 0.1);
+    --purple: #8b5cf6;
+    --purple-bg: rgba(139, 92, 246, 0.1);
+    
+    /* Cores Neutras */
+    --dark: #0f172a;
+    --gray-900: #1e293b;
+    --gray-800: #334155;
+    --gray-600: #64748b;
+    --gray-400: #94a3b8;
+    --gray-200: #e2e8f0;
+    --gray-100: #f1f5f9;
+    --gray-50: #f8fafc;
+    --white: #ffffff;
+    
+    /* Background */
+    --bg: #f1f5f9;
+    
+    /* Layout */
+    --sidebar-w: 260px;
+    
+    /* Bordas */
+    --radius-sm: 10px;
+    --radius: 14px;
+    --radius-lg: 18px;
+    --radius-xl: 22px;
+    
+    /* Sombras */
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow: 0 4px 6px rgba(0,0,0,0.04), 0 2px 4px rgba(0,0,0,0.03);
+    --shadow-md: 0 10px 15px rgba(0,0,0,0.05);
+    --shadow-lg: 0 20px 40px rgba(0,0,0,0.06);
+    --shadow-xl: 0 25px 50px rgba(0,0,0,0.08);
+    
+    /* Transições */
+    --transition-fast: all 0.15s ease;
+    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Tipografia */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}

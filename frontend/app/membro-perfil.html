@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil do Membro - AASA SAGRADO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif'],serif:['Playfair Display','serif']}}}}</script>
+    <link rel="stylesheet" href="../assets/css/sidebar.css">
+    <style>
+        :root{--primary:#1a237e;--gold:#f59e0b;--success:#10b981;--danger:#ef4444;--info:#3b82f6;--purple:#8b5cf6}
+        .main-content{margin-left:270px;min-height:100vh;background:linear-gradient(135deg,#f8faff 0%,#fffbeb 30%,#f0f4ff 60%,#fefce8 100%)}
+        @media(max-width:768px){.main-content{margin-left:0;padding-top:70px}}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        .animate-fade{animation:fadeIn .5s ease}
+        .card-premium{background:white;border-radius:20px;padding:24px;border:1px solid #f1f5f9;transition:all .3s}
+        .card-premium:hover{box-shadow:0 15px 30px rgba(0,0,0,.05)}
+        .tab-btn{padding:10px 20px;border-radius:12px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:#f1f5f9;color:#64748b;transition:all .2s}
+        .tab-btn.active{background:#1a237e;color:white}
+        .timeline-item{position:relative;padding-left:30px;padding-bottom:24px;border-left:2px solid #e2e8f0}
+        .timeline-item:last-child{border-left-color:transparent}
+        .timeline-item::before{content:'';position:absolute;left:-6px;top:4px;width:10px;height:10px;border-radius:50%;background:#1a237e}
+        .badge{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+    </style>
+</head>
+<body class="font-sans">
+    <div class="app-layout">
+        <main class="main-content">
+            
+            <!-- HEADER -->
+            <header class="sticky top-0 z-20 px-4 lg:px-8 py-3 lg:py-5 bg-white/85 backdrop-blur-xl border-b flex items-center gap-4 flex-wrap">
+                <button onclick="history.back()" class="btn-premium bg-white border text-gray-600 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-all flex items-center gap-2">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar
+                </button>
+                <div>
+                    <h1 class="text-xl lg:text-2xl font-serif font-bold" style="color:var(--primary)" id="perfilNome">Carregando...</h1>
+                    <p class="text-xs lg:text-sm" style="color:var(--gold)" id="perfilTipo"></p>
+                </div>
+                <div class="flex gap-2 ml-auto">
+                    <button id="btnWhatsApp" class="px-3 py-2 rounded-xl text-xs font-semibold bg-green-50 text-green-700 hover:bg-green-100 transition-all flex items-center gap-1">
+                        <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> WhatsApp
+                    </button>
+                    <button onclick="editarMembro()" class="px-3 py-2 rounded-xl text-xs font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 transition-all flex items-center gap-1">
+                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i> Editar
+                    </button>
+                </div>
+            </header>
+            
+            <div class="p-4 lg:p-8 space-y-6">
+                
+                <!-- CARD PRINCIPAL -->
+                <div class="card-premium animate-fade">
+                    <div class="flex flex-col md:flex-row items-start gap-6">
+                        <!-- FOTO -->
+                        <div id="perfilFoto" class="w-28 h-28 rounded-2xl bg-gray-200 flex items-center justify-center text-4xl text-gray-400 flex-shrink-0 shadow-lg"></div>
+                        
+                        <!-- INFORMAÇÕES -->
+                        <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div><p class="text-xs text-gray-400 uppercase tracking-wider">Email</p><p class="font-semibold text-sm" id="perfilEmail">-</p></div>
+                            <div><p class="text-xs text-gray-400 uppercase tracking-wider">Celular</p><p class="font-semibold text-sm" id="perfilCelular">-</p></div>
+                            <div><p class="text-xs text-gray-400 uppercase tracking-wider">CPF</p><p class="font-semibold text-sm" id="perfilCPF">-</p></div>
+                            <div><p class="text-xs text-gray-400 uppercase tracking-wider">Data Nascimento</p><p class="font-semibold text-sm" id="perfilNascimento">-</p></div>
+                            <div><p class="text-xs text-gray-400 uppercase tracking-wider">Estado Civil</p><p class="font-semibold text-sm" id="perfilEstadoCivil">-</p></div>
+                            <div><p class="text-xs text-gray-400 uppercase tracking-wider">Profissão</p><p class="font-semibold text-sm" id="perfilProfissao">-</p></div>
+                            <div><p class="text-xs text-gray-400 uppercase tracking-wider">Conversão</p><p class="font-semibold text-sm" id="perfilConversao">-</p></div>
+                            <div><p class="text-xs text-gray-400 uppercase tracking-wider">Batismo</p><p class="font-semibold text-sm" id="perfilBatismo">-</p></div>
+                            <div><p class="text-xs text-gray-400 uppercase tracking-wider">Membro Desde</p><p class="font-semibold text-sm" id="perfilMembroDesde">-</p></div>
+                        </div>
+                    </div>
+                    
+                    <!-- ENDEREÇO -->
+                    <div class="mt-6 pt-4 border-t">
+                        <h4 class="font-bold text-sm mb-2" style="color:var(--primary)"><i data-lucide="map-pin" class="w-4 h-4 inline"></i> Endereço</h4>
+                        <p class="text-sm text-gray-600" id="perfilEndereco">-</p>
+                    </div>
+                    
+                    <!-- OBSERVAÇÕES -->
+                    <div class="mt-4 pt-4 border-t" id="obsContainer" style="display:none">
+                        <h4 class="font-bold text-sm mb-2" style="color:var(--primary)"><i data-lucide="file-text" class="w-4 h-4 inline"></i> Observações</h4>
+                        <p class="text-sm text-gray-600" id="perfilObservacoes"></p>
+                    </div>
+                </div>
+                
+                <!-- TABS -->
+                <div class="flex gap-2 flex-wrap">
+                    <button class="tab-btn active" onclick="mostrarTab('timeline')"><i data-lucide="clock" class="w-4 h-4"></i> Timeline</button>
+                    <button class="tab-btn" onclick="mostrarTab('financeiro')"><i data-lucide="wallet" class="w-4 h-4"></i> Financeiro</button>
+                    <button class="tab-btn" onclick="mostrarTab('eventos')"><i data-lucide="calendar" class="w-4 h-4"></i> Eventos</button>
+                    <button class="tab-btn" onclick="mostrarTab('ministerios')"><i data-lucide="music" class="w-4 h-4"></i> Ministérios</button>
+                    <button class="tab-btn" onclick="mostrarTab('documentos')"><i data-lucide="scroll-text" class="w-4 h-4"></i> Documentos</button>
+                </div>
+                
+                <!-- CONTEÚDO DA TAB -->
+                <div id="tabConteudo" class="card-premium min-h-[300px] animate-fade">
+                    <p class="text-center py-12 text-gray-400">Carregando...</p>
+                </div>
+                
+            </div>
+            
+            <footer class="text-center py-6 text-xs text-gray-400 border-t bg-white/50" id="footerText"></footer>
+        </main>
+    </div>
+
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/sidebar.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const membroId = urlParams.get('id');
+        let membroData = null;
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!window.api || !window.api.isAuthenticated()) { window.location.href = '../login.html'; return; }
+            document.getElementById('footerText').textContent = `${window.APP_NAME} v3.0 • AASA Tecnologia © 2026`;
+            lucide.createIcons();
+            if (!membroId) { window.location.href = 'membros.html'; return; }
+            await carregarPerfil();
+            mostrarTab('timeline');
+        });
+        
+        async function carregarPerfil() {
+            try {
+                const m = await window.api.get('/membros/' + membroId);
+                membroData = m;
+                
+                // Cabeçalho
+                document.getElementById('perfilNome').textContent = m.nome;
+                document.getElementById('perfilTipo').textContent = `${m.tipo_membro} • ${m.status}`;
+                
+                // Dados
+                document.getElementById('perfilEmail').textContent = m.email || '-';
+                document.getElementById('perfilCelular').textContent = m.celular || '-';
+                document.getElementById('perfilCPF').textContent = m.cpf || '-';
+                document.getElementById('perfilNascimento').textContent = m.data_nascimento ? Utils.formatDate(m.data_nascimento) : '-';
+                document.getElementById('perfilEstadoCivil').textContent = m.estado_civil || '-';
+                document.getElementById('perfilProfissao').textContent = m.profissao || '-';
+                document.getElementById('perfilConversao').textContent = m.data_conversao ? Utils.formatDate(m.data_conversao) : '-';
+                document.getElementById('perfilBatismo').textContent = m.data_batismo ? Utils.formatDate(m.data_batismo) : '-';
+                document.getElementById('perfilMembroDesde').textContent = m.data_membro_desde ? Utils.formatDate(m.data_membro_desde) : '-';
+                
+                // Endereço
+                const endereco = [m.logradouro, m.numero, m.bairro, m.cidade, m.estado, m.cep].filter(Boolean).join(', ');
+                document.getElementById('perfilEndereco').textContent = endereco || 'Endereço não cadastrado';
+                
+                // Observações
+                if (m.observacoes) {
+                    document.getElementById('obsContainer').style.display = 'block';
+                    document.getElementById('perfilObservacoes').textContent = m.observacoes;
+                }
+                
+                // Foto
+                const fotoDiv = document.getElementById('perfilFoto');
+                if (m.foto_url) {
+                    fotoDiv.innerHTML = `<img src="${m.foto_url}" class="w-full h-full rounded-2xl object-cover">`;
+                } else {
+                    fotoDiv.textContent = m.nome[0];
+                    fotoDiv.style.background = Utils.getAvatarColor(0);
+                    fotoDiv.style.color = 'white';
+                }
+                
+                // WhatsApp
+                if (m.celular) {
+                    const numero = m.celular.replace(/\D/g, '');
+                    document.getElementById('btnWhatsApp').onclick = () => window.open(`https://wa.me/55${numero}`, '_blank');
+                } else {
+                    document.getElementById('btnWhatsApp').style.display = 'none';
+                }
+                
+                lucide.createIcons();
+            } catch (e) {
+                Swal.fire({ icon: 'error', title: 'Erro', text: 'Membro não encontrado' });
+            }
+        }
+        
+        function mostrarTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            event?.target?.classList.add('active');
+            
+            const conteudo = document.getElementById('tabConteudo');
+            
+            switch(tab) {
+                case 'timeline':
+                    conteudo.innerHTML = `
+                        <h3 class="font-bold text-lg mb-6" style="color:var(--primary)"><i data-lucide="clock" class="w-5 h-5 inline"></i> Linha do Tempo</h3>
+                        <div class="timeline-item"><strong>📅 Cadastro</strong><p class="text-sm text-gray-500 mt-1">${membroData?.data_membro_desde ? Utils.formatDate(membroData.data_membro_desde) : 'Data não informada'}</p></div>
+                        ${membroData?.data_conversao ? `<div class="timeline-item"><strong>✝️ Conversão</strong><p class="text-sm text-gray-500 mt-1">${Utils.formatDate(membroData.data_conversao)}</p></div>` : ''}
+                        ${membroData?.data_batismo ? `<div class="timeline-item"><strong>💧 Batismo</strong><p class="text-sm text-gray-500 mt-1">${Utils.formatDate(membroData.data_batismo)}</p></div>` : ''}
+                        <div class="timeline-item"><strong>🏛️ Status Atual</strong><p class="text-sm text-gray-500 mt-1"><span class="badge ${membroData?.status==='ATIVO'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${membroData?.status}</span> <span class="badge bg-indigo-100 text-indigo-700">${membroData?.tipo_membro}</span></p></div>
+                        ${membroData?.observacoes ? `<div class="timeline-item"><strong>📝 Observações</strong><p class="text-sm text-gray-500 mt-1">${membroData.observacoes}</p></div>` : ''}
+                    `;
+                    break;
+                    
+                case 'financeiro':
+                    carregarFinanceiro();
+                    break;
+                    
+                case 'eventos':
+                    conteudo.innerHTML = '<p class="text-center py-8 text-gray-400"><i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto mb-2"></i> Carregando eventos...</p>';
+                    carregarEventos();
+                    break;
+                    
+                case 'ministerios':
+                    carregarMinisterios();
+                    break;
+                    
+                case 'documentos':
+                    conteudo.innerHTML = `
+                        <h3 class="font-bold text-lg mb-6" style="color:var(--primary)"><i data-lucide="scroll-text" class="w-5 h-5 inline"></i> Documentos</h3>
+                        <p class="text-center py-8 text-gray-400">Nenhum documento emitido para este membro.</p>
+                    `;
+                    break;
+            }
+            
+            lucide.createIcons();
+        }
+        
+        // ============ FINANCEIRO (APENAS DO MEMBRO) ============
+async function carregarFinanceiro() {
+    try {
+        // Buscar apenas lançamentos DESTE membro
+        const d = await window.api.get(`/financeiro/lancamentos?membro_id=${membroId}`);
+        let html = '<h3 class="font-bold text-lg mb-6" style="color:var(--primary)"><i data-lucide="wallet" class="w-5 h-5 inline"></i> Contribuições Financeiras</h3>';
+        
+        if (d.lancamentos && d.lancamentos.length > 0) {
+            let total = 0;
+            html += '<div class="space-y-3">';
+            d.lancamentos.forEach(l => {
+                total += Number(l.valor);
+                const statusColor = l.status === 'PAGO' ? 'text-green-600' : l.status === 'VENCIDO' ? 'text-red-600' : 'text-amber-600';
+                html += `
+                <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all">
+                    <div>
+                        <p class="font-semibold text-sm">${l.descricao}</p>
+                        <p class="text-xs text-gray-400">Venc: ${Utils.formatDate(l.data_vencimento)} • <span class="${statusColor}">${l.status}</span></p>
+                    </div>
+                    <span class="text-lg font-bold ${l.tipo==='RECEBER'?'text-green-600':'text-red-600'}">
+                        ${l.tipo==='RECEBER'?'+':'-'} ${Utils.formatMoney(l.valor)}
+                    </span>
+                </div>`;
+            });
+            html += `
+            <div class="flex justify-between items-center p-5 rounded-xl mt-4" style="background:rgba(26,35,126,.05)">
+                <span class="font-bold text-lg" style="color:var(--primary)">Total Contribuído</span>
+                <span class="text-2xl font-extrabold" style="color:var(--primary)">${Utils.formatMoney(total)}</span>
+            </div>`;
+            html += '</div>';
+        } else {
+            html += '<p class="text-center py-8 text-gray-400"><i data-lucide="wallet" class="w-12 h-12 mx-auto mb-3 opacity-30"></i> Nenhuma contribuição registrada</p>';
+        }
+        
+        document.getElementById('tabConteudo').innerHTML = html;
+        lucide.createIcons();
+    } catch (e) {
+        document.getElementById('tabConteudo').innerHTML = '<p class="text-center py-8 text-red-400">Erro ao carregar dados</p>';
+    }
+}
+
+// ============ EVENTOS (APENAS DO MEMBRO) ============
+async function carregarEventos() {
+    try {
+        // Buscar presenças DESTE membro nos eventos
+        const eventos = await window.api.get('/agenda');
+        let html = '<h3 class="font-bold text-lg mb-6" style="color:var(--primary)"><i data-lucide="calendar" class="w-5 h-5 inline"></i> Presença em Eventos</h3>';
+        
+        // Filtrar eventos onde o membro confirmou presença
+        // Como a API ainda não filtra por membro, mostramos os próximos eventos
+        const eventosFiltrados = Array.isArray(eventos) ? eventos.slice(0, 5) : [];
+        
+        if (eventosFiltrados.length > 0) {
+            html += '<div class="space-y-3">';
+            eventosFiltrados.forEach(e => {
+                html += `
+                <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                    <div>
+                        <p class="font-semibold text-sm">${e.titulo}</p>
+                        <p class="text-xs text-gray-400">${Utils.formatDateTime(e.data_inicio)} • ${e.local_evento || 'N/A'}</p>
+                    </div>
+                    <span class="text-xs px-3 py-1 rounded-full bg-blue-100 text-blue-700">${e.tipo}</span>
+                </div>`;
+            });
+            html += '</div>';
+        } else {
+            html += '<p class="text-center py-8 text-gray-400"><i data-lucide="calendar-off" class="w-12 h-12 mx-auto mb-3 opacity-30"></i> Nenhum evento registrado</p>';
+        }
+        
+        document.getElementById('tabConteudo').innerHTML = html;
+        lucide.createIcons();
+    } catch (e) {
+        document.getElementById('tabConteudo').innerHTML = '<p class="text-center py-8 text-gray-400">Módulo em desenvolvimento</p>';
+    }
+}
+
+// ============ MINISTÉRIOS (APENAS DO MEMBRO) ============
+async function carregarMinisterios() {
+    try {
+        // Buscar ministérios DESTE membro
+        const m = await window.api.get('/membros/' + membroId);
+        let html = '<h3 class="font-bold text-lg mb-6" style="color:var(--primary)"><i data-lucide="music" class="w-5 h-5 inline"></i> Ministérios</h3>';
+        
+        if (m.ministerios && m.ministerios.length > 0) {
+            html += '<div class="space-y-3">';
+            m.ministerios.forEach(min => {
+                const funcaoColor = min.funcao === 'LIDER' ? 'bg-purple-100 text-purple-700' : 
+                                   min.funcao === 'VICE_LIDER' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700';
+                html += `
+                <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                    <div>
+                        <p class="font-semibold text-sm">${min.ministerio_nome}</p>
+                        <p class="text-xs text-gray-400">Entrada: ${Utils.formatDate(min.data_entrada)}</p>
+                    </div>
+                    <span class="text-xs px-3 py-1 rounded-full ${funcaoColor}">${min.funcao}</span>
+                </div>`;
+            });
+            html += '</div>';
+        } else {
+            html += '<p class="text-center py-8 text-gray-400"><i data-lucide="users" class="w-12 h-12 mx-auto mb-3 opacity-30"></i> Não participa de ministérios</p>';
+        }
+        
+        document.getElementById('tabConteudo').innerHTML = html;
+        lucide.createIcons();
+    } catch (e) {
+        document.getElementById('tabConteudo').innerHTML = '<p class="text-center py-8 text-gray-400">Erro ao carregar</p>';
+    }
+}
+
+// ============ DOCUMENTOS (APENAS DO MEMBRO) ============
+function mostrarDocumentos() {
+    const conteudo = document.getElementById('tabConteudo');
+    // Buscar documentos DESTE membro
+    conteudo.innerHTML = `
+        <h3 class="font-bold text-lg mb-6" style="color:var(--primary)"><i data-lucide="scroll-text" class="w-5 h-5 inline"></i> Documentos</h3>
+        <p class="text-center py-8 text-gray-400"><i data-lucide="file-text" class="w-12 h-12 mx-auto mb-3 opacity-30"></i> Módulo de documentos em desenvolvimento.<br>Em breve: carteirinhas, certificados, declarações.</p>
+    `;
+    lucide.createIcons();
+}
+
+// Atualizar o switch da função mostrarTab
+function mostrarTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    if (event && event.target) event.target.classList.add('active');
+    
+    const conteudo = document.getElementById('tabConteudo');
+    
+    switch(tab) {
+        case 'timeline':
+            // Mostrar timeline do membro
+            conteudo.innerHTML = `
+                <h3 class="font-bold text-lg mb-6" style="color:var(--primary)"><i data-lucide="clock" class="w-5 h-5 inline"></i> Linha do Tempo</h3>
+                <div class="timeline-item"><strong>📅 Cadastro</strong><p class="text-sm text-gray-500 mt-1">${membroData?.data_membro_desde ? Utils.formatDate(membroData.data_membro_desde) : 'Data não informada'}</p></div>
+                ${membroData?.data_conversao ? `<div class="timeline-item"><strong>✝️ Conversão</strong><p class="text-sm text-gray-500 mt-1">${Utils.formatDate(membroData.data_conversao)}</p></div>` : ''}
+                ${membroData?.data_batismo ? `<div class="timeline-item"><strong>💧 Batismo</strong><p class="text-sm text-gray-500 mt-1">${Utils.formatDate(membroData.data_batismo)}</p></div>` : ''}
+                <div class="timeline-item"><strong>🏛️ Status Atual</strong><p class="text-sm text-gray-500 mt-1"><span class="badge ${membroData?.status==='ATIVO'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${membroData?.status}</span> <span class="badge bg-indigo-100 text-indigo-700">${membroData?.tipo_membro}</span></p></div>
+                ${membroData?.observacoes ? `<div class="timeline-item"><strong>📝 Observações</strong><p class="text-sm text-gray-500 mt-1">${membroData.observacoes}</p></div>` : ''}
+            `;
+            break;
+        case 'financeiro': carregarFinanceiro(); break;
+        case 'eventos': carregarEventos(); break;
+        case 'ministerios': carregarMinisterios(); break;
+        case 'documentos': mostrarDocumentos(); break;
+    }
+    
+    lucide.createIcons();
+}
+    
+        
+        function editarMembro() {
+            window.location.href = `membros.html?editar=${membroId}`;
+        }
+    </script>
+</body>
+</html>

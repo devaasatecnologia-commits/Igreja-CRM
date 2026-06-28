@@ -1,0 +1,422 @@
+/* ============================================ */
+/* ESTILOS GLOBAIS                               */
+/* ============================================ */
+
+@import 'variables.css';
+
+/* Reset */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: var(--font-family);
+    background: var(--bg);
+    color: var(--gray-900);
+    line-height: 1.5;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* Links */
+a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: var(--transition-fast);
+}
+a:hover {
+    color: var(--primary-dark);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 20px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gray-400); }
+
+/* Seleção */
+::selection {
+    background: var(--primary);
+    color: white;
+}
+
+/* ============ LAYOUT ============ */
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-content {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    padding: 28px;
+    animation: fadeInUp 0.4s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============ TOPBAR ============ */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.topbar-left h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--gray-900);
+    letter-spacing: -0.5px;
+}
+
+.topbar-left p {
+    font-size: 13px;
+    color: var(--gray-400);
+    margin-top: 4px;
+}
+
+/* ============ BOTÕES ============ */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-family);
+    white-space: nowrap;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+.btn-success {
+    background: var(--success);
+    color: white;
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: white;
+}
+
+.btn-outline {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    color: var(--gray-600);
+}
+.btn-outline:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.btn-sm {
+    padding: 6px 14px;
+    font-size: 12px;
+}
+
+.btn-lg {
+    padding: 14px 28px;
+    font-size: 15px;
+}
+
+/* ============ BADGES ============ */
+.badge {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge-success { background: var(--success-bg); color: var(--success); }
+.badge-danger { background: var(--danger-bg); color: var(--danger); }
+.badge-warning { background: var(--warning-bg); color: var(--warning); }
+.badge-info { background: var(--info-bg); color: var(--info); }
+.badge-purple { background: var(--purple-bg); color: var(--purple); }
+
+/* ============ CARDS ============ */
+.card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.card-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.card-header h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gray-900);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-body {
+    padding: 24px;
+}
+
+.card-body.no-padding {
+    padding: 0;
+}
+
+/* ============ TABELAS ============ */
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--gray-100);
+    background: var(--gray-50);
+    white-space: nowrap;
+}
+
+tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--gray-50);
+    font-size: 13px;
+    color: var(--gray-800);
+    white-space: nowrap;
+}
+
+tbody tr {
+    transition: var(--transition-fast);
+}
+
+tbody tr:hover {
+    background: var(--gray-50);
+    cursor: pointer;
+}
+
+/* ============ FORMULÁRIOS ============ */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-600);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 10px 14px;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: var(--font-family);
+    transition: var(--transition-fast);
+    background: var(--white);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-bg);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.form-group.full {
+    grid-column: 1 / -1;
+}
+
+/* ============ MODAL ============ */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(3px);
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 600px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-xl);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background: var(--white);
+    z-index: 1;
+}
+
+.modal-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.modal-close {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--gray-200);
+    background: var(--white);
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-fast);
+}
+
+.modal-close:hover {
+    background: var(--gray-50);
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--gray-100);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* ============ TOAST ============ */
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 300;
+    padding: 14px 20px;
+    border-radius: var(--radius);
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp 0.3s ease;
+    display: none;
+}
+
+.toast-success { background: var(--success); display: block; }
+.toast-error { background: var(--danger); display: block; }
+
+/* ============ RESPONSIVO ============ */
+@media (max-width: 1024px) {
+    .form-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+        padding: 16px;
+        padding-top: 70px;
+    }
+    
+    .topbar-left h1 {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 12px;
+        padding-top: 65px;
+    }
+}

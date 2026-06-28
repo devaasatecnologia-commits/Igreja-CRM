@@ -1,0 +1,31 @@
+<button class="mobile-toggle" onclick="toggleSidebar()">
+    <i data-lucide="menu" class="w-6 h-6"></i>
+</button>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <img id="igrejaLogo" src="https://aasatecnologia.com.br/logo.png" class="sidebar-logo-img animate-pulse-gold" onerror="this.style.display='none'; document.getElementById('fallbackLogo').style.display='flex';">
+        <div id="fallbackLogo" class="sidebar-logo-fallback" style="display:none;"><i data-lucide="church" class="w-6 h-6"></i></div>
+        <div class="sidebar-brand">
+            <h3>AASA SAGRADO</h3>
+            <span id="igrejaNome">Carregando...</span>
+        </div>
+    </div>
+    
+    <nav class="sidebar-nav" id="sidebarNav">
+        <div class="text-center py-8 text-gray-400 text-sm">Carregando módulos...</div>
+    </nav>
+    
+    <div class="sidebar-footer">
+        <div class="user-card" onclick="logout()">
+            <div class="user-avatar" id="userInicial">A</div>
+            <div class="user-info">
+                <strong id="userNome">Admin</strong>
+                <span id="userPlano">Plano</span>
+            </div>
+            <i data-lucide="log-out" class="w-5 h-5 logout-icon"></i>
+        </div>
+        <div class="sidebar-version">v3.0 • AASA Tecnologia</div>
+    </div>
+</aside>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentos - CRM Igreja</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root{--primary:#6366f1;--primary-dark:#4f46e5;--primary-bg:rgba(99,102,241,0.08);--success:#10b981;--success-bg:rgba(16,185,129,0.1);--danger:#ef4444;--danger-bg:rgba(239,68,68,0.1);--warning:#f59e0b;--warning-bg:rgba(245,158,11,0.1);--info:#3b82f6;--info-bg:rgba(59,130,246,0.1);--purple:#8b5cf6;--purple-bg:rgba(139,92,246,0.1);--dark:#0f172a;--gray-900:#1e293b;--gray-600:#64748b;--gray-400:#94a3b8;--gray-200:#e2e8f0;--gray-100:#f1f5f9;--white:#ffffff;--bg:#f1f5f9;--sidebar-w:260px;--radius:14px;--radius-lg:18px;--shadow:0 4px 6px rgba(0,0,0,0.04);--shadow-lg:0 20px 40px rgba(0,0,0,0.06);--transition:all 0.2s ease}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--gray-900);-webkit-font-smoothing:antialiased}
+        ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:20px}
+        .app-layout{display:flex;min-height:100vh}
+        .sidebar{width:var(--sidebar-w);background:var(--white);border-right:1px solid var(--gray-200);position:fixed;top:0;left:0;bottom:0;z-index:100;display:flex;flex-direction:column}
+        .sidebar-header{padding:20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--gray-100)}
+        .sidebar-logo{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--purple));border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:16px}
+        .sidebar-brand h3{font-size:14px;font-weight:700}.sidebar-brand span{font-size:10px;color:var(--gray-400);display:block}
+        .sidebar-nav{flex:1;overflow-y:auto;padding:12px}
+        .nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;text-decoration:none;color:var(--gray-600);font-size:13px;font-weight:500;transition:var(--transition);margin-bottom:2px}
+        .nav-item:hover{background:var(--gray-100);color:var(--gray-900)}.nav-item.active{background:var(--primary-bg);color:var(--primary);font-weight:600}
+        .nav-item i{width:18px;height:18px}
+        .main-content{margin-left:var(--sidebar-w);flex:1;padding:24px;animation:fadeIn 0.4s ease}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+        .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+        .topbar h1{font-size:24px;font-weight:800}.topbar p{font-size:12px;color:var(--gray-400)}
+        .btn{padding:10px 18px;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:var(--transition);display:inline-flex;align-items:center;gap:8px}
+        .btn-primary{background:var(--primary);color:white}.btn-primary:hover{background:var(--primary-dark)}
+        .btn-outline{background:white;border:1px solid var(--gray-200)}.btn-sm{padding:6px 12px;font-size:11px}
+        
+        /* Tabs */
+        .tabs{display:flex;gap:4px;margin-bottom:20px;background:white;padding:4px;border-radius:12px;border:1px solid var(--gray-200);width:fit-content}
+        .tab{padding:10px 20px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;transition:var(--transition);border:none;background:transparent;color:var(--gray-600)}
+        .tab.active{background:var(--primary);color:white}
+        
+        /* Grid */
+        .docs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+        
+        .doc-card{background:white;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:24px;transition:var(--transition);cursor:pointer;position:relative}
+        .doc-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px);border-color:transparent}
+        .doc-icon{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:14px}
+        .doc-icon.carteirinha{background:var(--primary-bg);color:var(--primary)}
+        .doc-icon.certificado{background:var(--success-bg);color:var(--success)}
+        .doc-icon.carta{background:var(--warning-bg);color:var(--warning)}
+        .doc-icon.declaracao{background:var(--purple-bg);color:var(--purple)}
+        
+        .doc-card h3{font-size:16px;font-weight:600;margin-bottom:6px}
+        .doc-card p{font-size:12px;color:var(--gray-400);line-height:1.5}
+        .doc-card .badge{position:absolute;top:16px;right:16px}
+        
+        .badge{padding:4px 10px;border-radius:6px;font-size:10px;font-weight:600}
+        .badge-success{background:var(--success-bg);color:var(--success)}
+        
+        /* Quick Action Cards */
+        .quick-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-bottom:24px}
+        .quick-card{background:white;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:28px;text-align:center;cursor:pointer;transition:var(--transition)}
+        .quick-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px);border-color:var(--primary)}
+        .quick-card i{width:40px;height:40px;margin:0 auto 12px;color:var(--primary)}
+        .quick-card h3{font-size:16px;font-weight:600;margin-bottom:4px}
+        .quick-card p{font-size:12px;color:var(--gray-400)}
+        
+        @media(max-width:768px){.sidebar{width:200px}.sidebar-brand h3,.sidebar-brand span{display:none}.main-content{margin-left:200px;padding:14px}.quick-cards{grid-template-columns:1fr}.docs-grid{grid-template-columns:1fr}}
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header"><div class="sidebar-logo">⛪</div><div class="sidebar-brand"><h3>CRM Igreja</h3><span id="igrejaNome">Carregando...</span></div></div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+                <a href="membros.html" class="nav-item"><i data-lucide="users"></i> Membros</a>
+                <a href="celulas.html" class="nav-item"><i data-lucide="heart-handshake"></i> Células</a>
+                <a href="financeiro.html" class="nav-item"><i data-lucide="wallet"></i> Financeiro</a>
+                <a href="agenda.html" class="nav-item"><i data-lucide="calendar-days"></i> Agenda</a>
+                <a href="documentos.html" class="nav-item active"><i data-lucide="file-text"></i> Documentos</a>
+                <a href="vendas.html" class="nav-item"><i data-lucide="shopping-cart"></i> Vendas</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="topbar">
+                <div><h1>📜 Documentos</h1><p>Carteirinhas, certificados e declarações</p></div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-cards">
+                <div class="quick-card" onclick="alert('Funcionalidade: Gerar Carteirinha')">
+                    <i data-lucide="id-card" style="width:40px;height:40px;"></i>
+                    <h3>🎫 Nova Carteirinha</h3>
+                    <p>Gere carteirinha com QR Code para membros</p>
+                </div>
+                <div class="quick-card" onclick="alert('Funcionalidade: Gerar Certificado')">
+                    <i data-lucide="award" style="width:40px;height:40px;"></i>
+                    <h3>🏆 Novo Certificado</h3>
+                    <p>Certificados de batismo, casamento e cursos</p>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="mudarTab(this,'todos')">Todos</button>
+                <button class="tab" onclick="mudarTab(this,'carteirinhas')">Carteirinhas</button>
+                <button class="tab" onclick="mudarTab(this,'certificados')">Certificados</button>
+            </div>
+
+            <!-- Grid de Documentos -->
+            <div class="docs-grid">
+                <div class="doc-card">
+                    <span class="badge badge-success">Emitido</span>
+                    <div class="doc-icon carteirinha"><i data-lucide="id-card" style="width:24px;height:24px;"></i></div>
+                    <h3>Carteirinha - João Silva</h3>
+                    <p>Emitida em 15/05/2026 • Válida até 15/05/2028</p>
+                </div>
+                <div class="doc-card">
+                    <span class="badge badge-success">Emitido</span>
+                    <div class="doc-icon carteirinha"><i data-lucide="id-card" style="width:24px;height:24px;"></i></div>
+                    <h3>Carteirinha - Maria Santos</h3>
+                    <p>Emitida em 14/05/2026 • Válida até 14/05/2028</p>
+                </div>
+                <div class="doc-card">
+                    <span class="badge badge-success">Emitido</span>
+                    <div class="doc-icon certificado"><i data-lucide="award" style="width:24px;height:24px;"></i></div>
+                    <h3>Certificado de Batismo</h3>
+                    <p>Pedro Oliveira • 12/05/2026</p>
+                </div>
+                <div class="doc-card">
+                    <span class="badge badge-success">Emitido</span>
+                    <div class="doc-icon certificado"><i data-lucide="award" style="width:24px;height:24px;"></i></div>
+                    <h3>Certificado de Curso</h3>
+                    <p>Ana Costa • Curso de Liderança • 10/05/2026</p>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-icon carta"><i data-lucide="scroll" style="width:24px;height:24px;"></i></div>
+                    <h3>Carta de Transferência</h3>
+                    <p>Solicitada em 08/05/2026 • Aguardando</p>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-icon declaracao"><i data-lucide="file-check" style="width:24px;height:24px;"></i></div>
+                    <h3>Declaração de Membro</h3>
+                    <p>Carlos Silva • Emitida em 05/05/2026</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="assets/js/api.js"></script>
+    <script>
+        function init(){if(!api.isAuthenticated()){window.location.href='login.html';return}document.getElementById('igrejaNome').textContent=localStorage.getItem('igreja_nome')||'Igreja Demo';lucide.createIcons()}
+        function mudarTab(el,t){document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));el.classList.add('active')}
+        init();
+    </script>
+</body>
+</html>

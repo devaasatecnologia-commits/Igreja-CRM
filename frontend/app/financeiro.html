@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financeiro - AASA SAGRADO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif'],serif:['Playfair Display','serif']}}}}</script>
+    <link rel="stylesheet" href="../assets/css/sidebar.css">
+    <style>
+        :root{--primary:#1a237e;--gold:#f59e0b;--success:#10b981;--danger:#ef4444;--warning:#f59e0b;--info:#3b82f6;--purple:#8b5cf6}
+        .main-content{margin-left:270px;min-height:100vh;background:linear-gradient(135deg,#f8faff 0%,#fffbeb 30%,#f0f4ff 60%,#fefce8 100%)}
+        @media(max-width:768px){.main-content{margin-left:0;padding-top:70px}}
+        @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        .animate-slide{animation:slideUp .4s ease forwards}
+        .card-premium{background:white;border-radius:24px;padding:24px;border:1px solid #f1f5f9;transition:all .3s}
+        .card-premium:hover{box-shadow:0 20px 40px rgba(0,0,0,.06)}
+        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);animation:fadeIn .2s ease}
+        .modal-premium{background:white;border-radius:24px;width:90%;max-width:650px;max-height:85vh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.2);animation:slideUp .3s ease}
+        .input-premium{width:100%;padding:14px 18px;border:2px solid #e2e8f0;border-radius:14px;font-size:14px;font-family:'Inter',sans-serif;background:#f8fafc;transition:all .3s}
+        .input-premium:focus{outline:none;border-color:#1a237e;box-shadow:0 0 0 4px rgba(26,35,126,.08);background:white}
+        .select-premium{width:100%;padding:14px 18px;border:2px solid #e2e8f0;border-radius:14px;font-size:14px;font-family:'Inter',sans-serif;background:#f8fafc;cursor:pointer}
+        .btn-premium{padding:12px 24px;border-radius:14px;font-weight:600;font-size:14px;cursor:pointer;border:none;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:8px;transition:all .3s;white-space:nowrap}
+        .btn-premium:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.1)}
+        .btn-sm{padding:8px 14px;font-size:12px;border-radius:10px}
+        .btn-xs{padding:6px 10px;font-size:11px;border-radius:8px}
+        .tab-btn{padding:10px 20px;border-radius:12px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;border:none;background:#f1f5f9;color:#64748b}
+        .tab-btn.active{background:#1a237e;color:white}
+        .status-badge{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+        .table-row-hover{transition:all .15s}
+        .table-row-hover:hover{background:#f8fafc}
+        @media print{body *{visibility:hidden}#modalRecibo,#modalRecibo *{visibility:visible}#modalRecibo{position:absolute;left:0;top:0;width:100%;box-shadow:none}}
+    </style>
+</head>
+<body class="font-sans">
+    <div class="app-layout">
+        <main class="main-content">
+            
+            <!-- HEADER -->
+            <header class="sticky top-0 z-20 px-6 lg:px-8 py-4 lg:py-5 bg-white/85 backdrop-blur-xl border-b flex items-center justify-between flex-wrap gap-3">
+                <div>
+                    <h1 class="text-2xl lg:text-3xl font-serif font-bold tracking-tight flex items-center gap-3" style="color:var(--primary)">
+                        <i data-lucide="wallet" class="w-7 h-7 lg:w-8 lg:h-8"></i> Tesouraria
+                    </h1>
+                    <p class="text-sm mt-1 font-medium" style="color:var(--gold)">Controle financeiro completo da igreja</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="exportarCSV()" class="btn-premium btn-sm bg-white border border-gray-200 text-gray-600" title="Exportar CSV">
+                        <i data-lucide="download" class="w-4 h-4"></i> Exportar
+                    </button>
+                    <button onclick="abrirModal()" class="btn-premium text-white" style="background:linear-gradient(135deg,#1a237e,#283593)">
+                        <i data-lucide="plus-circle" class="w-5 h-5"></i> Novo Lançamento
+                    </button>
+                </div>
+            </header>
+            
+            <div class="p-4 lg:p-8 space-y-5 lg:space-y-6">
+                
+                <!-- TABS DE FILTRO -->
+                <div class="flex gap-2 flex-wrap">
+                    <button class="tab-btn active" onclick="filtrar('','')">📋 Todos</button>
+                    <button class="tab-btn" onclick="filtrar('RECEBER','')"><i data-lucide="trending-up" class="w-4 h-4"></i> Receitas</button>
+                    <button class="tab-btn" onclick="filtrar('PAGAR','')"><i data-lucide="trending-down" class="w-4 h-4"></i> Despesas</button>
+                    <button class="tab-btn" onclick="filtrar('','PENDENTE')"><i data-lucide="clock" class="w-4 h-4"></i> Pendentes</button>
+                    <button class="tab-btn" onclick="filtrar('','PAGO')"><i data-lucide="check-circle" class="w-4 h-4"></i> Baixados</button>
+                    <button class="tab-btn" onclick="filtrar('','VENCIDO')"><i data-lucide="alert-triangle" class="w-4 h-4"></i> Vencidos</button>
+                </div>
+                
+                <!-- FILTRO DE PERÍODO -->
+                <div class="flex gap-3 flex-wrap items-center">
+                    <input type="date" id="dataInicio" class="input-premium" style="width:160px" onchange="carregarDados()">
+                    <span class="text-gray-400">até</span>
+                    <input type="date" id="dataFim" class="input-premium" style="width:160px" onchange="carregarDados()">
+                    <button onclick="carregarDados()" class="btn-premium btn-sm text-white" style="background:var(--primary)"><i data-lucide="search" class="w-4 h-4"></i> Filtrar</button>
+                </div>
+                
+                <!-- STATS CARDS -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+                    <div class="card-premium animate-slide" style="animation-delay:.1s">
+                        <div class="flex items-center gap-3 mb-2"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(16,185,129,.1)"><i data-lucide="trending-up" class="w-5 h-5 text-green-600"></i></div></div>
+                        <div class="text-xl lg:text-2xl font-extrabold text-green-600" id="recebidoMes">R$ 0,00</div>
+                        <div class="text-xs lg:text-sm text-gray-500 mt-1">Total Recebido</div>
+                    </div>
+                    <div class="card-premium animate-slide" style="animation-delay:.15s">
+                        <div class="flex items-center gap-3 mb-2"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(239,68,68,.1)"><i data-lucide="trending-down" class="w-5 h-5 text-red-600"></i></div></div>
+                        <div class="text-xl lg:text-2xl font-extrabold text-red-600" id="pagoMes">R$ 0,00</div>
+                        <div class="text-xs lg:text-sm text-gray-500 mt-1">Total Pago</div>
+                    </div>
+                    <div class="card-premium animate-slide" style="animation-delay:.2s">
+                        <div class="flex items-center gap-3 mb-2"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(59,130,246,.1)"><i data-lucide="clock" class="w-5 h-5 text-blue-600"></i></div></div>
+                        <div class="text-xl lg:text-2xl font-extrabold text-blue-600" id="aReceber">R$ 0,00</div>
+                        <div class="text-xs lg:text-sm text-gray-500 mt-1">A Receber</div>
+                    </div>
+                    <div class="card-premium animate-slide" style="animation-delay:.25s">
+                        <div class="flex items-center gap-3 mb-2"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(245,158,11,.1)"><i data-lucide="alert-circle" class="w-5 h-5 text-amber-600"></i></div></div>
+                        <div class="text-xl lg:text-2xl font-extrabold text-amber-600" id="aPagar">R$ 0,00</div>
+                        <div class="text-xs lg:text-sm text-gray-500 mt-1">A Pagar</div>
+                    </div>
+                </div>
+                
+                <!-- GRÁFICOS -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+                    <div class="card-premium">
+                        <h3 class="text-base lg:text-lg font-serif font-bold mb-4 flex items-center gap-2" style="color:var(--primary)"><i data-lucide="chart-bar" class="w-5 h-5"></i> Fluxo de Caixa Mensal</h3>
+                        <div id="chartFluxo" style="height:250px"></div>
+                    </div>
+                    <div class="card-premium">
+                        <h3 class="text-base lg:text-lg font-serif font-bold mb-4 flex items-center gap-2" style="color:var(--primary)"><i data-lucide="chart-pie" class="w-5 h-5"></i> Receitas vs Despesas</h3>
+                        <div id="chartPizza" style="height:250px"></div>
+                    </div>
+                </div>
+                
+                <!-- TABELA DE LANÇAMENTOS -->
+                <div class="card-premium" style="padding:0;overflow:hidden">
+                    <div class="px-6 py-4 border-b flex justify-between items-center flex-wrap gap-3">
+                        <h3 class="font-serif font-bold" style="color:var(--primary)"><i data-lucide="list" class="w-5 h-5 inline"></i> Lançamentos</h3>
+                        <span class="text-xs text-gray-400" id="totalRegistros">0 registros</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="text-left px-4 py-3 text-xs font-bold text-gray-400 uppercase">Descrição</th>
+                                    <th class="text-left px-4 py-3 text-xs font-bold text-gray-400 uppercase hidden md:table-cell">Categoria</th>
+                                    <th class="text-left px-4 py-3 text-xs font-bold text-gray-400 uppercase">Valor</th>
+                                    <th class="text-left px-4 py-3 text-xs font-bold text-gray-400 uppercase hidden sm:table-cell">Vencimento</th>
+                                    <th class="text-left px-4 py-3 text-xs font-bold text-gray-400 uppercase">Status</th>
+                                    <th class="text-center px-4 py-3 text-xs font-bold text-gray-400 uppercase">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaLancamentos">
+                                <tr><td colspan="6" class="text-center py-12 text-gray-400"><i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto mb-3"></i> Carregando lançamentos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <footer class="text-center py-6 text-xs text-gray-400 border-t bg-white/50" id="footerText"></footer>
+        </main>
+    </div>
+
+    <!-- ============ MODAL: NOVO/EDITAR LANÇAMENTO ============ -->
+    <div class="modal-overlay" id="modalLancamento" style="display:none">
+        <div class="modal-premium">
+            <div class="sticky top-0 bg-white z-10 px-6 lg:px-8 py-5 lg:py-6 border-b flex justify-between items-center rounded-t-3xl">
+                <h2 class="text-lg lg:text-xl font-bold flex items-center gap-3" id="modalTitle">
+                    <i data-lucide="plus-circle" class="w-6 h-6" style="color:var(--primary)"></i> Novo Lançamento
+                </h2>
+                <button onclick="fecharModal()" class="w-10 h-10 rounded-full border-2 border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-6 lg:p-8 space-y-4">
+                <input type="hidden" id="lancamentoId">
+                
+                <!-- TIPO -->
+                <div class="flex gap-3">
+                    <button onclick="setTipo('RECEBER')" id="btnReceber" class="flex-1 py-3 rounded-xl text-sm font-semibold bg-green-100 text-green-700 flex items-center justify-center gap-2 transition-all">
+                        <i data-lucide="trending-up" class="w-4 h-4"></i> 💰 Receita
+                    </button>
+                    <button onclick="setTipo('PAGAR')" id="btnPagar" class="flex-1 py-3 rounded-xl text-sm font-semibold bg-gray-100 text-gray-600 flex items-center justify-center gap-2 transition-all">
+                        <i data-lucide="trending-down" class="w-4 h-4"></i> 💸 Despesa
+                    </button>
+                </div>
+                <input type="hidden" id="tipo" value="RECEBER">
+                
+                <!-- DESCRIÇÃO -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Descrição *</label>
+                    <input type="text" id="descricao" placeholder="Ex: Dízimo, Conta de luz, Salário..." class="input-premium" required>
+                </div>
+                
+                <!-- VALOR E VENCIMENTO -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Valor (R$) *</label>
+                        <input type="number" id="valor" placeholder="0,00" step="0.01" min="0.01" class="input-premium" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Vencimento *</label>
+                        <input type="date" id="vencimento" class="input-premium" required>
+                    </div>
+                </div>
+                
+                <!-- CATEGORIA E PARCELAS -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Categoria</label>
+                        <select id="categoria" class="select-premium">
+                            <optgroup label="📥 Receitas">
+                                <option value="2">Dízimo</option>
+                                <option value="3">Oferta</option>
+                                <option value="4">Doação</option>
+                                <option value="5">Campanha</option>
+                                <option value="9">Outras Receitas</option>
+                            </optgroup>
+                            <optgroup label="📤 Despesas">
+                                <option value="6">Salário</option>
+                                <option value="7">Aluguel</option>
+                                <option value="8">Contas (Água/Luz/Internet)</option>
+                                <option value="10">Manutenção</option>
+                                <option value="11">Outras Despesas</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Parcelas</label>
+                        <input type="number" id="parcelas" value="1" min="1" max="24" class="input-premium">
+                    </div>
+                </div>
+                
+                <!-- MEMBRO VINCULADO -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Membro (opcional)</label>
+                    <select id="membro_id" class="select-premium">
+                        <option value="">Nenhum</option>
+                    </select>
+                </div>
+                
+                <!-- OBSERVAÇÃO -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Observação</label>
+                    <textarea id="observacao" rows="2" class="input-premium" placeholder="Detalhes adicionais..."></textarea>
+                </div>
+            </div>
+            <div class="sticky bottom-0 bg-white z-10 px-6 lg:px-8 py-4 lg:py-5 border-t flex justify-end gap-3 rounded-b-3xl">
+                <button onclick="fecharModal()" class="btn-premium bg-gray-100 text-gray-600 hover:bg-gray-200">
+                    <i data-lucide="x" class="w-4 h-4"></i> Cancelar
+                </button>
+                <button onclick="salvarLancamento()" class="btn-premium text-white" style="background:var(--primary)">
+                    <i data-lucide="save" class="w-4 h-4"></i> Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ MODAL: BAIXAR ============ -->
+    <div class="modal-overlay" id="modalBaixar" style="display:none">
+        <div class="modal-premium" style="max-width:480px">
+            <div class="px-6 lg:px-8 py-5 lg:py-6 border-b flex justify-between items-center">
+                <h2 class="text-lg lg:text-xl font-bold flex items-center gap-3">
+                    <i data-lucide="check-circle" class="w-6 h-6 text-green-600"></i> Baixar Lançamento
+                </h2>
+                <button onclick="fecharBaixar()" class="w-10 h-10 rounded-full border-2 flex items-center justify-center hover:bg-gray-50">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-6 lg:p-8 space-y-4">
+                <input type="hidden" id="baixarId">
+                <div class="bg-gray-50 rounded-2xl p-5">
+                    <p class="text-sm text-gray-500" id="baixarDescricao"></p>
+                    <p class="text-3xl font-extrabold mt-2" style="color:var(--primary)" id="baixarValor"></p>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Data do Pagamento</label>
+                    <input type="date" id="dataPagamento" class="input-premium">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Forma de Pagamento</label>
+                    <select id="formaPagamento" class="select-premium">
+                        <option value="DINHEIRO">💵 Dinheiro</option>
+                        <option value="PIX">📱 PIX</option>
+                        <option value="CARTAO_CREDITO">💳 Cartão Crédito</option>
+                        <option value="CARTAO_DEBITO">💳 Cartão Débito</option>
+                        <option value="TRANSFERENCIA">🏦 Transferência</option>
+                        <option value="BOLETO">📄 Boleto</option>
+                    </select>
+                </div>
+            </div>
+            <div class="px-6 lg:px-8 py-4 lg:py-5 border-t flex justify-end gap-3">
+                <button onclick="fecharBaixar()" class="btn-premium bg-gray-100 text-gray-600">Cancelar</button>
+                <button onclick="confirmarBaixar()" class="btn-premium text-white" style="background:#10b981">
+                    <i data-lucide="check" class="w-4 h-4"></i> Confirmar Baixa
+                </button>
+            </div>
+        </div>
+    </div>
+
+   <!-- ============ MODAL: RECIBO PREMIUM ============ -->
+<div class="modal-overlay" id="modalRecibo" style="display:none">
+    <div class="modal-premium" style="max-width:600px">
+        <div class="px-8 py-6 border-b flex justify-between items-center bg-gray-50 rounded-t-3xl">
+            <h2 class="text-xl font-bold flex items-center gap-3" style="color:var(--primary)">
+                <i data-lucide="receipt" class="w-6 h-6"></i> Recibo Oficial
+            </h2>
+            <button onclick="fecharRecibo()" class="w-10 h-10 rounded-full border-2 flex items-center justify-center hover:bg-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        <div class="p-8" id="reciboContainer">
+            <!-- CABEÇALHO DO RECIBO -->
+            <div class="text-center mb-6 pb-6 border-b-2" style="border-color:var(--primary)">
+                <img src="https://aasatecnologia.com.br/logo.png" alt="Logo" class="w-16 h-16 mx-auto mb-3 rounded-xl object-contain bg-white p-1 shadow" onerror="this.style.display='none'">
+                <h3 class="text-2xl font-serif font-bold" style="color:var(--primary)" id="reciboIgreja">Igreja</h3>
+                <p class="text-sm text-gray-500">CNPJ: 00.000.000/0000-00</p>
+                <p class="text-sm text-gray-500" id="reciboEndereco"></p>
+            </div>
+            
+            <!-- TÍTULO -->
+            <div class="text-center mb-6">
+                <h2 class="text-xl font-bold uppercase tracking-wider" style="color:var(--primary)">Recibo de <span id="reciboTipo">Pagamento</span></h2>
+                <p class="text-sm text-gray-400 mt-1">Nº <span id="reciboNumero"></span></p>
+            </div>
+            
+            <!-- DADOS PRINCIPAIS -->
+            <div class="bg-gray-50 rounded-2xl p-6 mb-6 space-y-4">
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Valor:</span>
+                    <span class="text-2xl font-extrabold" style="color:var(--primary)" id="reciboValor"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Descrição:</span>
+                    <span class="font-semibold text-right" id="reciboDescricao"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Data Vencimento:</span>
+                    <span class="font-semibold" id="reciboVencimento"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Data Pagamento:</span>
+                    <span class="font-semibold text-green-600" id="reciboDataPagamento"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Forma de Pagamento:</span>
+                    <span class="font-semibold" id="reciboForma"></span>
+                </div>
+                <div class="flex justify-between" id="reciboMembroRow" style="display:none">
+                    <span class="text-gray-500">Membro:</span>
+                    <span class="font-semibold" id="reciboMembro"></span>
+                </div>
+            </div>
+            
+            <!-- ASSINATURA DIGITAL -->
+            <div class="border-t pt-6 mb-6">
+                <h4 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4 text-center">Assinatura Digital</h4>
+                <div class="grid grid-cols-2 gap-8">
+                    <div class="text-center">
+                        <div class="border-b-2 border-dashed border-gray-300 pb-2 mb-2">
+                            <input type="text" id="assinaturaNome" placeholder="Nome do responsável" class="w-full text-center border-none text-sm font-semibold" style="color:var(--primary)">
+                        </div>
+                        <p class="text-xs text-gray-400">Responsável</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="border-b-2 border-dashed border-gray-300 pb-2 mb-2">
+                            <input type="text" id="assinaturaCargo" placeholder="Cargo" class="w-full text-center border-none text-sm font-semibold" style="color:var(--primary)">
+                        </div>
+                        <p class="text-xs text-gray-400">Cargo</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- QR CODE DE VALIDAÇÃO -->
+            <div class="text-center mb-4">
+                <div id="reciboQRCode" class="inline-block bg-white p-3 rounded-xl shadow"></div>
+                <p class="text-xs text-gray-400 mt-2">Código de Validação: <span id="reciboCodigo" class="font-mono font-bold" style="color:var(--primary)"></span></p>
+            </div>
+            
+            <!-- RODAPÉ -->
+            <div class="text-center text-xs text-gray-400 mt-6 pt-4 border-t">
+                <p>Documento gerado digitalmente por <strong>${window.APP_NAME}</strong></p>
+                <p>AASA Tecnologia • www.aasatecnologia.com.br</p>
+            </div>
+        </div>
+        
+        <!-- BOTÕES -->
+        <div class="px-8 py-5 border-t flex justify-end gap-3 bg-gray-50 rounded-b-3xl">
+            <button onclick="fecharRecibo()" class="btn-premium bg-white border text-gray-600">Fechar</button>
+            <button onclick="gerarPDFRecibo()" class="btn-premium text-white" style="background:var(--danger)">
+                <i data-lucide="file-text" class="w-4 h-4"></i> PDF
+            </button>
+            <button onclick="window.print()" class="btn-premium text-white" style="background:var(--primary)">
+                <i data-lucide="printer" class="w-4 h-4"></i> Imprimir
+            </button>
+        </div>
+    </div>
+</div>
+
+    <!-- ============ SCRIPTS ============ -->
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/sidebar.js"></script>
+    <script>
+        // ============ VARIÁVEIS GLOBAIS ============
+        let chartFluxo = null, chartPizza = null;
+        let filtroTipo = '', filtroStatus = '';
+        let todosLancamentos = [];
+        
+        // ============ INIT ============
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!window.api || !window.api.isAuthenticated()) { window.location.href = '../login.html'; return; }
+            document.getElementById('footerText').textContent = `${window.APP_NAME} v3.0 • AASA Tecnologia © 2026`;
+            document.getElementById('dataPagamento').value = new Date().toISOString().split('T')[0];
+            lucide.createIcons();
+            carregarDados();
+            carregarMembros();
+        });
+        
+        // ============ CARREGAR DADOS ============
+        async function carregarDados() {
+            try {
+                let url = '/financeiro/lancamentos?';
+                if (filtroTipo) url += `tipo=${filtroTipo}&`;
+                if (filtroStatus) url += `status=${filtroStatus}&`;
+                
+                const dIni = document.getElementById('dataInicio')?.value;
+                const dFim = document.getElementById('dataFim')?.value;
+                if (dIni) url += `data_inicio=${dIni}&`;
+                if (dFim) url += `data_fim=${dFim}&`;
+                
+                const d = await window.api.get(url);
+                todosLancamentos = d.lancamentos || [];
+                
+                // Atualizar cards
+                document.getElementById('recebidoMes').textContent = Utils.formatMoney(d.totais?.recebido_mes || 0);
+                document.getElementById('pagoMes').textContent = Utils.formatMoney(d.totais?.pago_mes || 0);
+                document.getElementById('aReceber').textContent = Utils.formatMoney(d.totais?.a_receber || 0);
+                document.getElementById('aPagar').textContent = Utils.formatMoney(d.totais?.a_pagar || 0);
+                
+                // Atualizar tabela
+                renderizarTabela(todosLancamentos);
+                
+                // Atualizar gráficos
+                renderChartFluxo(d);
+                renderChartPizza(d);
+                
+                // Total registros
+                document.getElementById('totalRegistros').textContent = `${todosLancamentos.length} registros`;
+                
+            } catch (e) {
+                console.error('Erro ao carregar:', e);
+                document.getElementById('tabelaLancamentos').innerHTML = '<tr><td colspan="6" class="text-center py-12 text-red-400">Erro ao carregar dados</td></tr>';
+            }
+        }
+        
+        async function carregarMembros() {
+            try {
+                const d = await window.api.get('/membros?limite=100');
+                const select = document.getElementById('membro_id');
+                if (d.membros && d.membros.length > 0) {
+                    d.membros.forEach(m => {
+                        select.innerHTML += `<option value="${m.id}">${m.nome}</option>`;
+                    });
+                }
+            } catch (e) {}
+        }
+        
+        // ============ RENDERIZAR TABELA ============
+        function renderizarTabela(lancamentos) {
+            let html = '';
+            if (lancamentos.length > 0) {
+                lancamentos.forEach(l => {
+                    const sc = l.status === 'PAGO' ? 'bg-green-100 text-green-700' : 
+                              l.status === 'VENCIDO' ? 'bg-red-100 text-red-700' : 
+                              l.status === 'CANCELADO' ? 'bg-gray-100 text-gray-600' : 'bg-amber-100 text-amber-700';
+                    
+                    html += `
+                    <tr class="border-t table-row-hover">
+                        <td class="px-4 py-3">
+                            <p class="text-sm font-semibold">${l.descricao}</p>
+                            ${l.membro_nome ? `<p class="text-xs text-gray-400">${l.membro_nome}</p>` : ''}
+                            ${l.parcela_atual > 1 ? `<p class="text-xs text-gray-400">Parcela ${l.parcela_atual}/${l.total_parcelas}</p>` : ''}
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-500 hidden md:table-cell">${l.conta_nome || '-'}</td>
+                        <td class="px-4 py-3 text-sm font-bold ${l.tipo==='RECEBER'?'text-green-600':'text-red-600'}">
+                            ${l.tipo==='RECEBER'?'+':'-'} ${Utils.formatMoney(l.valor)}
+                        </td>
+                        <td class="px-4 py-3 text-sm hidden sm:table-cell">
+                            <span class="${l.status==='VENCIDO'&&l.status!=='PAGO'?'text-red-600 font-semibold':''}">${Utils.formatDate(l.data_vencimento)}</span>
+                        </td>
+                        <td class="px-4 py-3"><span class="status-badge ${sc}">${l.status}</span></td>
+                        <td class="px-4 py-3">
+                            <div class="flex gap-1 justify-center flex-wrap">
+                                ${l.status !== 'PAGO' && l.status !== 'CANCELADO' ? `
+                                <button onclick="abrirBaixar(${l.id},'${l.descricao.replace(/'/g,"\\'")}',${l.valor})" class="btn-premium btn-xs bg-green-50 text-green-700" title="Baixar"><i data-lucide="check" class="w-3 h-3"></i></button>
+                                <button onclick="editarLancamento(${l.id})" class="btn-premium btn-xs bg-blue-50 text-blue-700" title="Editar"><i data-lucide="pencil" class="w-3 h-3"></i></button>
+                                ` : ''}
+                                ${l.status === 'PAGO' ? `
+                                <button onclick="verRecibo(${l.id})" class="btn-premium btn-xs bg-gray-50 text-gray-700" title="Recibo"><i data-lucide="receipt" class="w-3 h-3"></i></button>
+                                ` : ''}
+                                ${l.status !== 'CANCELADO' ? `
+                                <button onclick="cancelarLancamento(${l.id})" class="btn-premium btn-xs bg-red-50 text-red-700" title="Cancelar"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                                ` : ''}
+                            </div>
+                        </td>
+                    </tr>`;
+                });
+            } else {
+                html = '<tr><td colspan="6" class="text-center py-12 text-gray-400">Nenhum lançamento encontrado</td></tr>';
+            }
+            document.getElementById('tabelaLancamentos').innerHTML = html;
+            lucide.createIcons();
+        }
+        
+        // ============ GRÁFICOS ============
+        function renderChartFluxo(d) {
+            if (chartFluxo) chartFluxo.destroy();
+            const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+            const receitas = [], despesas = [], cats = [];
+            
+            for (let i = 1; i <= 12; i++) {
+                cats.push(meses[i-1]);
+                receitas.push(0);
+                despesas.push(0);
+            }
+            
+            chartFluxo = new ApexCharts(document.getElementById('chartFluxo'), {
+                chart: { type: 'area', height: 250, toolbar: { show: false }, fontFamily: 'Inter' },
+                series: [
+                    { name: 'Receitas', data: [2200,1800,2500,3000,2800,3500,4000,3200,2800,3500,4200,5000] },
+                    { name: 'Despesas', data: [1500,1200,1800,2000,2200,2500,2800,2400,2100,2600,3000,3500] }
+                ],
+                colors: ['#10b981', '#ef4444'],
+                fill: { type: 'gradient', gradient: { opacityFrom: .3, opacityTo: 0 } },
+                stroke: { curve: 'smooth', width: 3 },
+                xaxis: { categories: cats },
+                legend: { position: 'bottom' }
+            });
+            chartFluxo.render();
+        }
+        
+        function renderChartPizza(d) {
+            if (chartPizza) chartPizza.destroy();
+            chartPizza = new ApexCharts(document.getElementById('chartPizza'), {
+                chart: { type: 'donut', height: 250, fontFamily: 'Inter' },
+                series: [Number(d?.totais?.recebido_mes || 2220), Number(d?.totais?.pago_mes || 1800)],
+                labels: ['Receitas', 'Despesas'],
+                colors: ['#10b981', '#ef4444'],
+                plotOptions: { pie: { donut: { size: '60%' } } },
+                legend: { position: 'bottom' }
+            });
+            chartPizza.render();
+        }
+        
+        // ============ FILTROS ============
+        function filtrar(tipo, status) {
+            filtroTipo = tipo; filtroStatus = status;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if (event && event.target) event.target.classList.add('active');
+            carregarDados();
+        }
+        
+        // ============ MODAL LANÇAMENTO ============
+        function setTipo(t) {
+            document.getElementById('tipo').value = t;
+            document.getElementById('btnReceber').className = t === 'RECEBER' ? 'flex-1 py-3 rounded-xl text-sm font-semibold bg-green-100 text-green-700 flex items-center justify-center gap-2' : 'flex-1 py-3 rounded-xl text-sm font-semibold bg-gray-100 text-gray-600 flex items-center justify-center gap-2';
+            document.getElementById('btnPagar').className = t === 'PAGAR' ? 'flex-1 py-3 rounded-xl text-sm font-semibold bg-red-100 text-red-700 flex items-center justify-center gap-2' : 'flex-1 py-3 rounded-xl text-sm font-semibold bg-gray-100 text-gray-600 flex items-center justify-center gap-2';
+            // Ajustar categoria padrão
+            document.getElementById('categoria').value = t === 'RECEBER' ? '2' : '8';
+        }
+        
+        function abrirModal() {
+            document.getElementById('modalTitle').innerHTML = '<i data-lucide="plus-circle" class="w-6 h-6" style="color:var(--primary)"></i> Novo Lançamento';
+            document.getElementById('lancamentoId').value = '';
+            document.getElementById('descricao').value = '';
+            document.getElementById('valor').value = '';
+            document.getElementById('vencimento').value = new Date().toISOString().split('T')[0];
+            document.getElementById('parcelas').value = '1';
+            document.getElementById('observacao').value = '';
+            document.getElementById('membro_id').value = '';
+            setTipo('RECEBER');
+            document.getElementById('modalLancamento').style.display = 'flex';
+            lucide.createIcons();
+        }
+        
+        function fecharModal() { document.getElementById('modalLancamento').style.display = 'none'; }
+        
+        async function editarLancamento(id) {
+            try {
+                const l = await window.api.get('/financeiro/lancamentos/' + id);
+                if (l) {
+                    document.getElementById('modalTitle').innerHTML = '<i data-lucide="pencil" class="w-6 h-6" style="color:var(--primary)"></i> Editar Lançamento';
+                    document.getElementById('lancamentoId').value = l.id;
+                    document.getElementById('descricao').value = l.descricao || '';
+                    document.getElementById('valor').value = l.valor || '';
+                    document.getElementById('vencimento').value = l.data_vencimento ? l.data_vencimento.split('T')[0] : '';
+                    document.getElementById('parcelas').value = l.total_parcelas || 1;
+                    document.getElementById('observacao').value = l.observacao || '';
+                    document.getElementById('membro_id').value = l.membro_id || '';
+                    document.getElementById('categoria').value = l.plano_conta_id || 2;
+                    setTipo(l.tipo || 'RECEBER');
+                    document.getElementById('modalLancamento').style.display = 'flex';
+                    lucide.createIcons();
+                }
+            } catch (e) { Utils.showToast('Erro ao carregar', 'error'); }
+        }
+        
+        async function salvarLancamento() {
+            const id = document.getElementById('lancamentoId').value;
+            const dados = {
+                tipo: document.getElementById('tipo').value,
+                descricao: document.getElementById('descricao').value,
+                valor: parseFloat(document.getElementById('valor').value),
+                data_vencimento: document.getElementById('vencimento').value,
+                plano_conta_id: parseInt(document.getElementById('categoria').value) || 2,
+                parcelas: parseInt(document.getElementById('parcelas').value) || 1,
+                membro_id: document.getElementById('membro_id').value || null,
+                observacao: document.getElementById('observacao').value
+            };
+            
+            if (!dados.descricao || !dados.valor || !dados.data_vencimento) {
+                return Utils.showToast('Preencha descrição, valor e vencimento!', 'error');
+            }
+            
+            try {
+                if (id) {
+                    await window.api.put('/financeiro/lancamentos/' + id, dados);
+                } else {
+                    await window.api.post('/financeiro/lancamentos', dados);
+                }
+                fecharModal();
+                carregarDados();
+                Utils.showToast(id ? 'Lançamento atualizado! ✨' : 'Lançamento criado com sucesso! 💰');
+            } catch (e) { Utils.showToast(e.message, 'error'); }
+        }
+        
+        // ============ MODAL BAIXAR ============
+        function abrirBaixar(id, desc, valor) {
+            document.getElementById('baixarId').value = id;
+            document.getElementById('baixarDescricao').textContent = desc;
+            document.getElementById('baixarValor').textContent = Utils.formatMoney(valor);
+            document.getElementById('modalBaixar').style.display = 'flex';
+        }
+        function fecharBaixar() { document.getElementById('modalBaixar').style.display = 'none'; }
+        
+     // Baixar lançamento
+async function confirmarBaixar() {
+    const id = document.getElementById('baixarId').value;
+    const valor = document.getElementById('baixarValor').textContent;
+    
+    SwalHelper.loading('Baixando...');
+    try {
+        await window.api.put('/financeiro/lancamentos/' + id + '/baixar', {
+            data_pagamento: document.getElementById('dataPagamento').value,
+            forma_pagamento: document.getElementById('formaPagamento').value
+        });
+        SwalHelper.close();
+        fecharBaixar();
+        carregarDados();
+        
+        Swal.fire({
+            toast: true,
+            position: 'center',
+            icon: 'success',
+            title: 'Baixado com sucesso! ✅',
+            text: valor,
+            showConfirmButton: false,
+            timer: 2500,
+            background: '#f0fdf4',
+            customClass: { popup: 'rounded-2xl shadow-xl border-2 border-green-200' }
+        });
+    } catch (e) {
+        SwalHelper.close();
+        SwalHelper.toast('Erro ao baixar', 'error');
+    }
+}
+
+// Cancelar lançamento
+async function cancelarLancamento(id) {
+    const confirmado = await SwalHelper.confirm(
+        'Cancelar lançamento?',
+        'Esta ação não pode ser desfeita.'
+    );
+    if (!confirmado) return;
+    
+    SwalHelper.loading('Cancelando...');
+    try {
+        await window.api.put('/financeiro/lancamentos/' + id + '/cancelar', {});
+        SwalHelper.close();
+        carregarDados();
+        SwalHelper.toast('Lançamento cancelado!');
+    } catch (e) {
+        SwalHelper.close();
+        SwalHelper.toast('Erro ao cancelar', 'error');
+    }
+}
+        
+   // ============ RECIBO PREMIUM ============
+async function verRecibo(id) {
+    try {
+        const l = await window.api.get('/financeiro/lancamentos/' + id);
+        const igreja = JSON.parse(localStorage.getItem('igreja') || '{}');
+        
+        if (l) {
+            // Preencher dados
+            document.getElementById('reciboIgreja').textContent = igreja.nome || 'Igreja';
+            document.getElementById('reciboEndereco').textContent = igreja.cidade ? `${igreja.cidade}/${igreja.estado}` : '';
+            document.getElementById('reciboTipo').textContent = l.tipo === 'RECEBER' ? 'Recebimento' : 'Pagamento';
+            document.getElementById('reciboNumero').textContent = `#${l.id}-${new Date().getFullYear()}`;
+            document.getElementById('reciboValor').textContent = Utils.formatMoney(l.valor);
+            document.getElementById('reciboDescricao').textContent = l.descricao;
+            document.getElementById('reciboVencimento').textContent = Utils.formatDate(l.data_vencimento);
+            document.getElementById('reciboDataPagamento').textContent = Utils.formatDate(l.data_pagamento) || 'Ainda não pago';
+            document.getElementById('reciboForma').textContent = l.forma_pagamento || 'N/A';
+            
+            // Membro
+            if (l.membro_nome) {
+                document.getElementById('reciboMembroRow').style.display = 'flex';
+                document.getElementById('reciboMembro').textContent = l.membro_nome;
+            } else {
+                document.getElementById('reciboMembroRow').style.display = 'none';
+            }
+            
+            // Código de validação
+            const codigo = `RCB-${l.id}-${Date.now().toString(36).toUpperCase()}`;
+            document.getElementById('reciboCodigo').textContent = codigo;
+            
+            // QR Code
+            const qrDiv = document.getElementById('reciboQRCode');
+            qrDiv.innerHTML = '';
+            // Gerar QR Code simples (URL de validação)
+            const qrData = `https://seudominio.com/validar/${codigo}`;
+            // Usar API de QR Code online
+            const qrImg = document.createElement('img');
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(qrData)}`;
+            qrImg.alt = 'QR Code';
+            qrDiv.appendChild(qrImg);
+            
+            // Assinatura
+            document.getElementById('assinaturaNome').value = localStorage.getItem('usuario_nome') || '';
+            document.getElementById('assinaturaCargo').value = 'Pastor/Tesoureiro';
+            
+            document.getElementById('modalRecibo').style.display = 'flex';
+        }
+    } catch (e) { Utils.showToast('Erro ao carregar recibo', 'error'); }
+}
+
+function fecharRecibo() { document.getElementById('modalRecibo').style.display = 'none'; }
+
+// Gerar PDF do recibo
+function gerarPDFRecibo() {
+    const container = document.getElementById('reciboContainer');
+    const original = container.innerHTML;
+    
+    // Criar versão para PDF
+    const pdfContent = container.cloneNode(true);
+    // Remover inputs
+    pdfContent.querySelectorAll('input').forEach(inp => {
+        const span = document.createElement('span');
+        span.textContent = inp.value;
+        span.style.cssText = 'font-weight:bold;color:#1a237e';
+        inp.replaceWith(span);
+    });
+    
+    // Substituir temporariamente
+    container.innerHTML = pdfContent.innerHTML;
+    
+    // Imprimir como PDF
+    window.print();
+    
+    // Restaurar original
+    container.innerHTML = original;
+    lucide.createIcons();
+}
+    
+        
+        // ============ EXPORTAR CSV ============
+        function exportarCSV() {
+            if (todosLancamentos.length === 0) return Utils.showToast('Nada para exportar', 'error');
+            let csv = 'Descrição,Categoria,Tipo,Valor,Vencimento,Status,Data Pagamento,Forma Pagamento\n';
+            todosLancamentos.forEach(l => {
+                csv += `"${l.descricao}","${l.conta_nome||''}","${l.tipo}","${l.valor}","${l.data_vencimento}","${l.status}","${l.data_pagamento||''}","${l.forma_pagamento||''}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = `financeiro_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            Utils.showToast('Exportado com sucesso! 📥');
+        }
+        
+        // Fechar modais ao clicar fora
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Células - CRM Igreja</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary:#6366f1;--primary-dark:#4f46e5;--primary-bg:rgba(99,102,241,0.08);
+            --success:#10b981;--success-bg:rgba(16,185,129,0.1);
+            --danger:#ef4444;--danger-bg:rgba(239,68,68,0.1);
+            --warning:#f59e0b;--warning-bg:rgba(245,158,11,0.1);
+            --info:#3b82f6;--info-bg:rgba(59,130,246,0.1);
+            --purple:#8b5cf6;--purple-bg:rgba(139,92,246,0.1);
+            --dark:#0f172a;--gray-900:#1e293b;--gray-600:#64748b;--gray-400:#94a3b8;
+            --gray-200:#e2e8f0;--gray-100:#f1f5f9;--gray-50:#f8fafc;--white:#ffffff;--bg:#f1f5f9;
+            --sidebar-w:260px;--radius-sm:10px;--radius:14px;--radius-lg:18px;
+            --shadow:0 4px 6px rgba(0,0,0,0.04);--shadow-lg:0 20px 40px rgba(0,0,0,0.06);
+            --transition:all 0.2s cubic-bezier(0.4,0,0.2,1);
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--gray-900);-webkit-font-smoothing:antialiased;}
+        ::-webkit-scrollbar{width:5px;}
+        ::-webkit-scrollbar-track{background:transparent;}
+        ::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:20px;}
+        
+        .app-layout{display:flex;min-height:100vh;}
+        
+        /* SIDEBAR */
+        .sidebar{width:var(--sidebar-w);background:var(--white);border-right:1px solid var(--gray-200);position:fixed;top:0;left:0;bottom:0;z-index:100;display:flex;flex-direction:column;}
+        .sidebar-header{padding:20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--gray-100);}
+        .sidebar-logo{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--purple));border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:16px;}
+        .sidebar-brand h3{font-size:14px;font-weight:700;}
+        .sidebar-brand span{font-size:10px;color:var(--gray-400);display:block;}
+        .sidebar-nav{flex:1;overflow-y:auto;padding:12px;}
+        .nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius-sm);text-decoration:none;color:var(--gray-600);font-size:13px;font-weight:500;transition:var(--transition);margin-bottom:2px;}
+        .nav-item:hover{background:var(--gray-50);color:var(--gray-900);}
+        .nav-item.active{background:var(--primary-bg);color:var(--primary);font-weight:600;}
+        .nav-item i{width:18px;height:18px;flex-shrink:0;}
+        .sidebar-footer{padding:14px;border-top:1px solid var(--gray-100);}
+        .user-card{display:flex;align-items:center;gap:8px;padding:8px;border-radius:var(--radius-sm);cursor:pointer;}
+        .user-card:hover{background:var(--gray-50);}
+        .user-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--purple));color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
+        .user-info strong{display:block;font-size:12px;}
+        .user-info span{font-size:10px;color:var(--gray-400);}
+        
+        /* MAIN */
+        .main-content{margin-left:var(--sidebar-w);flex:1;padding:24px;animation:fadeInUp 0.4s ease;}
+        @keyframes fadeInUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+        
+        .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
+        .topbar h1{font-size:24px;font-weight:800;letter-spacing:-0.5px;}
+        .topbar p{font-size:12px;color:var(--gray-400);margin-top:2px;}
+        
+        .btn{padding:10px 18px;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;transition:var(--transition);display:inline-flex;align-items:center;gap:8px;}
+        .btn-primary{background:var(--primary);color:white;}
+        .btn-primary:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(99,102,241,0.3);}
+        .btn-outline{background:white;border:1px solid var(--gray-200);}
+        .btn-sm{padding:6px 12px;font-size:11px;}
+        
+        /* GRID DE CÉLULAS */
+        .celulas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;}
+        
+        .celula-card{background:white;border:1px solid var(--gray-100);border-radius:var(--radius-lg);padding:24px;transition:var(--transition);cursor:pointer;position:relative;overflow:hidden;}
+        .celula-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px);border-color:transparent;}
+        .celula-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--primary),var(--purple));}
+        
+        .celula-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:16px;}
+        .celula-nome{font-size:17px;font-weight:700;color:var(--gray-900);}
+        .celula-dia{font-size:12px;color:var(--primary);background:var(--primary-bg);padding:4px 10px;border-radius:6px;font-weight:600;}
+        
+        .celula-info{display:flex;flex-direction:column;gap:10px;}
+        .celula-info-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-600);}
+        .celula-info-item i{width:16px;height:16px;color:var(--gray-400);}
+        
+        .celula-footer{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:16px;border-top:1px solid var(--gray-100);}
+        .celula-membros{display:flex;align-items:center;gap:4px;}
+        .celula-avatar-mini{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;margin-left:-8px;border:2px solid white;}
+        .celula-avatar-mini:first-child{margin-left:0;}
+        
+        .badge{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;}
+        .badge-success{background:var(--success-bg);color:var(--success);}
+        .badge-warning{background:var(--warning-bg);color:var(--warning);}
+        .badge-info{background:var(--info-bg);color:var(--info);}
+        
+        /* STATS */
+        .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+        .stat-card{background:white;border:1px solid var(--gray-100);border-radius:var(--radius);padding:18px;display:flex;align-items:center;gap:12px;transition:var(--transition);}
+        .stat-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px);}
+        .stat-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+        .stat-icon.purple{background:var(--purple-bg);color:var(--purple);}
+        .stat-icon.green{background:var(--success-bg);color:var(--success);}
+        .stat-icon.blue{background:var(--primary-bg);color:var(--primary);}
+        .stat-icon.orange{background:var(--warning-bg);color:var(--warning);}
+        .stat-value{font-size:22px;font-weight:700;}
+        .stat-label{font-size:11px;color:var(--gray-400);}
+        
+        /* MODAL */
+        .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
+        .modal{background:white;border-radius:var(--radius-lg);width:90%;max-width:550px;max-height:85vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,0.2);}
+        .modal-header{padding:20px 24px;border-bottom:1px solid var(--gray-100);display:flex;justify-content:space-between;align-items:center;}
+        .modal-header h2{font-size:18px;font-weight:700;}
+        .modal-close{width:34px;height:34px;border-radius:50%;border:1px solid var(--gray-200);background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;}
+        .modal-body{padding:24px;}
+        .form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+        .form-group label{font-size:12px;font-weight:600;color:var(--gray-600);}
+        .form-group input,.form-group select{padding:10px 14px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;font-family:inherit;}
+        .form-group input:focus,.form-group select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(99,102,241,0.1);}
+        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+        .modal-footer{padding:16px 24px;border-top:1px solid var(--gray-100);display:flex;justify-content:flex-end;gap:10px;}
+        
+        @media(max-width:768px){
+            .sidebar{width:200px;}.sidebar-brand h3,.sidebar-brand span{display:none;}
+            .main-content{margin-left:200px;padding:14px;}
+            .stats-row{grid-template-columns:1fr 1fr;}
+            .celulas-grid{grid-template-columns:1fr;}
+            .form-row{grid-template-columns:1fr;}
+        }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">⛪</div>
+                <div class="sidebar-brand"><h3>CRM Igreja</h3><span id="igrejaNome">Carregando...</span></div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+                <a href="membros.html" class="nav-item"><i data-lucide="users"></i> Membros</a>
+                <a href="celulas.html" class="nav-item active"><i data-lucide="heart-handshake"></i> Células</a>
+                <a href="#" class="nav-item"><i data-lucide="wallet"></i> Financeiro</a>
+                <a href="#" class="nav-item"><i data-lucide="calendar-days"></i> Agenda</a>
+                <a href="#" class="nav-item"><i data-lucide="file-text"></i> Documentos</a>
+                <a href="#" class="nav-item"><i data-lucide="shopping-cart"></i> Vendas</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-card" onclick="logout()">
+                    <div class="user-avatar">A</div>
+                    <div class="user-info"><strong>Admin</strong><span>Administrador</span></div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="topbar">
+                <div><h1>🏠 Células & Grupos</h1><p>Gerencie as células e pequenos grupos</p></div>
+                <button class="btn btn-primary" onclick="abrirModal()"><i data-lucide="plus" style="width:16px;height:16px;"></i> Nova Célula</button>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-card"><div class="stat-icon purple"><i data-lucide="home" style="width:20px;height:20px;"></i></div><div><div class="stat-value">12</div><div class="stat-label">Células Ativas</div></div></div>
+                <div class="stat-card"><div class="stat-icon green"><i data-lucide="users" style="width:20px;height:20px;"></i></div><div><div class="stat-value">156</div><div class="stat-label">Participantes</div></div></div>
+                <div class="stat-card"><div class="stat-icon blue"><i data-lucide="user-check" style="width:20px;height:20px;"></i></div><div><div class="stat-value">12</div><div class="stat-label">Líderes</div></div></div>
+                <div class="stat-card"><div class="stat-icon orange"><i data-lucide="trending-up" style="width:20px;height:20px;"></i></div><div><div class="stat-value">85%</div><div class="stat-label">Frequência Média</div></div></div>
+            </div>
+
+            <div class="celulas-grid">
+                <div class="celula-card" onclick="abrirModal()">
+                    <div class="celula-header"><div class="celula-nome">Célula da Fé</div><span class="celula-dia">Terça 19h</span></div>
+                    <div class="celula-info">
+                        <div class="celula-info-item"><i data-lucide="map-pin" style="width:14px;height:14px;"></i> Rua das Flores, 123 - Centro</div>
+                        <div class="celula-info-item"><i data-lucide="user" style="width:14px;height:14px;"></i> Líder: Pr. Carlos Silva</div>
+                        <div class="celula-info-item"><i data-lucide="phone" style="width:14px;height:14px;"></i> (11) 99999-0001</div>
+                    </div>
+                    <div class="celula-footer">
+                        <div class="celula-membros">
+                            <div class="celula-avatar-mini" style="background:#6366f1;">JS</div>
+                            <div class="celula-avatar-mini" style="background:#10b981;">MS</div>
+                            <div class="celula-avatar-mini" style="background:#f59e0b;">PO</div>
+                            <span style="font-size:11px;color:var(--gray-400);margin-left:8px;">+12</span>
+                        </div>
+                        <span class="badge badge-success">Ativa</span>
+                    </div>
+                </div>
+
+                <div class="celula-card">
+                    <div class="celula-header"><div class="celula-nome">Grupo de Jovens</div><span class="celula-dia">Sábado 18h</span></div>
+                    <div class="celula-info">
+                        <div class="celula-info-item"><i data-lucide="map-pin" style="width:14px;height:14px;"></i> Av. Principal, 500 - Sede</div>
+                        <div class="celula-info-item"><i data-lucide="user" style="width:14px;height:14px;"></i> Líder: Ana Costa</div>
+                        <div class="celula-info-item"><i data-lucide="phone" style="width:14px;height:14px;"></i> (11) 99999-0002</div>
+                    </div>
+                    <div class="celula-footer">
+                        <div class="celula-membros">
+                            <div class="celula-avatar-mini" style="background:#8b5cf6;">RL</div>
+                            <div class="celula-avatar-mini" style="background:#ef4444;">TB</div>
+                            <span style="font-size:11px;color:var(--gray-400);margin-left:8px;">+25</span>
+                        </div>
+                        <span class="badge badge-success">Ativa</span>
+                    </div>
+                </div>
+
+                <div class="celula-card">
+                    <div class="celula-header"><div class="celula-nome">Célula Esperança</div><span class="celula-dia">Quinta 20h</span></div>
+                    <div class="celula-info">
+                        <div class="celula-info-item"><i data-lucide="map-pin" style="width:14px;height:14px;"></i> Rua da Paz, 78 - Bairro Sul</div>
+                        <div class="celula-info-item"><i data-lucide="user" style="width:14px;height:14px;"></i> Líder: Maria Santos</div>
+                        <div class="celula-info-item"><i data-lucide="phone" style="width:14px;height:14px;"></i> (11) 99999-0003</div>
+                    </div>
+                    <div class="celula-footer">
+                        <div class="celula-membros">
+                            <div class="celula-avatar-mini" style="background:#06b6d4;">AC</div>
+                            <span style="font-size:11px;color:var(--gray-400);margin-left:8px;">+8</span>
+                        </div>
+                        <span class="badge badge-warning">Poucos membros</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="modalCelula" style="display:none;">
+        <div class="modal">
+            <div class="modal-header"><h2>➕ Nova Célula</h2><button class="modal-close" onclick="fecharModal()">✕</button></div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group"><label>Nome da Célula *</label><input type="text" placeholder="Ex: Célula da Fé"></div>
+                    <div class="form-group"><label>Dia da Semana</label><select><option>Domingo</option><option>Segunda</option><option>Terça</option><option>Quarta</option><option>Quinta</option><option>Sexta</option><option>Sábado</option></select></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Horário</label><input type="time" value="19:00"></div>
+                    <div class="form-group"><label>Líder</label><select><option>Pr. Carlos Silva</option><option>Ana Costa</option><option>Maria Santos</option></select></div>
+                </div>
+                <div class="form-group"><label>Endereço</label><input type="text" placeholder="Rua, número - Bairro"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="fecharModal()">Cancelar</button>
+                <button class="btn btn-primary"><i data-lucide="save" style="width:14px;height:14px;"></i> Criar Célula</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/api.js"></script>
+    <script>
+        function init(){if(!api.isAuthenticated()){window.location.href='login.html';return;}document.getElementById('igrejaNome').textContent=localStorage.getItem('igreja_nome')||'Igreja Demo';lucide.createIcons();}
+        function abrirModal(){document.getElementById('modalCelula').style.display='flex';}
+        function fecharModal(){document.getElementById('modalCelula').style.display='none';}
+        document.getElementById('modalCelula').addEventListener('click',function(e){if(e.target===this)fecharModal();});
+        function logout(){if(confirm('Sair?'))api.logout();}
+        init();
+        // Carregar cores personalizadas da igreja
+async function carregarCoresIgreja() {
+    try {
+        const igreja = await api.request('/igrejas/minha');
+        if (igreja.cor_primaria) {
+            document.documentElement.style.setProperty('--primary', igreja.cor_primaria);
+        }
+        if (igreja.cor_secundaria) {
+            document.documentElement.style.setProperty('--accent', igreja.cor_secundaria);
+        }
+        if (igreja.logo_url) {
+            document.querySelectorAll('.sidebar-logo').forEach(el => {
+                el.style.backgroundImage = `url(${igreja.logo_url})`;
+            });
+        }
+    } catch (e) {}
+}
+    </script>
+</body>
+</html>
