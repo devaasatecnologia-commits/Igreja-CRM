@@ -1,7 +1,7 @@
 {
   "name": "igreja-crm-backend",
   "version": "3.0.0",
-  "description": "CRM Igreja 3.0 - AASA SAGRADO",
+  "description": "CRM Igreja 3.0 - ERP Sacred",
   "main": "dist/server.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
@@ -19,9 +19,7 @@
     "qrcode": "^1.5.3",
     "pdfkit": "^0.15.0",
     "multer": "^1.4.5-lts.1",
-    "uuid": "^9.0.0",
-    "helmet": "^7.0.0",
-    "express-rate-limit": "^6.7.0"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
@@ -33,9 +31,8 @@
     "@types/pdfkit": "^0.13.4",
     "@types/multer": "^1.4.11",
     "@types/uuid": "^9.0.7",
-    "typescript": "^5.3.3",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
-    "nodemon": "^3.0.3"
+    "typescript": "^5.3.3"
   }
 }

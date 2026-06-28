@@ -1,222 +1,198 @@
 import { Request, Response } from 'express';
-import pool from '../config/database';
-import { generateToken, hashPassword, comparePassword } from '../utils/jwt';
+import mysql from 'mysql2/promise';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
-export class AuthController {
-    
-    // Login de usuário da igreja
-    async login(req: Request, res: Response) {
-        try {
-            const { email, senha } = req.body;
-            
-            if (!email || !senha) {
-                return res.status(400).json({ error: 'Email e senha são obrigatórios' });
-            }
-            
-            const [rows]: any = await pool.query(
-                `SELECT u.*, i.nome as igreja_nome, i.cor_primaria, i.cor_secundaria, i.logo_url
-                 FROM usuarios u
-                 JOIN igrejas i ON u.igreja_id = i.id
-                 WHERE u.email = ? AND u.status = 'ATIVO' AND i.status = 'ATIVO'`,
-                [email]
-            );
-            
-            if (rows.length === 0) {
-                return res.status(401).json({ error: 'Email ou senha incorretos' });
-            }
-            
-            const usuario = rows[0];
-            const senhaValida = await comparePassword(senha, usuario.senha);
-            
-            if (!senhaValida) {
-                return res.status(401).json({ error: 'Email ou senha incorretos' });
-            }
-            
-            // Atualizar último acesso
-            await pool.query('UPDATE usuarios SET ultimo_acesso = NOW() WHERE id = ?', [usuario.id]);
-            
-            const token = generateToken({
-                id: usuario.id,
-                email: usuario.email,
-                nivel: usuario.nivel,
-                igreja_id: usuario.igreja_id
+dotenv.config();
+
+// Configuração do banco
+const pool = mysql.createPool({
+    host: process.env.DB_HOST || 'localhost',
+    port: Number(process.env.DB_PORT) || 3306,
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'igreja_crm',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+});
+
+const JWT_SECRET = process.env.JWT_SECRET || 'igreja_crm_secret_key_2026';
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h';
+
+// Login
+export const login = async (req: Request, res: Response) => {
+    try {
+        const { email, senha } = req.body;
+
+        if (!email || !senha) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email e senha são obrigatórios'
             });
-            
-            return res.json({
+        }
+
+        // Buscar usuário no banco
+        const [rows] = await pool.query(
+            `SELECT u.*, i.nome as igreja_nome, i.cor_primaria, i.cor_secundaria 
+             FROM usuarios u 
+             JOIN igrejas i ON u.igreja_id = i.id 
+             WHERE u.email = ?`,
+            [email]
+        );
+
+        const users = rows as any[];
+        if (users.length === 0) {
+            return res.status(401).json({
+                success: false,
+                message: 'Usuário não encontrado'
+            });
+        }
+
+        const user = users[0];
+
+        // Verificar senha
+        const senhaValida = bcrypt.compareSync(senha, user.senha);
+        if (!senhaValida) {
+            return res.status(401).json({
+                success: false,
+                message: 'Senha incorreta'
+            });
+        }
+
+        // Gerar token JWT
+        const token = jwt.sign(
+            {
+                id: user.id,
+                email: user.email,
+                nome: user.nome,
+                tipo: user.tipo,
+                igreja_id: user.igreja_id
+            },
+            JWT_SECRET,
+            { expiresIn: JWT_EXPIRES_IN }
+        );
+
+        // Retornar dados
+        return res.json({
+            success: true,
+            message: 'Login realizado com sucesso',
+            data: {
                 token,
-                usuario: {
-                    id: usuario.id,
-                    nome: usuario.nome,
-                    email: usuario.email,
-                    nivel: usuario.nivel,
-                    avatar_url: usuario.avatar_url
+                user: {
+                    id: user.id,
+                    nome: user.nome,
+                    email: user.email,
+                    tipo: user.tipo,
+                    igreja_id: user.igreja_id
                 },
                 igreja: {
-                    id: usuario.igreja_id,
-                    nome: usuario.igreja_nome,
-                    cor_primaria: usuario.cor_primaria,
-                    cor_secundaria: usuario.cor_secundaria,
-                    logo_url: usuario.logo_url
+                    id: user.igreja_id,
+                    nome: user.igreja_nome || 'Igreja',
+                    cor_primaria: user.cor_primaria || '#1a237e',
+                    cor_secundaria: user.cor_secundaria || '#283593',
+                    cor_destaque: '#f59e0b'
                 }
-            });
-        } catch (error) {
-            console.error('Erro no login:', error);
-            return res.status(500).json({ error: 'Erro interno do servidor' });
-        }
-    }
-    
-    // Login do Super Admin
-    async loginSuperAdmin(req: Request, res: Response) {
-        try {
-            const { email, senha } = req.body;
-            
-            const [rows]: any = await pool.query(
-                'SELECT * FROM super_admin WHERE email = ? AND status = "ATIVO"',
-                [email]
-            );
-            
-            if (rows.length === 0) {
-                return res.status(401).json({ error: 'Credenciais inválidas' });
             }
-            
-            const admin = rows[0];
-            const senhaValida = await comparePassword(senha, admin.senha);
-            
-            if (!senhaValida) {
-                return res.status(401).json({ error: 'Credenciais inválidas' });
-            }
-            
-            await pool.query('UPDATE super_admin SET ultimo_acesso = NOW() WHERE id = ?', [admin.id]);
-            
-            const token = generateToken({
-                id: admin.id,
-                email: admin.email,
-                nivel: 'SUPER_ADMIN',
-                igreja_id: 0,
-                is_super_admin: true
-            });
-            
-            return res.json({
-                token,
-                usuario: {
-                    id: admin.id,
-                    nome: admin.nome,
-                    email: admin.email,
-                    nivel: 'SUPER_ADMIN'
-                }
-            });
-        } catch (error) {
-            console.error('Erro no login super admin:', error);
-            return res.status(500).json({ error: 'Erro interno do servidor' });
-        }
+        });
+
+    } catch (error) {
+        console.error('Erro no login:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Erro interno no servidor',
+            error: error instanceof Error ? error.message : 'Erro desconhecido'
+        });
     }
-    
-    // Registrar nova igreja
-    async registrarIgreja(req: Request, res: Response) {
-        const connection = await pool.getConnection();
-        
-        try {
-            const { igreja, admin } = req.body;
-            
-            await connection.beginTransaction();
-            
-            // 1. Criar igreja
-            const [resultIgreja]: any = await connection.query(
-                `INSERT INTO igrejas (codigo, nome, email, telefone, tipo, plano, 
-                 cep, logradouro, numero, bairro, cidade, estado)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                [
-                    'IGJ' + Date.now(),
-                    igreja.nome,
-                    igreja.email,
-                    igreja.telefone,
-                    igreja.tipo || 'INDEPENDENTE',
-                    igreja.plano || 'FREE',
-                    igreja.cep, igreja.logradouro, igreja.numero,
-                    igreja.bairro, igreja.cidade, igreja.estado
-                ]
-            );
-            
-            const igrejaId = resultIgreja.insertId;
-            
-            // 2. Criar usuário admin
-            const senhaHash = await hashPassword(admin.senha);
-            
-            await connection.query(
-                `INSERT INTO usuarios (igreja_id, nome, email, senha, nivel)
-                 VALUES (?, ?, ?, ?, 'ADMIN_MASTER')`,
-                [igrejaId, admin.nome, admin.email, senhaHash]
-            );
-            
-            // 3. Criar plano de contas padrão
-            await connection.query(
-                `INSERT INTO plano_contas (igreja_id, codigo, nome, tipo, categoria) VALUES
-                 (?, '1', 'RECEITAS', 'RECEITA', 'OUTRO'),
-                 (?, '1.1', 'Dízimos', 'RECEITA', 'DIZIMO'),
-                 (?, '1.2', 'Ofertas', 'RECEITA', 'OFERTA'),
-                 (?, '2', 'DESPESAS', 'DESPESA', 'OUTRO'),
-                 (?, '2.1', 'Contas', 'DESPESA', 'OUTRO')`,
-                [igrejaId, igrejaId, igrejaId, igrejaId, igrejaId]
-            );
-            
-            // 4. Criar ministérios padrão
-            await connection.query(
-                `INSERT INTO ministerios (igreja_id, nome, descricao, cor, icone) VALUES
-                 (?, 'Louvor', 'Ministério de música', '#8b5cf6', '🎵'),
-                 (?, 'Oração', 'Intercessão', '#f59e0b', '🙏'),
-                 (?, 'Jovens', 'Juventude', '#06b6d4', '🔥')`,
-                [igrejaId, igrejaId, igrejaId]
-            );
-            
-            await connection.commit();
-            
-            return res.status(201).json({
-                message: 'Igreja cadastrada com sucesso!',
-                igreja_id: igrejaId
+};
+
+// Registrar nova igreja
+export const register = async (req: Request, res: Response) => {
+    try {
+        const { nome, email, senha, telefone, endereco } = req.body;
+
+        if (!nome || !email || !senha) {
+            return res.status(400).json({
+                success: false,
+                message: 'Nome, email e senha são obrigatórios'
             });
-        } catch (error: any) {
-            await connection.rollback();
-            console.error('Erro ao registrar:', error);
-            
-            if (error.code === 'ER_DUP_ENTRY') {
-                return res.status(400).json({ error: 'Email já cadastrado' });
-            }
-            
-            return res.status(500).json({ error: 'Erro ao cadastrar igreja' });
-        } finally {
-            connection.release();
         }
-    }
-    
-    // Esqueci senha
-    async esqueciSenha(req: Request, res: Response) {
-        try {
-            const { email } = req.body;
-            
-            const [rows]: any = await pool.query(
-                'SELECT * FROM usuarios WHERE email = ?',
-                [email]
-            );
-            
-            if (rows.length === 0) {
-                return res.json({ message: 'Se o email existir, um link será enviado' });
-            }
-            
-            // Gerar token de reset
-            const token = require('crypto').randomBytes(32).toString('hex');
-            const expiracao = new Date();
-            expiracao.setHours(expiracao.getHours() + 1);
-            
-            await pool.query(
-                'UPDATE usuarios SET token_reset = ?, token_expiracao = ? WHERE email = ?',
-                [token, expiracao, email]
-            );
-            
-            // TODO: Enviar email com link de reset
-            
-            return res.json({ message: 'Se o email existir, um link será enviado' });
-        } catch (error) {
-            return res.status(500).json({ error: 'Erro interno' });
+
+        // Verificar se já existe
+        const [existing] = await pool.query(
+            'SELECT * FROM usuarios WHERE email = ?',
+            [email]
+        );
+
+        if ((existing as any[]).length > 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email já cadastrado'
+            });
         }
+
+        // Gerar slug
+        const slug = nome.toLowerCase().replace(/[^a-z0-9]/g, '-');
+
+        // Hash da senha
+        const senhaHash = bcrypt.hashSync(senha, 10);
+
+        // Inserir igreja
+        const [igrejaResult] = await pool.query(
+            'INSERT INTO igrejas (nome, slug, email, telefone, endereco) VALUES (?, ?, ?, ?, ?)',
+            [nome, slug, email, telefone || null, endereco || null]
+        );
+        const igrejaId = (igrejaResult as any).insertId;
+
+        // Inserir usuário admin
+        await pool.query(
+            'INSERT INTO usuarios (igreja_id, nome, email, senha, tipo, ativo) VALUES (?, ?, ?, ?, ?, ?)',
+            [igrejaId, 'Admin', email, senhaHash, 'admin', 1]
+        );
+
+        return res.status(201).json({
+            success: true,
+            message: 'Igreja cadastrada com sucesso!',
+            data: {
+                igreja_id: igrejaId,
+                nome,
+                email
+            }
+        });
+
+    } catch (error) {
+        console.error('Erro no registro:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Erro interno no servidor'
+        });
     }
-}
+};
+
+// Verificar token
+export const verifyToken = async (req: Request, res: Response) => {
+    try {
+        const token = req.headers.authorization?.replace('Bearer ', '');
+
+        if (!token) {
+            return res.status(401).json({
+                success: false,
+                message: 'Token não fornecido'
+            });
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET);
+        return res.json({
+            success: true,
+            message: 'Token válido',
+            data: decoded
+        });
+
+    } catch (error) {
+        return res.status(401).json({
+            success: false,
+            message: 'Token inválido'
+        });
+    }
+};
