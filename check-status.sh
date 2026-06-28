@@ -1,0 +1,36 @@
+#!/bin/bash
+echo "========================================="
+echo "📊 STATUS DO PROJETO AASA SAGRADO"
+echo "========================================="
+echo ""
+
+echo "🔍 BACKEND:"
+echo "  - Server.ts: $(test -f backend/src/server.ts && echo '✅' || echo '❌')"
+echo "  - Auth Controller: $(test -f backend/src/controllers/authController.ts && echo '✅' || echo '❌')"
+echo "  - Database Config: $(test -f backend/src/config/database.ts && echo '✅' || echo '❌')"
+echo "  - Rotas: $(ls -1 backend/src/routes/*.ts 2>/dev/null | wc -l) arquivos"
+echo "  - Controllers: $(ls -1 backend/src/controllers/*.ts 2>/dev/null | wc -l) arquivos"
+
+echo ""
+echo "🎨 FRONTEND:"
+echo "  - Login: $(test -f frontend/login.html && echo '✅' || echo '❌')"
+echo "  - Dashboard: $(test -f frontend/app/dashboard.html && echo '✅' || echo '❌')"
+echo "  - Páginas app: $(ls -1 frontend/app/*.html 2>/dev/null | wc -l) arquivos"
+echo "  - Páginas admin: $(ls -1 frontend/admin/*.html 2>/dev/null | wc -l) arquivos"
+
+echo ""
+echo "🗄️ BANCO DE DADOS:"
+echo "  - Tabelas: $(mysql -u root -e 'USE igreja_crm; SHOW TABLES;' 2>/dev/null | tail -n +2 | wc -l) tabelas"
+echo "  - Usuários: $(mysql -u root -e 'USE igreja_crm; SELECT COUNT(*) FROM usuarios;' 2>/dev/null | tail -n 1) registros"
+echo "  - Igrejas: $(mysql -u root -e 'USE igreja_crm; SELECT COUNT(*) FROM igrejas;' 2>/dev/null | tail -n 1) registros"
+
+echo ""
+echo "📝 DOCUMENTAÇÃO:"
+echo "  - README.md: $(test -f README.md && echo '✅' || echo '❌')"
+echo "  - DOCUMENTACAO_OFICIAL.md: $(test -f DOCUMENTACAO_OFICIAL.md && echo '✅' || echo '❌')"
+echo "  - .gitignore: $(test -f .gitignore && echo '✅' || echo '❌')"
+
+echo ""
+echo "========================================="
+echo "🎯 Status Geral: PROJETO EM DESENVOLVIMENTO"
+echo "========================================="

@@ -1,10 +1,14 @@
 import { Router } from 'express';
 import authRoutes from './auth';
+import membrosRoutes from './membros';
 
 const router = Router();
 
 // Rotas de autenticação
 router.use('/auth', authRoutes);
+
+// Rotas de membros
+router.use('/membros', membrosRoutes);
 
 // Rota de teste
 router.get('/test', (req, res) => {
