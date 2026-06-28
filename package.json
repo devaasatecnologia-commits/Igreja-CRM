@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@angular/cdk": "^22.0.2",
+    "@angular/material": "^22.0.2",
+    "@ng-bootstrap/ng-bootstrap": "^21.0.0",
+    "@types/axios": "^0.9.36",
+    "axios": "^1.18.1",
+    "bootstrap": "^5.3.8"
+  }
+}
