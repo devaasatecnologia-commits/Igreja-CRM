@@ -1,14 +1,22 @@
 import { Router } from 'express';
 import authRoutes from './auth';
 import membrosRoutes from './membros';
+import eventosRoutes from './eventos';
+import financeiroRoutes from './financeiro';
+import ministeriosRoutes from './ministerios';
+import doacoesRoutes from './doacoes';
 
 const router = Router();
 
 // Rotas de autenticação
 router.use('/auth', authRoutes);
 
-// Rotas de membros
+// Rotas principais
 router.use('/membros', membrosRoutes);
+router.use('/eventos', eventosRoutes);
+router.use('/financeiro', financeiroRoutes);
+router.use('/ministerios', ministeriosRoutes);
+router.use('/doacoes', doacoesRoutes);
 
 // Rota de teste
 router.get('/test', (req, res) => {

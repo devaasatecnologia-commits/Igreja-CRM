@@ -1,14 +1,11 @@
 import { Router } from 'express';
-import { MinisterioController } from '../controllers/MinisterioController';
+import { getMinisterios, createMinisterio, updateMinisterio, deleteMinisterio } from '../controllers/ministeriosController';
 
 const router = Router();
-const c = new MinisterioController();
 
-router.get('/', c.listar);
-router.get('/:id', c.buscarPorId);
-router.post('/', c.criar);
-router.put('/:id', c.atualizar);
-router.post('/:id/membros', c.adicionarMembro);
-router.delete('/:id/membros/:membroId', c.removerMembro);
+router.get('/', getMinisterios);
+router.post('/', createMinisterio);
+router.put('/:id', updateMinisterio);
+router.delete('/:id', deleteMinisterio);
 
 export default router;

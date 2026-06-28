@@ -1,16 +1,11 @@
 import { Router } from 'express';
-import { FinanceiroController } from '../controllers/FinanceiroController';
+import { getFinanceiro, createFinanceiro, updateFinanceiro, deleteFinanceiro } from '../controllers/financeiroController';
 
 const router = Router();
-const c = new FinanceiroController();
 
-router.get('/lancamentos', c.listarLancamentos);
-router.get('/lancamentos/:id', c.buscarLancamento);  
-router.post('/lancamentos', c.criarLancamento);
-router.put('/lancamentos/:id', c.atualizarLancamento);  
-router.put('/lancamentos/:id/baixar', c.baixarLancamento);
-router.put('/lancamentos/:id/cancelar', c.cancelarLancamento); 
-router.get('/relatorio', c.relatorioFinanceiro); 
-router.get('/fluxo-caixa', c.fluxoCaixa); 
+router.get('/', getFinanceiro);
+router.post('/', createFinanceiro);
+router.put('/:id', updateFinanceiro);
+router.delete('/:id', deleteFinanceiro);
 
 export default router;
