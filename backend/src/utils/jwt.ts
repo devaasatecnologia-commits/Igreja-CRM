@@ -1,32 +1,47 @@
-import jwt, { SignOptions } from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
-const JWT_SECRET: string = process.env.JWT_SECRET || 'crm_igreja_super_secret_key_2026';
-const JWT_EXPIRES = process.env.JWT_EXPIRES_IN || '24h';
+const JWT_SECRET = process.env.JWT_SECRET || 'aasa-sagrado-secret-2026';
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
-export interface TokenPayload {
-    id: number;
-    email: string;
-    nivel: string;
-    igreja_id: number;
-    is_super_admin?: boolean;
-}
+// Gerar token JWT
+export const generateToken = (payload: any) => {
+    return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+};
 
-export function generateToken(payload: TokenPayload): string {
-    const options: SignOptions = {
-        expiresIn: JWT_EXPIRES as any
-    };
-    return jwt.sign(payload as object, JWT_SECRET, options);
-}
+// Verificar token JWT
+export const verifyToken = (token: string) => {
+    try {
+        return jwt.verify(token, JWT_SECRET);
+    } catch (error) {
+        return null;
+    }
+};
 
-export function verifyToken(token: string): TokenPayload {
-    return jwt.verify(token, JWT_SECRET) as TokenPayload;
-}
+// Hash da senha
+export const hashPassword = async (senha: string) => {
+    const salt = await bcrypt.genSalt(10);
+    return bcrypt.hash(senha, salt);
+};
 
-export async function hashPassword(password: string): Promise<string> {
-    return bcrypt.hash(password, 12);
-}
+// Comparar senha
+export const comparePassword = async (senha: string, hash: string) => {
+    return bcrypt.compare(senha, hash);
+};
 
-export async function comparePassword(password: string, hash: string): Promise<boolean> {
-    return bcrypt.compare(password, hash);
-}
+// Decodificar token sem verificar
+export const decodeToken = (token: string) => {
+    try {
+        return jwt.decode(token);
+    } catch (error) {
+        return null;
+    }
+};
+
+export default {
+    generateToken,
+    verifyToken,
+    hashPassword,
+    comparePassword,
+    decodeToken
+};

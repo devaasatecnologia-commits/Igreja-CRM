@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Ministério - AASA SAGRADO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif'],serif:['Playfair Display','serif']}}}}</script>
+    <link rel="stylesheet" href="../assets/css/sidebar.css">
+    <style>
+        :root{--primary:#1a237e;--gold:#f59e0b}
+        .main-content{margin-left:270px;min-height:100vh;background:linear-gradient(135deg,#f8faff 0%,#fffbeb 30%,#f0f4ff 60%,#fefce8 100%)}
+        @media(max-width:768px){.main-content{margin-left:0;padding-top:70px}}
+        @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .animate-slide{animation:slideUp .4s ease forwards}
+        .card-premium{background:white;border-radius:20px;padding:24px;border:1px solid #f1f5f9;transition:all .3s}
+        .card-premium:hover{box-shadow:0 15px 30px rgba(0,0,0,.05)}
+        .btn-premium{padding:10px 22px;border-radius:12px;font-weight:600;font-size:13px;cursor:pointer;border:none;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+        .btn-premium:hover{transform:translateY(-1px);box-shadow:0 6px 15px rgba(0,0,0,.1)}
+        .info-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f5f9}
+        .info-row:last-child{border-bottom:none}
+        .info-label{font-size:12px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+        .info-value{font-size:14px;font-weight:500;color:#1e293b}
+        .badge-status{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600}
+        .ministerio-icon-grande{width:80px;height:80px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto}
+    </style>
+</head>
+<body class="font-sans">
+
+    <div id="sidebar-container"></div>
+
+    <div class="app-layout">
+        <main class="main-content">
+
+            <header class="sticky top-0 z-20 px-4 lg:px-8 py-3 lg:py-5 bg-white/85 backdrop-blur-xl border-b flex items-center justify-between flex-wrap gap-3">
+                <div class="flex items-center gap-4">
+                    <button onclick="history.back()" class="btn-premium bg-white border text-gray-600 px-3 py-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button>
+                    <div>
+                        <h1 class="text-xl lg:text-2xl font-serif font-bold" style="color:var(--primary)" id="nomeMinisterio">Carregando...</h1>
+                        <p class="text-xs lg:text-sm" style="color:var(--gold)" id="statusMinisterio"></p>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="editarMinisterio()" class="btn-premium bg-blue-50 text-blue-700"><i data-lucide="pencil" class="w-4 h-4"></i> Editar</button>
+                </div>
+            </header>
+            
+            <div class="p-4 lg:p-8 space-y-4 lg:space-y-6">
+                
+                <div class="card-premium animate-slide text-center">
+                    <div class="ministerio-icon-grande" id="iconMinisterio" style="background:#8b5cf620;color:#8b5cf6">🕊️</div>
+                    <h2 class="text-2xl font-bold mt-4" style="color:var(--primary)" id="nomeMinisterioInfo">-</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 text-left">
+                        <div><p class="info-label">Descrição</p><p class="info-value" id="descricaoMinisterio">-</p></div>
+                        <div><p class="info-label">Cor</p><p class="info-value" id="corMinisterio">-</p></div>
+                        <div><p class="info-label">Ícone</p><p class="info-value" id="iconeMinisterio">-</p></div>
+                        <div><p class="info-label">Status</p><p class="info-value" id="statusMinisterioInfo">-</p></div>
+                    </div>
+                </div>
+                
+            </div>
+            <footer class="text-center py-6 text-xs text-gray-400 border-t bg-white/50" id="footerText"></footer>
+        </main>
+    </div>
+
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/sidebar.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const ministerioId = urlParams.get('id');
+        let ministerioData = null;
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!window.api || !window.api.isAuthenticated()) { window.location.href = '../login.html'; return; }
+            if (!ministerioId) { window.location.href = 'ministerios.html'; return; }
+            
+            document.getElementById('footerText').textContent = `${window.APP_NAME} v3.0 • AASA Tecnologia © 2026`;
+            lucide.createIcons();
+            await carregarMinisterio();
+        });
+        
+        async function carregarMinisterio() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const igrejaId = localStorage.getItem('igreja_id') || 1;
+                
+                const response = await fetch(`${window.API_URL}/ministerios/${ministerioId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'x-igreja-id': igrejaId
+                    }
+                });
+                
+                if (!response.ok) throw new Error('Erro ao carregar ministério');
+                
+                const data = await response.json();
+                ministerioData = data.data;
+                
+                if (!ministerioData) {
+                    document.getElementById('nomeMinisterio').textContent = 'Ministério não encontrado';
+                    return;
+                }
+                
+                document.getElementById('nomeMinisterio').textContent = ministerioData.nome || 'Sem nome';
+                document.getElementById('nomeMinisterioInfo').textContent = ministerioData.nome || '-';
+                document.getElementById('descricaoMinisterio').textContent = ministerioData.descricao || 'Sem descrição';
+                document.getElementById('corMinisterio').innerHTML = `<span style="display:inline-block;width:20px;height:20px;border-radius:4px;background:${ministerioData.cor || '#6366f1'};vertical-align:middle;margin-right:6px"></span> ${ministerioData.cor || '#6366f1'}`;
+                document.getElementById('iconeMinisterio').textContent = ministerioData.icone || '🕊️';
+                document.getElementById('statusMinisterio').textContent = ministerioData.status || 'N/A';
+                document.getElementById('statusMinisterioInfo').innerHTML = `<span class="badge-status ${ministerioData.status === 'ATIVO' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${ministerioData.status || 'N/A'}</span>`;
+                
+                // Ícone grande
+                const iconDiv = document.getElementById('iconMinisterio');
+                iconDiv.textContent = ministerioData.icone || '🕊️';
+                iconDiv.style.background = `${ministerioData.cor || '#8b5cf6'}20`;
+                iconDiv.style.color = ministerioData.cor || '#8b5cf6';
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                document.getElementById('nomeMinisterio').textContent = 'Erro ao carregar';
+            }
+        }
+        
+        function editarMinisterio() {
+            alert(`✏️ Função de edição em desenvolvimento para o ministério ID: ${ministerioId}`);
+        }
+    </script>
+</body>
+</html>

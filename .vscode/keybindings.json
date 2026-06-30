@@ -1,0 +1,23 @@
+[
+  {
+    "key": "ctrl+shift+t",
+    "command": "workbench.action.terminal.newWithCwd",
+    "args": {
+      "cwd": "${workspaceFolder}"
+    }
+  },
+  {
+    "key": "ctrl+shift+1",
+    "command": "workbench.action.terminal.focusAtIndex",
+    "args": {
+      "index": 0
+    }
+  },
+  {
+    "key": "ctrl+shift+2",
+    "command": "workbench.action.terminal.focusAtIndex",
+    "args": {
+      "index": 1
+    }
+  }
+]

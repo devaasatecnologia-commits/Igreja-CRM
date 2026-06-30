@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ministérios - AASA SAGRADO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif'],serif:['Playfair Display','serif']}}}}</script>
+    <link rel="stylesheet" href="../assets/css/sidebar.css">
+    <style>
+        :root{--primary:#1a237e;--gold:#f59e0b;--success:#10b981;--danger:#ef4444}
+        .main-content{margin-left:270px;min-height:100vh;background:linear-gradient(135deg,#f8faff 0%,#fffbeb 30%,#f0f4ff 60%,#fefce8 100%)}
+        @media(max-width:768px){.main-content{margin-left:0;padding-top:70px}}
+        @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .animate-slide{animation:slideUp .4s ease forwards}
+        .card-premium{background:white;border-radius:20px;padding:22px;border:1px solid #f1f5f9;transition:all .3s}
+        .btn-premium{padding:10px 22px;border-radius:12px;font-weight:600;font-size:13px;cursor:pointer;border:none;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+        .btn-premium:hover{transform:translateY(-1px);box-shadow:0 6px 15px rgba(0,0,0,.1)}
+        .btn-sm{padding:6px 12px;font-size:11px;border-radius:8px}
+        .ministerio-card{background:white;border-radius:16px;padding:20px;border:1px solid #f1f5f9;transition:all .3s;cursor:pointer}
+        .ministerio-card:hover{box-shadow:0 15px 30px rgba(0,0,0,.06);transform:translateY(-3px)}
+        .ministerio-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px}
+    </style>
+</head>
+<body class="font-sans">
+
+    <div id="sidebar-container"></div>
+
+    <div class="app-layout">
+        <main class="main-content">
+
+            <header class="sticky top-0 z-20 px-4 lg:px-8 py-3 lg:py-5 bg-white/85 backdrop-blur-xl border-b flex items-center justify-between flex-wrap gap-3">
+                <div>
+                    <h1 class="text-xl lg:text-3xl font-serif font-bold flex items-center gap-2 lg:gap-3" style="color:var(--primary)">
+                        <i data-lucide="church" class="w-6 h-6 lg:w-8 lg:h-8"></i> Ministérios
+                    </h1>
+                    <p class="text-xs lg:text-sm mt-1 font-medium" style="color:var(--gold)">Gerencie os ministérios da sua igreja</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="abrirModal()" class="btn-premium text-white" style="background:linear-gradient(135deg,#1a237e,#283593)"><i data-lucide="plus-circle" class="w-4 h-4"></i> Novo Ministério</button>
+                </div>
+            </header>
+            
+            <div class="p-4 lg:p-8 space-y-4 lg:space-y-6">
+
+                <!-- STATS -->
+                <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
+                    <div class="card-premium animate-slide">
+                        <div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center" style="background:rgba(26,35,126,.1)"><i data-lucide="church" class="w-4 h-4 lg:w-5 lg:h-5" style="color:#1a237e"></i></div></div>
+                        <div class="text-xl lg:text-3xl font-extrabold" style="color:var(--primary)" id="statTotal">0</div>
+                        <div class="text-xs lg:text-sm text-gray-500">Total de Ministérios</div>
+                    </div>
+                    <div class="card-premium animate-slide" style="animation-delay:.1s">
+                        <div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center" style="background:rgba(16,185,129,.1)"><i data-lucide="user-check" class="w-4 h-4 lg:w-5 lg:h-5" style="color:#10b981"></i></div></div>
+                        <div class="text-xl lg:text-3xl font-extrabold text-green-600" id="statAtivos">0</div>
+                        <div class="text-xs lg:text-sm text-gray-500">Ministérios Ativos</div>
+                    </div>
+                    <div class="card-premium animate-slide" style="animation-delay:.2s">
+                        <div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center" style="background:rgba(139,92,246,.1)"><i data-lucide="users" class="w-4 h-4 lg:w-5 lg:h-5" style="color:#8b5cf6"></i></div></div>
+                        <div class="text-xl lg:text-3xl font-extrabold text-purple-600" id="statMembros">0</div>
+                        <div class="text-xs lg:text-sm text-gray-500">Membros nos Ministérios</div>
+                    </div>
+                </div>
+
+                <!-- GRID DE MINISTÉRIOS -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="gridMinisterios">
+                    <div class="col-span-full text-center py-12 text-gray-400">
+                        <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto mb-3"></i>
+                        <p>Carregando ministérios...</p>
+                    </div>
+                </div>
+                
+            </div>
+            <footer class="text-center py-6 text-xs text-gray-400 border-t bg-white/50" id="footerText"></footer>
+        </main>
+    </div>
+
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/sidebar.js"></script>
+    <script>
+        let todosMinisterios = [];
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!window.api || !window.api.isAuthenticated()) { window.location.href = '../login.html'; return; }
+            document.getElementById('footerText').textContent = `${window.APP_NAME} v3.0 • AASA Tecnologia © 2026`;
+            lucide.createIcons();
+            carregarMinisterios();
+        });
+        
+        async function carregarMinisterios() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const igrejaId = localStorage.getItem('igreja_id') || 1;
+                
+                const response = await fetch(`${window.API_URL}/ministerios`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'x-igreja-id': igrejaId
+                    }
+                });
+                
+                if (!response.ok) throw new Error('Erro ao carregar ministérios');
+                
+                const data = await response.json();
+                todosMinisterios = data.data || [];
+                
+                atualizarEstatisticas(todosMinisterios);
+                renderizarMinisterios(todosMinisterios);
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                document.getElementById('gridMinisterios').innerHTML = '<div class="col-span-full text-center py-12 text-red-400">Erro ao carregar dados</div>';
+            }
+        }
+        
+        function atualizarEstatisticas(ministerios) {
+            const total = ministerios.length;
+            const ativos = ministerios.filter(m => m.status === 'ATIVO').length;
+            
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statAtivos').textContent = ativos;
+            document.getElementById('statMembros').textContent = 0;
+        }
+        
+        function renderizarMinisterios(ministerios) {
+            const grid = document.getElementById('gridMinisterios');
+            
+            if (ministerios.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400">Nenhum ministério encontrado</div>';
+                return;
+            }
+            
+            let html = '';
+            ministerios.forEach(m => {
+                const cores = ['#8b5cf6', '#f59e0b', '#06b6d4', '#10b981', '#ef4444', '#3b82f6', '#ec4899'];
+                const corIndex = (m.id || 1) % cores.length;
+                
+                html += `
+                <div class="ministerio-card animate-slide">
+                    <div class="flex items-start justify-between">
+                        <div class="ministerio-icon" style="background:${cores[corIndex]}20;color:${cores[corIndex]}">${m.icone || '🕊️'}</div>
+                        <span class="px-2 py-1 rounded-full text-xs font-semibold ${m.status === 'ATIVO' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${m.status || 'N/A'}</span>
+                    </div>
+                    <h3 class="text-lg font-bold mt-3" style="color:var(--primary)">${m.nome}</h3>
+                    <p class="text-sm text-gray-500 mt-1">${m.descricao || 'Sem descrição'}</p>
+                    <div class="flex gap-2 mt-4 pt-3 border-t">
+                        <button onclick="verMinisterio(${m.id})" class="text-xs font-semibold text-blue-600 hover:underline">Ver Detalhes</button>
+                        <button onclick="editarMinisterio(${m.id})" class="text-xs font-semibold text-gray-600 hover:underline">Editar</button>
+                    </div>
+                </div>`;
+            });
+            
+            grid.innerHTML = html;
+            lucide.createIcons();
+        }
+        
+        function verMinisterio(id) {
+            const m = todosMinisterios.find(m => m.id === id);
+            if (m) {
+                alert(`📋 Detalhes do Ministério\n\nNome: ${m.nome}\nDescrição: ${m.descricao || 'Sem descrição'}\nCor: ${m.cor || 'Não definida'}\nÍcone: ${m.icone || '🕊️'}\nStatus: ${m.status}`);
+            }
+        }
+        
+        function editarMinisterio(id) {
+            alert(`✏️ Função de edição em desenvolvimento para o ministério ID: ${id}`);
+        }
+        
+        function abrirModal() {
+            alert('✏️ Função de cadastro em desenvolvimento');
+        }
+    </script>
+</body>
+</html>

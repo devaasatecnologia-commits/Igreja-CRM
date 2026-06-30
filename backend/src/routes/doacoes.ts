@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import { getDoacoes, createDoacao, updateDoacao, deleteDoacao } from '../controllers/doacoesController';
+import { listar, criar, atualizar, deletar } from '../controllers/doacoesController';
 
 const router = Router();
 
-router.get('/', getDoacoes);
-router.post('/', createDoacao);
-router.put('/:id', updateDoacao);
-router.delete('/:id', deleteDoacao);
+router.get('/', listar);
+router.post('/', criar);
+router.put('/:id', atualizar);
+router.delete('/:id', deletar);
 
 export default router;

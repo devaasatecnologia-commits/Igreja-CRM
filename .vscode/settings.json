@@ -1,0 +1,19 @@
+{
+  // Terminal
+  "terminal.integrated.defaultProfile.windows": "Git Bash",
+  "terminal.integrated.splitCwd": "workspaceRoot",
+  "terminal.integrated.tabs.enabled": true,
+  
+  // Editor
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "files.autoSave": "onFocusChange",
+  
+  // Git
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false,
+  "git.autofetch": true,
+  
+  // Abrir automaticamente os terminais
+  "terminal.integrated.hideOnStartup": false
+}

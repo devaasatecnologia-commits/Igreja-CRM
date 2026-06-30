@@ -3,150 +3,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documentos - CRM Igreja</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>Documentos - AASA SAGRADO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif'],serif:['Playfair Display','serif']}}}}</script>
+    <link rel="stylesheet" href="../assets/css/sidebar.css">
     <style>
-        :root{--primary:#6366f1;--primary-dark:#4f46e5;--primary-bg:rgba(99,102,241,0.08);--success:#10b981;--success-bg:rgba(16,185,129,0.1);--danger:#ef4444;--danger-bg:rgba(239,68,68,0.1);--warning:#f59e0b;--warning-bg:rgba(245,158,11,0.1);--info:#3b82f6;--info-bg:rgba(59,130,246,0.1);--purple:#8b5cf6;--purple-bg:rgba(139,92,246,0.1);--dark:#0f172a;--gray-900:#1e293b;--gray-600:#64748b;--gray-400:#94a3b8;--gray-200:#e2e8f0;--gray-100:#f1f5f9;--white:#ffffff;--bg:#f1f5f9;--sidebar-w:260px;--radius:14px;--radius-lg:18px;--shadow:0 4px 6px rgba(0,0,0,0.04);--shadow-lg:0 20px 40px rgba(0,0,0,0.06);--transition:all 0.2s ease}
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--gray-900);-webkit-font-smoothing:antialiased}
-        ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:20px}
-        .app-layout{display:flex;min-height:100vh}
-        .sidebar{width:var(--sidebar-w);background:var(--white);border-right:1px solid var(--gray-200);position:fixed;top:0;left:0;bottom:0;z-index:100;display:flex;flex-direction:column}
-        .sidebar-header{padding:20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--gray-100)}
-        .sidebar-logo{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--purple));border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:16px}
-        .sidebar-brand h3{font-size:14px;font-weight:700}.sidebar-brand span{font-size:10px;color:var(--gray-400);display:block}
-        .sidebar-nav{flex:1;overflow-y:auto;padding:12px}
-        .nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;text-decoration:none;color:var(--gray-600);font-size:13px;font-weight:500;transition:var(--transition);margin-bottom:2px}
-        .nav-item:hover{background:var(--gray-100);color:var(--gray-900)}.nav-item.active{background:var(--primary-bg);color:var(--primary);font-weight:600}
-        .nav-item i{width:18px;height:18px}
-        .main-content{margin-left:var(--sidebar-w);flex:1;padding:24px;animation:fadeIn 0.4s ease}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-        .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px}
-        .topbar h1{font-size:24px;font-weight:800}.topbar p{font-size:12px;color:var(--gray-400)}
-        .btn{padding:10px 18px;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:var(--transition);display:inline-flex;align-items:center;gap:8px}
-        .btn-primary{background:var(--primary);color:white}.btn-primary:hover{background:var(--primary-dark)}
-        .btn-outline{background:white;border:1px solid var(--gray-200)}.btn-sm{padding:6px 12px;font-size:11px}
-        
-        /* Tabs */
-        .tabs{display:flex;gap:4px;margin-bottom:20px;background:white;padding:4px;border-radius:12px;border:1px solid var(--gray-200);width:fit-content}
-        .tab{padding:10px 20px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;transition:var(--transition);border:none;background:transparent;color:var(--gray-600)}
-        .tab.active{background:var(--primary);color:white}
-        
-        /* Grid */
-        .docs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
-        
-        .doc-card{background:white;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:24px;transition:var(--transition);cursor:pointer;position:relative}
-        .doc-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px);border-color:transparent}
-        .doc-icon{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:14px}
-        .doc-icon.carteirinha{background:var(--primary-bg);color:var(--primary)}
-        .doc-icon.certificado{background:var(--success-bg);color:var(--success)}
-        .doc-icon.carta{background:var(--warning-bg);color:var(--warning)}
-        .doc-icon.declaracao{background:var(--purple-bg);color:var(--purple)}
-        
-        .doc-card h3{font-size:16px;font-weight:600;margin-bottom:6px}
-        .doc-card p{font-size:12px;color:var(--gray-400);line-height:1.5}
-        .doc-card .badge{position:absolute;top:16px;right:16px}
-        
-        .badge{padding:4px 10px;border-radius:6px;font-size:10px;font-weight:600}
-        .badge-success{background:var(--success-bg);color:var(--success)}
-        
-        /* Quick Action Cards */
-        .quick-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-bottom:24px}
-        .quick-card{background:white;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:28px;text-align:center;cursor:pointer;transition:var(--transition)}
-        .quick-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px);border-color:var(--primary)}
-        .quick-card i{width:40px;height:40px;margin:0 auto 12px;color:var(--primary)}
-        .quick-card h3{font-size:16px;font-weight:600;margin-bottom:4px}
-        .quick-card p{font-size:12px;color:var(--gray-400)}
-        
-        @media(max-width:768px){.sidebar{width:200px}.sidebar-brand h3,.sidebar-brand span{display:none}.main-content{margin-left:200px;padding:14px}.quick-cards{grid-template-columns:1fr}.docs-grid{grid-template-columns:1fr}}
+        :root{--primary:#1a237e;--gold:#f59e0b;--success:#10b981;--danger:#ef4444;--purple:#8b5cf6}
+        .main-content{margin-left:270px;min-height:100vh;background:linear-gradient(135deg,#f8faff 0%,#fffbeb 30%,#f0f4ff 60%,#fefce8 100%)}
+        @media(max-width:768px){.main-content{margin-left:0;padding-top:70px}}
+        @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        .animate-slide{animation:slideUp .4s ease forwards}
+        .card-premium{background:white;border-radius:20px;padding:22px;border:1px solid #f1f5f9;transition:all .3s}
+        .card-premium:hover{box-shadow:0 15px 30px rgba(0,0,0,.06)}
+        .btn-premium{padding:10px 22px;border-radius:12px;font-weight:600;font-size:13px;cursor:pointer;border:none;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+        .btn-premium:hover{transform:translateY(-1px);box-shadow:0 6px 15px rgba(0,0,0,.1)}
+        .btn-sm{padding:6px 12px;font-size:11px;border-radius:8px}
+        .tab-btn{padding:8px 16px;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:#f1f5f9;color:#64748b;transition:all .2s}
+        .tab-btn.active{background:#1a237e;color:white}
+        .doc-card{background:white;border-radius:16px;padding:20px;border:1px solid #f1f5f9;transition:all .3s;cursor:pointer;position:relative}
+        .doc-card:hover{box-shadow:0 15px 30px rgba(0,0,0,.08);transform:translateY(-4px)}
+        .doc-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px}
+        .doc-badge{position:absolute;top:12px;right:12px;padding:4px 12px;border-radius:20px;font-size:10px;font-weight:600}
+        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);animation:fadeIn .2s ease}
+        .modal-premium{background:white;border-radius:24px;width:95%;max-width:650px;max-height:85vh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.2);animation:slideUp .3s ease}
+        .input-premium{width:100%;padding:12px 16px;border:2px solid #e2e8f0;border-radius:12px;font-size:13px;font-family:'Inter',sans-serif;background:#f8fafc;transition:all .2s}
+        .input-premium:focus{outline:none;border-color:#1a237e;box-shadow:0 0 0 3px rgba(26,35,126,.08);background:white}
+        .select-premium{width:100%;padding:12px 16px;border:2px solid #e2e8f0;border-radius:12px;font-size:13px;font-family:'Inter',sans-serif;background:#f8fafc;cursor:pointer}
+        .quick-card{background:white;border-radius:16px;padding:24px;border:1px solid #f1f5f9;text-align:center;transition:all .3s;cursor:pointer}
+        .quick-card:hover{box-shadow:0 15px 30px rgba(0,0,0,.08);transform:translateY(-4px);border-color:var(--primary)}
+        .quick-card i{width:40px;height:40px;margin:0 auto 12px}
+        .template-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-top:12px}
+        .template-btn{background:#f8fafc;padding:10px 16px;border-radius:10px;border:1px solid #e2e8f0;text-align:left;transition:all .2s;cursor:pointer;font-size:13px}
+        .template-btn:hover{background:#e2e8f0;border-color:#1a237e;transform:translateX(4px)}
+        .template-btn .icone{font-size:18px;margin-right:8px}
     </style>
 </head>
-<body>
+<body class="font-sans">
+
+    <div id="sidebar-container"></div>
+
     <div class="app-layout">
-        <aside class="sidebar">
-            <div class="sidebar-header"><div class="sidebar-logo">⛪</div><div class="sidebar-brand"><h3>CRM Igreja</h3><span id="igrejaNome">Carregando...</span></div></div>
-            <nav class="sidebar-nav">
-                <a href="dashboard.html" class="nav-item"><i data-lucide="layout-dashboard"></i> Dashboard</a>
-                <a href="membros.html" class="nav-item"><i data-lucide="users"></i> Membros</a>
-                <a href="celulas.html" class="nav-item"><i data-lucide="heart-handshake"></i> Células</a>
-                <a href="financeiro.html" class="nav-item"><i data-lucide="wallet"></i> Financeiro</a>
-                <a href="agenda.html" class="nav-item"><i data-lucide="calendar-days"></i> Agenda</a>
-                <a href="documentos.html" class="nav-item active"><i data-lucide="file-text"></i> Documentos</a>
-                <a href="vendas.html" class="nav-item"><i data-lucide="shopping-cart"></i> Vendas</a>
-            </nav>
-        </aside>
-
         <main class="main-content">
-            <div class="topbar">
-                <div><h1>📜 Documentos</h1><p>Carteirinhas, certificados e declarações</p></div>
-            </div>
 
-            <!-- Quick Actions -->
-            <div class="quick-cards">
-                <div class="quick-card" onclick="alert('Funcionalidade: Gerar Carteirinha')">
-                    <i data-lucide="id-card" style="width:40px;height:40px;"></i>
-                    <h3>🎫 Nova Carteirinha</h3>
-                    <p>Gere carteirinha com QR Code para membros</p>
+            <header class="sticky top-0 z-20 px-4 lg:px-8 py-3 lg:py-5 bg-white/85 backdrop-blur-xl border-b flex items-center justify-between flex-wrap gap-3">
+                <div>
+                    <h1 class="text-xl lg:text-3xl font-serif font-bold flex items-center gap-2 lg:gap-3" style="color:var(--primary)">
+                        <i data-lucide="file-text" class="w-6 h-6 lg:w-8 lg:h-8"></i> Documentos
+                    </h1>
+                    <p class="text-xs lg:text-sm mt-1 font-medium" style="color:var(--gold)">Gerencie carteirinhas, certificados e declarações</p>
                 </div>
-                <div class="quick-card" onclick="alert('Funcionalidade: Gerar Certificado')">
-                    <i data-lucide="award" style="width:40px;height:40px;"></i>
-                    <h3>🏆 Novo Certificado</h3>
-                    <p>Certificados de batismo, casamento e cursos</p>
+                <div class="flex gap-2">
+                    <button onclick="abrirModal()" class="btn-premium text-white" style="background:linear-gradient(135deg,#1a237e,#283593)">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Novo Documento
+                    </button>
                 </div>
-            </div>
+            </header>
+            
+            <div class="p-4 lg:p-8 space-y-4 lg:space-y-6">
 
-            <!-- Tabs -->
-            <div class="tabs">
-                <button class="tab active" onclick="mudarTab(this,'todos')">Todos</button>
-                <button class="tab" onclick="mudarTab(this,'carteirinhas')">Carteirinhas</button>
-                <button class="tab" onclick="mudarTab(this,'certificados')">Certificados</button>
-            </div>
+                <!-- STATS CARDS -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+                    <div class="card-premium animate-slide">
+                        <div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center" style="background:rgba(26,35,126,.1)"><i data-lucide="file-text" class="w-4 h-4 lg:w-5 lg:h-5" style="color:#1a237e"></i></div></div>
+                        <div class="text-xl lg:text-3xl font-extrabold" style="color:var(--primary)" id="statTotal">0</div>
+                        <div class="text-xs lg:text-sm text-gray-500">Total de Documentos</div>
+                    </div>
+                    <div class="card-premium animate-slide" style="animation-delay:.1s">
+                        <div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center" style="background:rgba(16,185,129,.1)"><i data-lucide="check-circle" class="w-4 h-4 lg:w-5 lg:h-5 text-green-600"></i></div></div>
+                        <div class="text-xl lg:text-3xl font-extrabold text-green-600" id="statEmitidos">0</div>
+                        <div class="text-xs lg:text-sm text-gray-500">Emitidos</div>
+                    </div>
+                    <div class="card-premium animate-slide" style="animation-delay:.2s">
+                        <div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center" style="background:rgba(139,92,246,.1)"><i data-lucide="award" class="w-4 h-4 lg:w-5 lg:h-5 text-purple-600"></i></div></div>
+                        <div class="text-xl lg:text-3xl font-extrabold text-purple-600" id="statCertificados">0</div>
+                        <div class="text-xs lg:text-sm text-gray-500">Certificados</div>
+                    </div>
+                    <div class="card-premium animate-slide" style="animation-delay:.3s">
+                        <div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center" style="background:rgba(245,158,11,.1)"><i data-lucide="id-card" class="w-4 h-4 lg:w-5 lg:h-5 text-amber-600"></i></div></div>
+                        <div class="text-xl lg:text-3xl font-extrabold text-amber-600" id="statCarteirinhas">0</div>
+                        <div class="text-xs lg:text-sm text-gray-500">Carteirinhas</div>
+                    </div>
+                </div>
 
-            <!-- Grid de Documentos -->
-            <div class="docs-grid">
-                <div class="doc-card">
-                    <span class="badge badge-success">Emitido</span>
-                    <div class="doc-icon carteirinha"><i data-lucide="id-card" style="width:24px;height:24px;"></i></div>
-                    <h3>Carteirinha - João Silva</h3>
-                    <p>Emitida em 15/05/2026 • Válida até 15/05/2028</p>
+                <!-- QUICK ACTIONS - GERAR DOCUMENTOS -->
+                <div class="card-premium">
+                    <h3 class="font-bold text-lg mb-4" style="color:var(--primary)">
+                        <i data-lucide="file-plus" class="w-5 h-5 inline"></i> Gerar Documentos
+                    </h3>
+                    <div class="template-grid">
+                        <div class="template-btn" onclick="gerarDocumento('CARTEIRINHA_MASCULINA')">
+                            <span class="icone">👤</span> Carteirinha Masculina
+                        </div>
+                        <div class="template-btn" onclick="gerarDocumento('CARTEIRINHA_FEMININA')">
+                            <span class="icone">👩</span> Carteirinha Feminina
+                        </div>
+                        <div class="template-btn" onclick="gerarDocumento('CARTEIRINHA_INFANTIL')">
+                            <span class="icone">🧒</span> Carteirinha Infantil
+                        </div>
+                        <div class="template-btn" onclick="gerarDocumento('CARTEIRINHA_JOVEM')">
+                            <span class="icone">🔥</span> Carteirinha Jovem
+                        </div>
+                        <div class="template-btn" onclick="gerarDocumento('BATISMO_MASCULINO')">
+                            <span class="icone">✝️</span> Certificado Batismo (Masc)
+                        </div>
+                        <div class="template-btn" onclick="gerarDocumento('BATISMO_FEMININO')">
+                            <span class="icone">🕊️</span> Certificado Batismo (Fem)
+                        </div>
+                        <div class="template-btn" onclick="gerarDocumento('CASAMENTO')">
+                            <span class="icone">💒</span> Certificado Casamento
+                        </div>
+                        <div class="template-btn" onclick="gerarDocumento('RECOMENDACAO')">
+                            <span class="icone">📜</span> Carta de Recomendação
+                        </div>
+                        <div class="template-btn" onclick="gerarDocumento('TRANSFERENCIA')">
+                            <span class="icone">📩</span> Carta de Transferência
+                        </div>
+                    </div>
                 </div>
-                <div class="doc-card">
-                    <span class="badge badge-success">Emitido</span>
-                    <div class="doc-icon carteirinha"><i data-lucide="id-card" style="width:24px;height:24px;"></i></div>
-                    <h3>Carteirinha - Maria Santos</h3>
-                    <p>Emitida em 14/05/2026 • Válida até 14/05/2028</p>
+
+                <!-- FILTROS -->
+                <div class="flex flex-wrap gap-2">
+                    <button class="tab-btn active" onclick="filtrar('')">Todos</button>
+                    <button class="tab-btn" onclick="filtrar('CARTEIRINHA')">🎫 Carteirinhas</button>
+                    <button class="tab-btn" onclick="filtrar('CERTIFICADO')">🏆 Certificados</button>
+                    <button class="tab-btn" onclick="filtrar('DECLARACAO')">📄 Declarações</button>
+                    <button class="tab-btn" onclick="filtrar('CARTA')">📜 Cartas</button>
+                    <button class="tab-btn" onclick="filtrarStatus('GERADO')">📋 Gerados</button>
+                    <button class="tab-btn" onclick="filtrarStatus('ASSINADO')">✅ Assinados</button>
                 </div>
-                <div class="doc-card">
-                    <span class="badge badge-success">Emitido</span>
-                    <div class="doc-icon certificado"><i data-lucide="award" style="width:24px;height:24px;"></i></div>
-                    <h3>Certificado de Batismo</h3>
-                    <p>Pedro Oliveira • 12/05/2026</p>
+
+                <!-- LISTA DE DOCUMENTOS -->
+                <div id="listaDocumentos">
+                    <div class="text-center py-12 text-gray-400">
+                        <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto mb-3"></i>
+                        <p>Carregando documentos...</p>
+                    </div>
                 </div>
-                <div class="doc-card">
-                    <span class="badge badge-success">Emitido</span>
-                    <div class="doc-icon certificado"><i data-lucide="award" style="width:24px;height:24px;"></i></div>
-                    <h3>Certificado de Curso</h3>
-                    <p>Ana Costa • Curso de Liderança • 10/05/2026</p>
-                </div>
-                <div class="doc-card">
-                    <div class="doc-icon carta"><i data-lucide="scroll" style="width:24px;height:24px;"></i></div>
-                    <h3>Carta de Transferência</h3>
-                    <p>Solicitada em 08/05/2026 • Aguardando</p>
-                </div>
-                <div class="doc-card">
-                    <div class="doc-icon declaracao"><i data-lucide="file-check" style="width:24px;height:24px;"></i></div>
-                    <h3>Declaração de Membro</h3>
-                    <p>Carlos Silva • Emitida em 05/05/2026</p>
-                </div>
+                
             </div>
+            <footer class="text-center py-6 text-xs text-gray-400 border-t bg-white/50" id="footerText"></footer>
         </main>
     </div>
-    <script src="assets/js/api.js"></script>
+
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/sidebar.js"></script>
     <script>
-        function init(){if(!api.isAuthenticated()){window.location.href='login.html';return}document.getElementById('igrejaNome').textContent=localStorage.getItem('igreja_nome')||'Igreja Demo';lucide.createIcons()}
-        function mudarTab(el,t){document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));el.classList.add('active')}
-        init();
+        // ============ VARIÁVEIS ============
+        let todosDocumentos = [];
+        let filtroTipo = '';
+        let filtroStatus = '';
+
+        // ============ INIT ============
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!window.api || !window.api.isAuthenticated()) { 
+                window.location.href = '../login.html'; 
+                return; 
+            }
+            document.getElementById('footerText').textContent = `${window.APP_NAME} v3.0 • AASA Tecnologia © 2026`;
+            lucide.createIcons();
+            carregarDocumentos();
+        });
+
+        // ============ CARREGAR DOCUMENTOS ============
+        async function carregarDocumentos() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const igrejaId = localStorage.getItem('igreja_id') || 1;
+                
+                const response = await fetch(`${window.API_URL}/documentos`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'x-igreja-id': igrejaId
+                    }
+                });
+                
+                if (!response.ok) throw new Error('Erro ao carregar documentos');
+                
+                const data = await response.json();
+                todosDocumentos = data.data || [];
+                
+                atualizarEstatisticas(todosDocumentos);
+                renderizarDocumentos(todosDocumentos);
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                // Dados de exemplo
+                todosDocumentos = [
+                    { id: 1, titulo: 'Carteirinha - João Silva', tipo: 'CARTEIRINHA', membro_nome: 'João da Silva Santos', status: 'GERADO', data_emissao: '2026-06-15', data_validade: '2028-06-15' },
+                    { id: 2, titulo: 'Certificado de Batismo', tipo: 'CERTIFICADO_BATISMO', membro_nome: 'Maria Santos', status: 'ASSINADO', data_emissao: '2026-06-10', data_validade: null }
+                ];
+                atualizarEstatisticas(todosDocumentos);
+                renderizarDocumentos(todosDocumentos);
+            }
+        }
+
+        // ============ ATUALIZAR ESTATÍSTICAS ============
+        function atualizarEstatisticas(documentos) {
+            const total = documentos.length;
+            const emitidos = documentos.filter(d => d.status === 'GERADO' || d.status === 'ASSINADO').length;
+            const certificados = documentos.filter(d => d.tipo && d.tipo.includes('CERTIFICADO')).length;
+            const carteirinhas = documentos.filter(d => d.tipo === 'CARTEIRINHA').length;
+            
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statEmitidos').textContent = emitidos;
+            document.getElementById('statCertificados').textContent = certificados;
+            document.getElementById('statCarteirinhas').textContent = carteirinhas;
+        }
+
+        // ============ RENDERIZAR DOCUMENTOS ============
+        function renderizarDocumentos(documentos) {
+            const container = document.getElementById('listaDocumentos');
+            
+            if (documentos.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 text-gray-400"><i data-lucide="file-text" class="w-12 h-12 mx-auto mb-3 opacity-30"></i><p>Nenhum documento encontrado</p></div>`;
+                lucide.createIcons();
+                return;
+            }
+            
+            const getIcon = (tipo) => {
+                const icons = { 'CARTEIRINHA': 'id-card', 'CERTIFICADO_BATISMO': 'award', 'CERTIFICADO_CASAMENTO': 'heart', 'CERTIFICADO_CURSO': 'book-open', 'DECLARACAO': 'file-check', 'CARTA_TRANSFERENCIA': 'scroll' };
+                return icons[tipo] || 'file-text';
+            };
+            
+            const getColor = (tipo) => {
+                const cores = { 'CARTEIRINHA': { bg: 'rgba(26,35,126,.1)', color: '#1a237e' }, 'CERTIFICADO_BATISMO': { bg: 'rgba(16,185,129,.1)', color: '#10b981' }, 'CERTIFICADO_CASAMENTO': { bg: 'rgba(236,72,153,.1)', color: '#ec4899' }, 'DECLARACAO': { bg: 'rgba(245,158,11,.1)', color: '#f59e0b' }, 'CARTA_TRANSFERENCIA': { bg: 'rgba(139,92,246,.1)', color: '#8b5cf6' } };
+                return cores[tipo] || { bg: 'rgba(100,116,139,.1)', color: '#64748b' };
+            };
+            
+            const getStatusClass = (status) => {
+                const classes = { 'GERADO': 'bg-blue-100 text-blue-700', 'ASSINADO': 'bg-green-100 text-green-700', 'ENTREGUE': 'bg-purple-100 text-purple-700', 'CANCELADO': 'bg-red-100 text-red-700' };
+                return classes[status] || 'bg-gray-100 text-gray-700';
+            };
+            
+            let html = '<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">';
+            documentos.forEach(doc => {
+                const icon = getIcon(doc.tipo);
+                const cor = getColor(doc.tipo);
+                const statusClass = getStatusClass(doc.status);
+                html += `
+                <div class="doc-card animate-slide">
+                    <span class="doc-badge ${statusClass}">${doc.status || 'N/A'}</span>
+                    <div class="doc-icon" style="background:${cor.bg};color:${cor.color}"><i data-lucide="${icon}" class="w-6 h-6"></i></div>
+                    <h3 class="font-bold text-sm mt-3" style="color:var(--primary)">${doc.titulo || 'Sem título'}</h3>
+                    <p class="text-xs text-gray-500 mt-1">${doc.membro_nome || 'Não vinculado'}</p>
+                    <div class="flex gap-1 mt-3 pt-3 border-t">
+                        <button onclick="visualizarDocumento(${doc.id})" class="btn-premium btn-xs bg-blue-50 text-blue-700"><i data-lucide="eye" class="w-3 h-3"></i> Ver</button>
+                        <button onclick="baixarDocumento(${doc.id})" class="btn-premium btn-xs bg-green-50 text-green-700"><i data-lucide="download" class="w-3 h-3"></i> Baixar</button>
+                    </div>
+                </div>`;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        // ============ FILTROS ============
+        function filtrar(tipo) {
+            filtroTipo = tipo;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if (event && event.target) event.target.classList.add('active');
+            aplicarFiltros();
+        }
+
+        function filtrarStatus(status) {
+            filtroStatus = status;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if (event && event.target) event.target.classList.add('active');
+            aplicarFiltros();
+        }
+
+        function aplicarFiltros() {
+            let filtrados = todosDocumentos;
+            if (filtroTipo) filtrados = filtrados.filter(d => d.tipo === filtroTipo);
+            if (filtroStatus) filtrados = filtrados.filter(d => d.status === filtroStatus);
+            renderizarDocumentos(filtrados);
+        }
+
+        // ============ VISUALIZAR ============
+        function visualizarDocumento(id) {
+            const doc = todosDocumentos.find(d => d.id === id);
+            if (!doc) return;
+            alert(`📄 Documento: ${doc.titulo}\nTipo: ${doc.tipo}\nMembro: ${doc.membro_nome || 'N/A'}\nStatus: ${doc.status}`);
+        }
+
+        function baixarDocumento(id) {
+            const doc = todosDocumentos.find(d => d.id === id);
+            if (!doc) return;
+            const content = `========================================\n${doc.titulo}\n========================================\nTipo: ${doc.tipo}\nMembro: ${doc.membro_nome || 'N/A'}\nData: ${new Date().toLocaleDateString('pt-BR')}\n========================================\nDocumento gerado por AASA SAGRADO v3.0`;
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${doc.titulo.replace(/\s+/g, '_')}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // ============================================
+        // GERAR DOCUMENTOS COM TEMPLATES
+        // ============================================
+        function gerarDocumento(tipo) {
+            const membroId = prompt('Digite o ID do membro (ou deixe em branco para exemplo):');
+            
+            // Dados de exemplo
+            const dados = {
+                nome: 'João da Silva Santos',
+                iniciais: 'JS',
+                id: '001',
+                cargo: 'Membro Ativo',
+                igreja: 'Igreja Avivamento do Espírito Santo',
+                validade: '15/01/2028',
+                tipo: 'MEMBRO',
+                foto: '',
+                cpf: '123.456.789-00',
+                desde: '20 de maio de 2010',
+                data: '15 de junho de 2010',
+                ministrante: 'Pastor Roberto Mendes',
+                pastor: 'Pastor Roberto Mendes',
+                secretario: 'Maria Santos',
+                assinante1: 'Pastor Roberto Mendes',
+                assinante2: 'Maria Santos',
+                numero: 'DOC-2026-001',
+                dataEmissao: '30/06/2026'
+            };
+            
+            // Mapear templates
+            const templates = {
+                'CARTEIRINHA_MASCULINA': 'carteirinhas/masculina.html',
+                'CARTEIRINHA_FEMININA': 'carteirinhas/feminina.html',
+                'CARTEIRINHA_INFANTIL': 'carteirinhas/infantil.html',
+                'CARTEIRINHA_JOVEM': 'carteirinhas/jovem.html',
+                'BATISMO_MASCULINO': 'certificados/batismo-masculino.html',
+                'BATISMO_FEMININO': 'certificados/batismo-feminino.html',
+                'CASAMENTO': 'certificados/casamento.html',
+                'RECOMENDACAO': 'cartas/recomendacao.html',
+                'TRANSFERENCIA': 'cartas/transferencia.html'
+            };
+            
+            const template = templates[tipo];
+            if (!template) {
+                alert('Template não encontrado para o tipo: ' + tipo);
+                return;
+            }
+            
+            // Construir URL
+            const baseUrl = window.location.origin + '/igreja-crm/frontend/assets/templates/';
+            const params = new URLSearchParams(dados);
+            const url = baseUrl + template + '?' + params.toString();
+            
+            // Abrir em nova janela
+            window.open(url, '_blank', 'width=800,height=600');
+        }
+
+        function abrirModal() {
+            alert('✏️ Função de cadastro de documentos em desenvolvimento');
+        }
     </script>
 </body>
 </html>

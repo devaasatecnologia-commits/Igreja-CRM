@@ -20,12 +20,28 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api', router);
 
 // Rota de health check
+app.get('/health', (req, res) => {
+    res.json({
+        status: 'online',
+        service: 'CRM Igreja 3.0 API',
+        version: '3.0.0',
+        timestamp: new Date().toISOString()
+    });
+});
+
+// Rota raiz
 app.get('/', (req, res) => {
     res.json({
         name: 'CRM Igreja 3.0 API',
         version: '3.0.0',
         status: 'online',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        endpoints: {
+            health: '/health',
+            api: '/api',
+            test: '/api/test',
+            auth: '/api/auth/login'
+        }
     });
 });
 
@@ -42,4 +58,5 @@ app.listen(PORT, () => {
     console.log('🚀 CRM Igreja 3.0 API');
     console.log(`📡 http://localhost:${PORT}`);
     console.log(`📝 http://localhost:${PORT}/api`);
+    console.log(`✅ Health Check: http://localhost:${PORT}/health`);
 });

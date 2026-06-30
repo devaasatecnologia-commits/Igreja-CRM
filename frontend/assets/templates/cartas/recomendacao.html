@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carta de Recomendação</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @page { size: A4; margin: 25mm; }
+        body { font-family: 'Times New Roman', serif; background: #f0f0f0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .carta {
+            width: 210mm; min-height: 297mm;
+            background: white;
+            padding: 15mm 20mm;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        .cabecalho { text-align: center; border-bottom: 3px double #1a237e; padding-bottom: 12px; margin-bottom: 20px; }
+        .cabecalho .igreja-nome { font-size: 22px; font-weight: 700; color: #1a237e; font-family: 'Georgia', serif; }
+        .cabecalho .igreja-endereco { font-size: 11px; color: #64748b; margin-top: 3px; }
+        .titulo { font-size: 20px; font-weight: 700; text-align: center; color: #1a237e; text-transform: uppercase; letter-spacing: 2px; margin: 25px 0 20px; font-family: 'Georgia', serif; }
+        .corpo { line-height: 2; font-size: 14px; color: #1e293b; text-align: justify; }
+        .corpo p { margin-bottom: 10px; text-indent: 35px; }
+        .corpo .destaque { font-weight: 700; color: #1a237e; }
+        .assinatura-area { margin-top: 50px; display: flex; justify-content: space-between; }
+        .assinatura-box { text-align: center; width: 45%; }
+        .assinatura-box .linha { border-bottom: 2px solid #1a237e; width: 100%; margin: 30px 0 8px; }
+        .assinatura-box .nome { font-weight: 700; font-size: 14px; color: #1a237e; }
+        .assinatura-box .cargo { font-size: 12px; color: #64748b; }
+        .rodape { margin-top: 40px; text-align: center; font-size: 10px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 12px; }
+        .selo-igreja { position: absolute; bottom: 25mm; right: 25mm; width: 35px; height: 35px; border: 2px solid #1a237e; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 7px; color: #1a237e; text-align: center; opacity: 0.4; }
+        @media print { body { background: white; } .carta { box-shadow: none; } }
+    </style>
+</head>
+<body>
+    <div class="carta" id="carta">
+        <div class="cabecalho">
+            <div class="igreja-nome" id="igrejaNome">Igreja Avivamento do Espírito Santo</div>
+            <div class="igreja-endereco" id="igrejaEndereco">Rua da Igreja, 100 - Centro - São Paulo/SP</div>
+        </div>
+        <div class="titulo">Carta de Recomendação</div>
+        <div class="corpo">
+            <p>Nós, da <span class="destaque" id="igrejaOrigem">Igreja Avivamento do Espírito Santo</span>, localizada em <span class="destaque" id="enderecoIgreja">Rua da Igreja, 100 - Centro - São Paulo/SP</span>, vimos por meio desta carta recomendar o(a) membro(a) <span class="destaque" id="membroNome">João da Silva Santos</span>.</p>
+            <p>O(A) referido(a) membro é portador(a) do CPF <span class="destaque" id="membroCPF">123.456.789-00</span> e está em plena comunhão com nossa igreja desde <span class="destaque" id="membroDesde">20 de maio de 2010</span>.</p>
+            <p>Durante todo o período em que esteve conosco, <span class="destaque" id="membroNome2">João</span> demonstrou ser uma pessoa de caráter íntegro, comprometida com a fé cristã e com os valores do evangelho. Participou ativamente das atividades da igreja, contribuindo para o crescimento espiritual e comunitário da congregação.</p>
+            <p>Recomendamos <span class="destaque" id="membroNome3">João</span> a qualquer comunidade cristã que o receba, confiando que continuará sendo uma bênção e um exemplo de fé onde quer que esteja.</p>
+            <p style="text-align: right; margin-top: 20px; text-indent: 0;">Em fé e comunhão,</p>
+        </div>
+        <div class="assinatura-area">
+            <div class="assinatura-box"><div class="linha"></div><div class="nome" id="assinante1">Pastor Roberto Mendes</div><div class="cargo">Pastor Presidente</div></div>
+            <div class="assinatura-box"><div class="linha"></div><div class="nome" id="assinante2">Maria Santos</div><div class="cargo">Secretária</div></div>
+        </div>
+        <div class="rodape">
+            <span id="dataEmissao">São Paulo, 30 de junho de 2026</span><br>
+            <span id="numeroDoc">Nº: REC-2026-001</span>
+        </div>
+        <div class="selo-igreja">AASA</div>
+    </div>
+    <script>
+        const p = new URLSearchParams(window.location.search);
+        document.getElementById('membroNome').textContent = p.get('nome') || 'João da Silva Santos';
+        document.getElementById('membroNome2').textContent = p.get('nome')?.split(' ')[0] || 'João';
+        document.getElementById('membroNome3').textContent = p.get('nome')?.split(' ')[0] || 'João';
+        document.getElementById('membroCPF').textContent = p.get('cpf') || '123.456.789-00';
+        document.getElementById('membroDesde').textContent = p.get('desde') || '20 de maio de 2010';
+        document.getElementById('igrejaNome').textContent = p.get('igreja') || 'Igreja Avivamento do Espírito Santo';
+        document.getElementById('assinante1').textContent = p.get('assinante1') || 'Pastor Roberto Mendes';
+        document.getElementById('assinante2').textContent = p.get('assinante2') || 'Maria Santos';
+        document.getElementById('dataEmissao').textContent = p.get('data') || 'São Paulo, 30 de junho de 2026';
+        document.getElementById('numeroDoc').textContent = `Nº: ${p.get('numero') || 'REC-2026-001'}`;
+        setTimeout(() => window.print(), 800);
+    </script>
+</body>
+</html>

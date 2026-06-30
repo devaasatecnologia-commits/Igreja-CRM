@@ -1,4 +1,3 @@
-</html>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -10,30 +9,32 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif'],serif:['Playfair Display','serif']}}}}</script>
+    
+    <!-- CSS do Sidebar (mesmo do dashboard) -->
     <link rel="stylesheet" href="../assets/css/sidebar.css">
+    
     <style>
         :root{--primary:#1a237e;--gold:#f59e0b;--success:#10b981;--danger:#ef4444}
         .main-content{margin-left:270px;min-height:100vh;background:linear-gradient(135deg,#f8faff 0%,#fffbeb 30%,#f0f4ff 60%,#fefce8 100%)}
         @media(max-width:768px){.main-content{margin-left:0;padding-top:70px}}
         @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
         .animate-slide{animation:slideUp .4s ease forwards}
         .card-premium{background:white;border-radius:20px;padding:22px;border:1px solid #f1f5f9;transition:all .3s;cursor:pointer}
         .card-premium:hover{box-shadow:0 15px 30px rgba(0,0,0,.06);transform:translateY(-3px)}
-        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-        .modal-premium{background:white;border-radius:24px;width:95%;max-width:780px;max-height:90vh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.2);animation:modalIn .3s ease}
-        .input-premium{width:100%;padding:12px 16px;border:2px solid #e2e8f0;border-radius:12px;font-size:13px;font-family:'Inter',sans-serif;background:#f8fafc;transition:all .2s}
-        .input-premium:focus{outline:none;border-color:#1a237e;box-shadow:0 0 0 3px rgba(26,35,126,.08);background:white}
-        .select-premium{width:100%;padding:12px 16px;border:2px solid #e2e8f0;border-radius:12px;font-size:13px;font-family:'Inter',sans-serif;background:#f8fafc;cursor:pointer}
         .btn-premium{padding:10px 22px;border-radius:12px;font-weight:600;font-size:13px;cursor:pointer;border:none;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
         .btn-premium:hover{transform:translateY(-1px);box-shadow:0 6px 15px rgba(0,0,0,.1)}
         .btn-sm{padding:6px 12px;font-size:11px;border-radius:8px}
         .tab-btn{padding:8px 16px;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:#f1f5f9;color:#64748b;transition:all .2s}
         .tab-btn.active{background:#1a237e;color:white}
-        .foto-preview{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #e2e8f0;background:#f8fafc;display:flex;align-items:center;justify-content:center;font-size:32px;color:#94a3b8}
+        .input-premium{width:100%;padding:12px 16px;border:2px solid #e2e8f0;border-radius:12px;font-size:13px;font-family:'Inter',sans-serif;background:#f8fafc;transition:all .2s}
+        .input-premium:focus{outline:none;border-color:#1a237e;box-shadow:0 0 0 3px rgba(26,35,126,.08);background:white}
     </style>
 </head>
 <body class="font-sans">
+
+    <!-- SIDEBAR (mesmo do dashboard) -->
+    <div id="sidebar-container"></div>
+
     <div class="app-layout">
         <main class="main-content">
 
@@ -54,17 +55,17 @@
 
                 <!-- STATS CARDS -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
-                    <div class="card-premium animate-slide" onclick="filtrarStatus('')">
+                    <div class="card-premium animate-slide">
                         <div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center" style="background:rgba(26,35,126,.1)"><i data-lucide="users" class="w-4 h-4 lg:w-5 lg:h-5" style="color:#1a237e"></i></div></div>
                         <div class="text-xl lg:text-3xl font-extrabold" style="color:var(--primary)" id="statTotal">0</div>
                         <div class="text-xs lg:text-sm text-gray-500">Total de Membros</div>
                     </div>
-                    <div class="card-premium animate-slide" style="animation-delay:.1s" onclick="filtrarStatus('ATIVO')">
+                    <div class="card-premium animate-slide" style="animation-delay:.1s">
                         <div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center" style="background:rgba(16,185,129,.1)"><i data-lucide="user-check" class="w-4 h-4 lg:w-5 lg:h-5" style="color:#10b981"></i></div></div>
                         <div class="text-xl lg:text-3xl font-extrabold text-green-600" id="statAtivos">0</div>
                         <div class="text-xs lg:text-sm text-gray-500">Ativos</div>
                     </div>
-                    <div class="card-premium animate-slide" style="animation-delay:.2s" onclick="filtrarStatus('VISITANTE')">
+                    <div class="card-premium animate-slide" style="animation-delay:.2s">
                         <div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center" style="background:rgba(245,158,11,.1)"><i data-lucide="eye" class="w-4 h-4 lg:w-5 lg:h-5" style="color:#f59e0b"></i></div></div>
                         <div class="text-xl lg:text-3xl font-extrabold text-amber-600" id="statVisitantes">0</div>
                         <div class="text-xs lg:text-sm text-gray-500">Visitantes</div>
@@ -100,7 +101,6 @@
                             <tbody id="tabelaMembros"><tr><td colspan="6" class="text-center py-12 text-gray-400"><i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto mb-2"></i> Carregando...</td></tr></tbody>
                         </table>
                     </div>
-                    <!-- PAGINAÇÃO -->
                     <div class="flex justify-between items-center px-6 py-3 border-t bg-gray-50 text-sm">
                         <span class="text-gray-500" id="infoPagina"></span>
                         <div class="flex gap-1" id="paginacao"></div>
@@ -112,307 +112,196 @@
         </main>
     </div>
 
-    <!-- MODAL MEMBRO -->
-    <div class="modal-overlay" id="modalMembro" style="display:none">
-        <div class="modal-premium">
-            <div class="sticky top-0 bg-white z-10 px-6 lg:px-8 py-4 lg:py-6 border-b flex justify-between items-center rounded-t-3xl">
-                <h2 class="text-lg lg:text-xl font-bold flex items-center gap-2" id="modalTitle"><i data-lucide="user-plus" class="w-5 h-5 lg:w-6 lg:h-6" style="color:var(--primary)"></i> Novo Membro</h2>
-                <button onclick="fecharModal()" class="w-8 h-8 lg:w-10 lg:h-10 rounded-full border-2 flex items-center justify-center hover:bg-gray-50"><i data-lucide="x" class="w-4 h-4 lg:w-5 lg:h-5"></i></button>
-            </div>
-            <div class="p-6 lg:p-8">
-                <input type="hidden" id="membroId">
-                
-                <!-- FOTO -->
-                <div class="flex justify-center mb-6">
-                    <div class="foto-preview" id="fotoPreview" onclick="document.getElementById('foto_url').click()">
-                        <i data-lucide="camera" class="w-8 h-8"></i>
-                    </div>
-                    <input type="hidden" id="foto_url">
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- NOME -->
-                    <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nome Completo *</label><input type="text" id="nome" class="input-premium" placeholder="Nome completo do membro" required></div>
-                    
-                    <!-- EMAIL E CELULAR -->
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Email</label><input type="email" id="email" class="input-premium" placeholder="email@exemplo.com"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Celular *</label><input type="text" id="celular" class="input-premium" placeholder="(00) 00000-0000" onkeyup="aplicarMascaraCelular(this)" maxlength="15"></div>
-                    
-                    <!-- CPF E RG -->
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">CPF</label><input type="text" id="cpf" class="input-premium" placeholder="000.000.000-00" onkeyup="aplicarMascaraCPF(this)" maxlength="14"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">RG</label><input type="text" id="rg" class="input-premium" placeholder="00.000.000-0"></div>
-                    
-                    <!-- DATA NASC E SEXO -->
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Data Nascimento</label><input type="date" id="data_nascimento" class="input-premium"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Sexo</label><select id="sexo" class="select-premium"><option value="">Selecione</option><option value="MASCULINO">Masculino</option><option value="FEMININO">Feminino</option></select></div>
-                    
-                    <!-- TIPO E ESTADO CIVIL -->
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Tipo *</label><select id="tipo_membro" class="select-premium"><option value="VISITANTE">Visitante</option><option value="CONGREGADO">Congregado</option><option value="MEMBRO" selected>Membro</option><option value="LIDER">Líder</option><option value="DIACONO">Diácono</option><option value="PRESBITERO">Presbítero</option><option value="EVANGELISTA">Evangelista</option><option value="PASTOR">Pastor</option><option value="BISPO">Bispo</option></select></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Estado Civil</label><select id="estado_civil" class="select-premium"><option value="">Selecione</option><option value="SOLTEIRO">Solteiro</option><option value="CASADO">Casado</option><option value="DIVORCIADO">Divorciado</option><option value="VIUVO">Viúvo</option></select></div>
-                    
-                    <!-- PROFISSÃO -->
-                    <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Profissão</label><input type="text" id="profissao" class="input-premium" placeholder="Profissão"></div>
-                    
-                    <!-- ENDEREÇO -->
-                    <div class="md:col-span-2 pt-4 border-t"><h4 class="font-bold text-sm mb-3" style="color:var(--primary)">📍 Endereço</h4></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">CEP</label><input type="text" id="cep" class="input-premium" placeholder="00000-000" onkeyup="aplicarMascaraCEP(this)" onblur="buscarCEP()" maxlength="9"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Estado</label><input type="text" id="estado" class="input-premium" placeholder="SP" maxlength="2"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Cidade</label><input type="text" id="cidade" class="input-premium" placeholder="Cidade"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Bairro</label><input type="text" id="bairro" class="input-premium" placeholder="Bairro"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Logradouro</label><input type="text" id="logradouro" class="input-premium" placeholder="Rua/Avenida"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Número</label><input type="text" id="numero" class="input-premium" placeholder="123"></div>
-                    
-                    <!-- DATAS ESPIRITUAIS -->
-                    <div class="md:col-span-2 pt-4 border-t"><h4 class="font-bold text-sm mb-3" style="color:var(--primary)">🙏 Datas Espirituais</h4></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Data Conversão</label><input type="date" id="data_conversao" class="input-premium"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Data Batismo</label><input type="date" id="data_batismo" class="input-premium"></div>
-                    <div class="md:col-span-2 pt-4 border-t"><h4 class="font-bold text-sm mb-3" style="color:var(--primary)">🔐 Portal do Membro</h4></div>
-                    <div class="md:col-span-2 flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-                        <div>
-                            <label class="font-semibold text-sm">Ativar acesso ao portal?</label>
-                            <p class="text-xs text-gray-500">O membro poderá acessar seus dados, recibos e certificados online.</p>
-                        </div>
-                        <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
-                            <input type="checkbox" id="portal_ativo" class="sr-only peer" onchange="togglePortalInfo()">
-                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-                        </label>
-                    </div>
-                    <div id="portalInfo" style="display:none" class="md:col-span-2 p-4 bg-green-50 rounded-xl">
-                        <p class="text-sm text-green-700"><i data-lucide="link" class="w-4 h-4 inline"></i> Link do portal: <strong id="portalLink">-</strong></p>
-                        <p class="text-xs text-gray-500 mt-1">Email: <span id="portalEmail"></span> | Senha inicial: <strong>membro123</strong></p>
-                    </div>
-                    <!-- OBSERVAÇÕES -->
-                    <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Observações</label><textarea id="observacoes" rows="3" class="input-premium" placeholder="Anotações sobre o membro..."></textarea></div>
-                </div>
-            </div>
-            <div class="sticky bottom-0 bg-white z-10 px-6 lg:px-8 py-4 lg:py-5 border-t flex justify-end gap-3 rounded-b-3xl">
-                <button onclick="fecharModal()" class="btn-premium bg-gray-100 text-gray-600"><i data-lucide="x" class="w-4 h-4"></i> Cancelar</button>
-                <button onclick="salvarMembro()" class="btn-premium text-white" style="background:var(--primary)"><i data-lucide="save" class="w-4 h-4"></i> Salvar</button>
-            </div>
-        </div>
-    </div>
-<script src="../assets/js/config.js"></script>
-<script src="../assets/js/utils.js"></script>
-<script src="../assets/js/api.js"></script>
-<script src="../assets/js/sidebar.js"></script>
-<script>
-    // ============ VARIÁVEIS ============
-    let paginaAtual = 1, totalPaginas = 1, filtroTipo = '', filtroStatus = '';
+    <!-- ===== SCRIPTS (MESMO DO DASHBOARD) ===== -->
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/sidebar.js"></script>
     
-    // ============ INIT ============
-    document.addEventListener('DOMContentLoaded', () => {
-        if (!window.api || !window.api.isAuthenticated()) { window.location.href = '../login.html'; return; }
-        document.getElementById('footerText').textContent = `${window.APP_NAME} v3.0 • AASA Tecnologia © 2026`;
-        lucide.createIcons();
-        carregarMembros();
-        carregarStats();
-    });
-    
-    // ============ MÁSCARAS ============
-    function aplicarMascaraCPF(input) {
-        let v = input.value.replace(/\D/g, '').slice(0, 11);
-        v = v.replace(/(\d{3})(\d)/, '$1.$2');
-        v = v.replace(/(\d{3})(\d)/, '$1.$2');
-        v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-        input.value = v;
-    }
-    
-    function aplicarMascaraCelular(input) {
-        let v = input.value.replace(/\D/g, '').slice(0, 11);
-        v = v.replace(/^(\d{2})(\d)/, '($1) $2');
-        v = v.replace(/(\d{5})(\d)/, '$1-$2');
-        input.value = v;
-    }
-    
-    function aplicarMascaraCEP(input) {
-        let v = input.value.replace(/\D/g, '').slice(0, 8);
-        v = v.replace(/^(\d{5})(\d)/, '$1-$2');
-        input.value = v;
-    }
-    
-    // ============ BUSCAR CEP ============
-    async function buscarCEP() {
-        const cep = document.getElementById('cep').value.replace(/\D/g, '');
-        if (cep.length !== 8) return;
-        try {
-            const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-            const data = await res.json();
-            if (!data.erro) {
-                document.getElementById('logradouro').value = data.logradouro || '';
-                document.getElementById('bairro').value = data.bairro || '';
-                document.getElementById('cidade').value = data.localidade || '';
-                document.getElementById('estado').value = data.uf || '';
-            }
-        } catch (e) {}
-    }
-    
-    // ============ STATS ============
-    async function carregarStats() {
-        try {
-            const d = await window.api.get('/membros/estatisticas');
-            document.getElementById('statTotal').textContent = d.total || 0;
-            document.getElementById('statAtivos').textContent = d.ativos || 0;
-            document.getElementById('statVisitantes').textContent = d.porTipo?.find(t => t.tipo_membro === 'VISITANTE')?.total || 0;
-            const lideranca = ['LIDER', 'PASTOR', 'DIACONO', 'PRESBITERO', 'EVANGELISTA', 'BISPO'];
-            let totalLideres = 0;
-            lideranca.forEach(tipo => { const found = d.porTipo?.find(t => t.tipo_membro === tipo); if (found) totalLideres += found.total; });
-            document.getElementById('statLideres').textContent = totalLideres;
-        } catch (e) {}
-    }
-    
-    // ============ LISTAR MEMBROS ============
-    async function carregarMembros() {
-        const busca = document.getElementById('searchInput')?.value || '';
-        let url = `/membros?pagina=${paginaAtual}&limite=10`;
-        if (busca) url += `&busca=${encodeURIComponent(busca)}`;
-        if (filtroTipo) url += `&tipo=${encodeURIComponent(filtroTipo)}`;
-        if (filtroStatus) url += `&status=${encodeURIComponent(filtroStatus)}`;
+    <script>
+        // ============ VARIÁVEIS ============
+        let paginaAtual = 1, totalPaginas = 1, filtroTipo = '', filtroStatus = '';
+        let todosMembros = [];
         
-        try {
-            const d = await window.api.get(url);
-            totalPaginas = Math.ceil((d.total || 0) / 10);
-            document.getElementById('infoPagina').textContent = `Página ${paginaAtual} de ${totalPaginas || 1} (${d.total || 0} membros)`;
+        // ============ INIT ============
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!window.api || !window.api.isAuthenticated()) { 
+                window.location.href = '../login.html'; 
+                return; 
+            }
             
-            let html = '';
-            if (d.membros && d.membros.length > 0) {
-                d.membros.forEach((m, i) => {
-                    html += `
-                    <tr class="border-t hover:bg-gray-50 cursor-pointer" onclick="editarMembro(${m.id})">
-                        <td class="px-3 lg:px-6 py-3"><div class="flex items-center gap-2 lg:gap-3"><div class="w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-white font-bold text-xs lg:text-sm shadow" style="background:${Utils.getAvatarColor(i)}">${m.nome[0]}</div><strong class="text-xs lg:text-sm">${m.nome}</strong></div></td>
-                        <td class="px-3 lg:px-6 py-3 text-xs lg:text-sm text-gray-600 hidden md:table-cell">${m.email || '-'}</td>
-                        <td class="px-3 lg:px-6 py-3 text-xs lg:text-sm text-gray-600 hidden sm:table-cell">${m.celular || '-'}</td>
-                        <td class="px-3 lg:px-6 py-3"><span class="px-2 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">${m.tipo_membro}</span></td>
-                        <td class="px-3 lg:px-6 py-3"><span class="px-2 py-1 rounded-full text-xs font-semibold ${m.status==='ATIVO'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${m.status}</span></td>
-                        <td class="px-3 lg:px-6 py-3 text-center">
-                            <div class="flex gap-1 justify-center">
-                                <button onclick="event.stopPropagation();whatsappMembro('${m.celular || ''}')" class="p-1.5 hover:bg-green-50 rounded-lg" title="WhatsApp"><i data-lucide="message-circle" class="w-3.5 h-3.5 text-green-500"></i></button>
-                                <button onclick="event.stopPropagation();verPerfil(${m.id})" class="p-1.5 hover:bg-blue-50 rounded-lg" title="Ver Perfil"><i data-lucide="eye" class="w-3.5 h-3.5 text-blue-500"></i></button>
-                                <button onclick="event.stopPropagation();editarMembro(${m.id})" class="p-1.5 hover:bg-gray-100 rounded-lg" title="Editar"><i data-lucide="pencil" class="w-3.5 h-3.5 text-gray-500"></i></button>
-                                <button onclick="event.stopPropagation();excluirMembro(${m.id})" class="p-1.5 hover:bg-red-50 rounded-lg" title="Desativar"><i data-lucide="trash-2" class="w-3.5 h-3.5 text-red-500"></i></button>
-                            </div>
-                        </td>
-                    </tr>`;
-                });
-            } else {
-                html = '<tr><td colspan="6" class="text-center py-12 text-gray-400">Nenhum membro encontrado</td></tr>';
-            }
-            document.getElementById('tabelaMembros').innerHTML = html;
-            renderizarPaginacao();
+            // O sidebar.js já carrega automaticamente via DOMContentLoaded
+            document.getElementById('footerText').textContent = `${window.APP_NAME} v3.0 • AASA Tecnologia © 2026`;
             lucide.createIcons();
-        } catch (e) { console.error(e); }
-    }
-    
-    function renderizarPaginacao() {
-        let html = '';
-        for (let i = 1; i <= totalPaginas; i++) {
-            html += `<button onclick="paginaAtual=${i};carregarMembros()" class="w-8 h-8 rounded-lg text-xs font-semibold ${i===paginaAtual?'bg-indigo-600 text-white':'bg-white border text-gray-600 hover:bg-gray-100'}">${i}</button>`;
-        }
-        document.getElementById('paginacao').innerHTML = html;
-    }
-    
-    function filtrarTipo(tipo) { filtroTipo = tipo; paginaAtual = 1; document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); if (event && event.target) event.target.classList.add('active'); carregarMembros(); carregarStats(); }
-    function filtrarStatus(status) { filtroStatus = status; paginaAtual = 1; carregarMembros(); carregarStats(); }
-    
-    // ============ WHATSAPP ============
-    function whatsappMembro(celular) {
-        if (!celular) { Swal.fire({ icon: 'info', title: 'Sem celular', text: 'Este membro não possui celular cadastrado.' }); return; }
-        const numero = celular.replace(/\D/g, '');
-        window.open(`https://wa.me/55${numero}`, '_blank');
-    }
-    
-    // ============ VER PERFIL ============
-    function verPerfil(id) { window.location.href = `membro-perfil.html?id=${id}`; }
-    
-    // ============ TOGGLE PORTAL ============
-    function togglePortalInfo() {
-        const ativo = document.getElementById('portal_ativo')?.checked;
-        const portalInfo = document.getElementById('portalInfo');
-        if (portalInfo) portalInfo.style.display = ativo ? 'block' : 'none';
-        if (ativo) {
-            const email = document.getElementById('email').value || 'membro@igreja.com';
-            const nome = document.getElementById('nome').value || 'membro';
-            document.getElementById('portalEmail').textContent = email;
-        }
-    }
-    
-    // ============ MODAL ============
-    function abrirModal() {
-        document.getElementById('modalTitle').innerHTML = '<i data-lucide="user-plus" class="w-5 h-5 lg:w-6 lg:h-6" style="color:var(--primary)"></i> Novo Membro';
-        document.getElementById('membroId').value = '';
-        ['nome','email','celular','cpf','rg','data_nascimento','profissao','cep','estado','cidade','bairro','logradouro','numero','data_conversao','data_batismo','observacoes','foto_url'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-        document.getElementById('sexo').value = '';
-        document.getElementById('tipo_membro').value = 'MEMBRO';
-        document.getElementById('estado_civil').value = '';
-        document.getElementById('fotoPreview').innerHTML = '<i data-lucide="camera" class="w-8 h-8"></i>';
-        if (document.getElementById('portal_ativo')) document.getElementById('portal_ativo').checked = false;
-        if (document.getElementById('portalInfo')) document.getElementById('portalInfo').style.display = 'none';
-        document.getElementById('modalMembro').style.display = 'flex';
-        lucide.createIcons();
-    }
-    
-    async function editarMembro(id) {
-        try {
-            const m = await window.api.get('/membros/' + id);
-            document.getElementById('modalTitle').innerHTML = '<i data-lucide="pencil" class="w-5 h-5 lg:w-6 lg:h-6" style="color:var(--primary)"></i> Editar Membro';
-            ['membroId','nome','email','celular','cpf','rg','profissao','cep','estado','cidade','bairro','logradouro','numero','observacoes','foto_url'].forEach(k => { const el = document.getElementById(k); if (el) el.value = m[k] || ''; });
-            document.getElementById('data_nascimento').value = m.data_nascimento ? m.data_nascimento.split('T')[0] : '';
-            document.getElementById('data_conversao').value = m.data_conversao ? m.data_conversao.split('T')[0] : '';
-            document.getElementById('data_batismo').value = m.data_batismo ? m.data_batismo.split('T')[0] : '';
-            document.getElementById('sexo').value = m.sexo || '';
-            document.getElementById('tipo_membro').value = m.tipo_membro || 'MEMBRO';
-            document.getElementById('estado_civil').value = m.estado_civil || '';
-            if (m.foto_url) { document.getElementById('fotoPreview').innerHTML = `<img src="${m.foto_url}" class="w-full h-full rounded-full object-cover">`; }
-            else { document.getElementById('fotoPreview').innerHTML = '<i data-lucide="camera" class="w-8 h-8"></i>'; }
-            if (document.getElementById('portal_ativo') && m.portal_ativo) { document.getElementById('portal_ativo').checked = true; togglePortalInfo(); }
-            document.getElementById('modalMembro').style.display = 'flex';
-            lucide.createIcons();
-        } catch (e) { Swal.fire({ icon: 'error', title: 'Erro', text: 'Erro ao carregar membro' }); }
-    }
-    
-    function fecharModal() { document.getElementById('modalMembro').style.display = 'none'; document.getElementById('fotoPreview').innerHTML = '<i data-lucide="camera" class="w-8 h-8"></i>'; lucide.createIcons(); }
-    
-    async function salvarMembro() {
-        const id = document.getElementById('membroId').value;
-        const dados = {};
-        ['nome','email','celular','cpf','rg','data_nascimento','sexo','tipo_membro','estado_civil','profissao','cep','estado','cidade','bairro','logradouro','numero','data_conversao','data_batismo','observacoes','foto_url'].forEach(k => { const el = document.getElementById(k); if (el) dados[k] = el.value || null; });
-        if (document.getElementById('portal_ativo')) dados.portal_ativo = document.getElementById('portal_ativo').checked;
-        
-        if (!dados.nome) { Swal.fire({ icon: 'error', title: 'Campo obrigatório', text: 'Nome é obrigatório!' }); return; }
-        
-        Swal.fire({ title: 'Salvando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-        try {
-            if (id) { await window.api.put('/membros/' + id, dados); }
-            else { await window.api.post('/membros', dados); }
-            Swal.close();
-            fecharModal();
             carregarMembros();
-            carregarStats();
-            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: id ? 'Membro atualizado! ✨' : 'Membro cadastrado! 🎉', showConfirmButton: false, timer: 3000 });
-        } catch (e) { Swal.close(); Swal.fire({ icon: 'error', title: 'Erro', text: e.message }); }
-    }
-    
-    async function excluirMembro(id) {
-        const { isConfirmed } = await Swal.fire({ title: 'Desativar membro?', text: 'O membro será marcado como inativo.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', confirmButtonText: 'Sim, desativar', cancelButtonText: 'Cancelar' });
-        if (!isConfirmed) return;
-        try {
-            await window.api.delete('/membros/' + id);
-            carregarMembros(); carregarStats();
-            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Membro desativado!', showConfirmButton: false, timer: 3000 });
-        } catch (e) { Swal.fire({ icon: 'error', title: 'Erro', text: e.message }); }
-    }
-    
-    // ============ EXPORTAR ============
-    async function exportarCSV() {
-        const d = await window.api.get('/membros?limite=1000');
-        if (!d.membros || d.membros.length === 0) { Swal.fire({ icon: 'info', title: 'Nada para exportar' }); return; }
-        let csv = 'Nome,Email,Celular,CPF,Tipo,Status\n';
-        d.membros.forEach(m => { csv += `"${m.nome}","${m.email||''}","${m.celular||''}","${m.cpf||''}","${m.tipo_membro}","${m.status}"\n`; });
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `membros_${new Date().toISOString().split('T')[0]}.csv`; a.click();
-        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Exportado! 📥', showConfirmButton: false, timer: 2000 });
-    }
-    
-    document.getElementById('modalMembro').addEventListener('click', function(e) { if (e.target === this) fecharModal(); });
-</script>
+        });
+        
+        // ============ CARREGAR MEMBROS ============
+        async function carregarMembros() {
+            const tbody = document.getElementById('tabelaMembros');
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-12 text-gray-400"><i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto mb-2"></i> Carregando...</td></tr>';
+            
+            try {
+                const token = localStorage.getItem('auth_token');
+                const igrejaId = localStorage.getItem('igreja_id') || 1;
+                
+                const response = await fetch(`${window.API_URL}/membros`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'x-igreja-id': igrejaId
+                    }
+                });
+                
+                if (!response.ok) throw new Error('Erro ao carregar membros');
+                
+                const data = await response.json();
+                todosMembros = data.data || [];
+                
+                if (todosMembros.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-12 text-gray-400">Nenhum membro encontrado</td></tr>';
+                    return;
+                }
+                
+                atualizarEstatisticas(todosMembros);
+                renderizarTabela(todosMembros);
+                document.getElementById('infoPagina').textContent = `Total: ${todosMembros.length} membros`;
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-12 text-red-400">Erro ao carregar dados</td></tr>';
+            }
+        }
+        
+        // ============ ATUALIZAR ESTATÍSTICAS ============
+        function atualizarEstatisticas(membros) {
+            const total = membros.length;
+            const ativos = membros.filter(m => m.status === 'ATIVO').length;
+            const visitantes = membros.filter(m => m.tipo_membro === 'VISITANTE').length;
+            const lideres = membros.filter(m => m.tipo_membro === 'LIDER' || m.tipo_membro === 'PASTOR').length;
+            
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statAtivos').textContent = ativos;
+            document.getElementById('statVisitantes').textContent = visitantes;
+            document.getElementById('statLideres').textContent = lideres;
+        }
+        
+        // ============ RENDERIZAR TABELA ============
+        function renderizarTabela(membros) {
+            const tbody = document.getElementById('tabelaMembros');
+            let html = '';
+            
+            membros.forEach((m, i) => {
+                const colors = ['#1a237e','#8b5cf6','#10b981','#f59e0b','#ef4444','#3b82f6','#ec4899','#14b8a6'];
+                const colorIndex = i % colors.length;
+                const statusClass = m.status === 'ATIVO' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+                
+                html += `
+                <tr class="border-t hover:bg-gray-50">
+                    <td class="px-3 lg:px-6 py-3">
+                        <div class="flex items-center gap-2 lg:gap-3">
+                            <div class="w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-white font-bold text-xs lg:text-sm shadow" style="background:${colors[colorIndex]}">${m.nome ? m.nome[0] : '?'}</div>
+                            <strong class="text-xs lg:text-sm">${m.nome || 'Sem nome'}</strong>
+                        </div>
+                    </td>
+                    <td class="px-3 lg:px-6 py-3 text-xs lg:text-sm text-gray-600 hidden md:table-cell">${m.email || '-'}</td>
+                    <td class="px-3 lg:px-6 py-3 text-xs lg:text-sm text-gray-600 hidden sm:table-cell">${m.celular || '-'}</td>
+                    <td class="px-3 lg:px-6 py-3"><span class="px-2 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">${m.tipo_membro || 'N/A'}</span></td>
+                    <td class="px-3 lg:px-6 py-3"><span class="px-2 py-1 rounded-full text-xs font-semibold ${statusClass}">${m.status || 'N/A'}</span></td>
+                    <td class="px-3 lg:px-6 py-3 text-center">
+                        <div class="flex gap-1 justify-center">
+                            <button onclick="verMembro(${m.id})" class="p-1.5 hover:bg-blue-50 rounded-lg" title="Ver"><i data-lucide="eye" class="w-3.5 h-3.5 text-blue-500"></i></button>
+                            <button onclick="editarMembro(${m.id})" class="p-1.5 hover:bg-gray-100 rounded-lg" title="Editar"><i data-lucide="pencil" class="w-3.5 h-3.5 text-gray-500"></i></button>
+                            <button onclick="excluirMembro(${m.id})" class="p-1.5 hover:bg-red-50 rounded-lg" title="Excluir"><i data-lucide="trash-2" class="w-3.5 h-3.5 text-red-500"></i></button>
+                        </div>
+                    </td>
+                </tr>`;
+            });
+            
+            tbody.innerHTML = html;
+            lucide.createIcons();
+        }
+        
+        // ============ FUNÇÕES DE FILTRO ============
+        function filtrarTipo(tipo) {
+            filtroTipo = tipo;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if (event && event.target) event.target.classList.add('active');
+            
+            let filtrados = todosMembros;
+            if (tipo) filtrados = filtrados.filter(m => m.tipo_membro === tipo);
+            renderizarTabela(filtrados);
+        }
+        
+        function filtrarStatus(status) {
+            filtroStatus = status;
+            let filtrados = todosMembros;
+            if (status) filtrados = filtrados.filter(m => m.status === status);
+            renderizarTabela(filtrados);
+        }
+        
+        // ============ FUNÇÕES DE AÇÃO ============
+        function verMembro(id) {
+            const m = todosMembros.find(m => m.id === id);
+            if (m) {
+                alert(`📋 Detalhes do Membro\n\nNome: ${m.nome}\nEmail: ${m.email || 'Não informado'}\nCelular: ${m.celular || 'Não informado'}\nTipo: ${m.tipo_membro}\nStatus: ${m.status}\nProfissão: ${m.profissao || 'Não informado'}`);
+            }
+        }
+        
+        function editarMembro(id) {
+            alert(`✏️ Função de edição em desenvolvimento para o membro ID: ${id}`);
+        }
+        
+        async function excluirMembro(id) {
+            const m = todosMembros.find(m => m.id === id);
+            if (!m) return;
+            
+            if (!confirm(`Tem certeza que deseja excluir "${m.nome}"?`)) return;
+            
+            try {
+                const token = localStorage.getItem('auth_token');
+                const igrejaId = localStorage.getItem('igreja_id') || 1;
+                
+                const response = await fetch(`${window.API_URL}/membros/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'x-igreja-id': igrejaId
+                    }
+                });
+                
+                if (response.ok) {
+                    alert('✅ Membro excluído!');
+                    await carregarMembros();
+                } else {
+                    throw new Error('Erro ao excluir');
+                }
+            } catch (error) {
+                alert('❌ Erro ao excluir membro');
+            }
+        }
+        
+        function abrirModal() {
+            alert('✏️ Função de cadastro em desenvolvimento');
+        }
+        
+        function exportarCSV() {
+            if (todosMembros.length === 0) {
+                alert('Nenhum membro para exportar');
+                return;
+            }
+            
+            let csv = 'Nome,Email,Celular,Tipo,Status\n';
+            todosMembros.forEach(m => {
+                csv += `"${m.nome || ''}","${m.email || ''}","${m.celular || ''}","${m.tipo_membro || ''}","${m.status || ''}"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `membros_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+        }
+    </script>
 </body>
 </html>

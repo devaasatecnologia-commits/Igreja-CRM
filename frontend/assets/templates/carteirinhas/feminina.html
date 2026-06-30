@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carteirinha - Feminina</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @page { size: 85mm 54mm; margin: 0; }
+        body { font-family: 'Inter', sans-serif; background: #f5f0f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .carteirinha {
+            width: 85mm; height: 54mm;
+            background: linear-gradient(135deg, #6b1a5c, #8b2b7a);
+            border-radius: 10px;
+            padding: 4px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .carteirinha::before {
+            content: '';
+            position: absolute;
+            top: -20%; right: -10%;
+            width: 120px; height: 120px;
+            background: radial-gradient(circle, rgba(255,182,193,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .card-content {
+            background: white;
+            border-radius: 8px;
+            padding: 8px 12px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        .foto-area {
+            width: 55px; height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6b1a5c, #8b2b7a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 26px;
+            font-weight: 700;
+            flex-shrink: 0;
+            border: 3px solid #f472b6;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+        }
+        .foto-area img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .info-area { flex: 1; }
+        .info-area .nome { font-size: 13px; font-weight: 700; color: #6b1a5c; margin-bottom: 1px; }
+        .info-area .cargo { font-size: 9px; color: #f472b6; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .info-area .detalhes { font-size: 7.5px; color: #64748b; margin-top: 3px; line-height: 1.4; }
+        .info-area .detalhes span { display: block; }
+        .info-area .validade { font-size: 6.5px; color: #94a3b8; margin-top: 2px; }
+        .qr-code-area { width: 42px; height: 42px; background: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0; flex-shrink: 0; }
+        .qr-code-area img { width: 38px; height: 38px; }
+        .badge-tipo {
+            position: absolute;
+            top: 4px; right: 8px;
+            font-size: 6px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .footer-doc {
+            position: absolute;
+            bottom: 2px; right: 8px;
+            font-size: 4.5px;
+            color: rgba(255,255,255,0.25);
+            z-index: 1;
+            letter-spacing: 0.5px;
+        }
+        @media print { body { background: white; } .carteirinha { box-shadow: none; } }
+    </style>
+</head>
+<body>
+    <div class="carteirinha" id="carteirinha">
+        <div class="badge-tipo" id="tipoBadge">MEMBRO</div>
+        <div class="card-content">
+            <div class="foto-area" id="fotoMembro">
+                <span id="iniciais">MS</span>
+            </div>
+            <div class="info-area">
+                <div class="nome" id="nomeMembro">Maria Santos</div>
+                <div class="cargo" id="cargoMembro">Membro Ativo</div>
+                <div class="detalhes">
+                    <span id="igrejaNome">Igreja Avivamento do Espírito Santo</span>
+                    <span id="membroId">ID: 002</span>
+                </div>
+                <div class="validade" id="validadeDoc">Válido até: 15/01/2028</div>
+            </div>
+            <div class="qr-code-area">
+                <img id="qrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=40x40&data=MEM-002" alt="QR">
+            </div>
+        </div>
+        <div class="footer-doc">AASA SAGRADO v3.0</div>
+    </div>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        document.getElementById('nomeMembro').textContent = params.get('nome') || 'Maria Santos';
+        document.getElementById('iniciais').textContent = params.get('iniciais') || 'MS';
+        document.getElementById('cargoMembro').textContent = params.get('cargo') || 'Membro Ativo';
+        document.getElementById('igrejaNome').textContent = params.get('igreja') || 'Igreja Avivamento';
+        document.getElementById('membroId').textContent = `ID: ${params.get('id') || '002'}`;
+        document.getElementById('validadeDoc').textContent = `Válido até: ${params.get('validade') || '15/01/2028'}`;
+        document.getElementById('tipoBadge').textContent = params.get('tipo') || 'MEMBRO';
+        const qrData = params.get('qr') || 'MEM-002';
+        document.getElementById('qrCodeImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=40x40&data=${qrData}`;
+        if (params.get('foto')) {
+            document.getElementById('fotoMembro').innerHTML = `<img src="${params.get('foto')}" alt="Foto">`;
+        }
+        setTimeout(() => window.print(), 800);
+    </script>
+</body>
+</html>

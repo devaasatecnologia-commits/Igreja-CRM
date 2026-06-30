@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificado de Batismo - Feminino</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @page { size: A4 landscape; margin: 0; }
+        body { font-family: 'Georgia', serif; background: #f5f0f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .certificado {
+            width: 297mm; height: 210mm;
+            background: linear-gradient(135deg, #fff5f7, #fdf2f8);
+            padding: 15mm;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+        }
+        .certificado::before {
+            content: '';
+            position: absolute;
+            inset: 8mm;
+            border: 3px double #6b1a5c;
+            border-radius: 8px;
+        }
+        .certificado::after {
+            content: '🕊️';
+            position: absolute;
+            top: 15mm; right: 20mm;
+            font-size: 60px;
+            opacity: 0.06;
+        }
+        .conteudo { position: relative; z-index: 1; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+        .logo-area { margin-bottom: 12px; }
+        .logo-area img { height: 55px; width: auto; }
+        .titulo-cert {
+            font-size: 36px;
+            font-weight: 700;
+            color: #6b1a5c;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            border-bottom: 3px solid #f472b6;
+            display: inline-block;
+            padding-bottom: 6px;
+            margin-bottom: 12px;
+        }
+        .subtitulo { font-size: 18px; color: #64748b; margin-bottom: 8px; font-style: italic; }
+        .nome-destino {
+            font-size: 44px;
+            font-weight: 700;
+            color: #6b1a5c;
+            margin: 10px 0;
+            font-family: 'Georgia', serif;
+        }
+        .descricao { font-size: 16px; color: #334155; line-height: 1.8; max-width: 80%; margin: 0 auto 15px; }
+        .detalhes { font-size: 14px; color: #64748b; margin: 8px 0; }
+        .detalhes strong { color: #6b1a5c; }
+        .assinaturas { display: flex; justify-content: center; gap: 50px; margin-top: 25px; }
+        .assinatura { text-align: center; }
+        .assinatura .linha { width: 140px; border-bottom: 2px solid #6b1a5c; margin-bottom: 5px; }
+        .assinatura .nome { font-size: 14px; font-weight: 600; color: #6b1a5c; }
+        .assinatura .cargo { font-size: 11px; color: #64748b; }
+        .selo {
+            position: absolute;
+            bottom: 15mm; right: 20mm;
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            border: 3px solid #f472b6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            color: #6b1a5c;
+            font-weight: 700;
+            text-align: center;
+            background: rgba(244,114,182,0.05);
+            line-height: 1.2;
+        }
+        .numero-doc { position: absolute; bottom: 10mm; left: 15mm; font-size: 9px; color: #94a3b8; }
+        .data-doc { position: absolute; bottom: 10mm; right: 15mm; font-size: 9px; color: #94a3b8; }
+        .versiculo { font-size: 12px; color: #64748b; font-style: italic; margin-top: 10px; }
+        @media print { body { background: white; } .certificado { box-shadow: none; } }
+    </style>
+</head>
+<body>
+    <div class="certificado" id="certificado">
+        <div class="conteudo">
+            <div class="logo-area"><img src="https://aasatecnologia.com.br/logo.png" alt="Logo" id="logoIgreja"></div>
+            <div class="titulo-cert" id="tituloCert">Certificado de Batismo</div>
+            <div class="subtitulo">Certificamos que</div>
+            <div class="nome-destino" id="nomeDestino">Maria Aparecida dos Santos</div>
+            <div class="descricao">
+                foi batizada nas águas em <strong id="dataBatismo">15 de junho de 2010</strong>,
+                na <strong id="igrejaNome">Igreja Avivamento do Espírito Santo</strong>,
+                pela <strong id="ministrante">Pastora Ana Lúcia</strong>,
+                confessando publicamente sua fé em Jesus Cristo como seu único Senhor e Salvador.
+            </div>
+            <div class="detalhes">📖 <strong id="versiculoRef">Romanos 6:4</strong> - <span id="versiculoTexto">"Assim como Cristo foi ressuscitado dentre os mortos pela glória do Pai, nós também andemos em novidade de vida."</span></div>
+            <div class="assinaturas">
+                <div class="assinatura"><div class="linha"></div><div class="nome" id="assinante1">Pastora Ana Lúcia</div><div class="cargo">Pastora Presidente</div></div>
+                <div class="assinatura"><div class="linha"></div><div class="nome" id="assinante2">Maria Santos</div><div class="cargo">Secretária</div></div>
+            </div>
+            <div class="versiculo" id="versiculoExtra">"Portanto, se alguém está em Cristo, é nova criação. As coisas velhas já passaram; eis que tudo se fez novo." (2 Coríntios 5:17)</div>
+        </div>
+        <div class="selo">✅<br>VÁLIDO</div>
+        <div class="numero-doc" id="numeroDoc">Nº: CERT-BAT-2026-002</div>
+        <div class="data-doc" id="dataDoc">Emitido: 30/06/2026</div>
+    </div>
+    <script>
+        const p = new URLSearchParams(window.location.search);
+        document.getElementById('nomeDestino').textContent = p.get('nome') || 'Maria Aparecida dos Santos';
+        document.getElementById('dataBatismo').textContent = p.get('data') || '15 de junho de 2010';
+        document.getElementById('igrejaNome').textContent = p.get('igreja') || 'Igreja Avivamento do Espírito Santo';
+        document.getElementById('ministrante').textContent = p.get('ministrante') || 'Pastora Ana Lúcia';
+        document.getElementById('assinante1').textContent = p.get('pastor') || 'Pastora Ana Lúcia';
+        document.getElementById('assinante2').textContent = p.get('secretario') || 'Maria Santos';
+        document.getElementById('numeroDoc').textContent = `Nº: ${p.get('numero') || 'CERT-BAT-2026-002'}`;
+        document.getElementById('dataDoc').textContent = `Emitido: ${p.get('dataEmissao') || '30/06/2026'}`;
+        setTimeout(() => window.print(), 800);
+    </script>
+</body>
+</html>

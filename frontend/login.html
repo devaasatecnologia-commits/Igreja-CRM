@@ -386,30 +386,26 @@
                 });
                 const data = await res.json();
                 
-                console.log('📦 Resposta da API:', data);
-                
-                // CORRIGIDO: Verificar a estrutura correta da resposta
-                if (data.success === true && data.data && data.data.token) {
-                    // Salvar dados (usando a estrutura data.data)
-                    localStorage.setItem('auth_token', data.data.token);
-                    localStorage.setItem('usuario', JSON.stringify(data.data.user));
-                    localStorage.setItem('igreja', JSON.stringify(data.data.igreja));
-                    localStorage.setItem('igreja_nome', data.data.igreja.nome || 'Igreja');
-                    if (data.data.igreja.cor_primaria) localStorage.setItem('cor_primaria', data.data.igreja.cor_primaria);
-                    if (data.data.igreja.cor_secundaria) localStorage.setItem('cor_secundaria', data.data.igreja.cor_secundaria);
+                if (res.ok && data.token) {
+                    // Salvar dados da igreja (cores, logo, nome)
+                    localStorage.setItem('auth_token', data.token);
+                    localStorage.setItem('usuario', JSON.stringify(data.usuario));
+                    localStorage.setItem('igreja', JSON.stringify(data.igreja));
+                    localStorage.setItem('igreja_nome', data.igreja.nome);
+                    if (data.igreja.cor_primaria) localStorage.setItem('cor_primaria', data.igreja.cor_primaria);
+                    if (data.igreja.cor_secundaria) localStorage.setItem('cor_secundaria', data.igreja.cor_secundaria);
+                    if (data.igreja.logo_url) localStorage.setItem('igreja_logo', data.igreja.logo_url);
                     
                     msg.className = 'alert alert-success';
                     msg.textContent = '✅ Acesso concedido! Redirecionando...';
-                    btn.textContent = '✅ REDIRECIONANDO...';
-                    setTimeout(() => window.location.href = 'app/dashboard.html', 800);
+                    setTimeout(() => window.location.href = 'app/dashboard.html', 600);
                 } else {
                     msg.className = 'alert alert-error';
-                    msg.textContent = '❌ ' + (data.message || 'Credenciais inválidas');
+                    msg.textContent = '❌ ' + (data.error || 'Credenciais inválidas');
                     btn.disabled = false;
                     btn.textContent = '🔥 ENTRAR NO SISTEMA';
                 }
             } catch (err) {
-                console.error('❌ Erro:', err);
                 msg.className = 'alert alert-error';
                 msg.textContent = '❌ Erro de conexão com o servidor';
                 btn.disabled = false;

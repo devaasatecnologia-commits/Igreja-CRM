@@ -1,22 +1,24 @@
 import { Router } from 'express';
 import authRoutes from './auth';
 import membrosRoutes from './membros';
-import eventosRoutes from './eventos';
-import financeiroRoutes from './financeiro';
 import ministeriosRoutes from './ministerios';
-import doacoesRoutes from './doacoes';
+import celulasRoutes from './celulas';
+import agendamentosRoutes from './agendamentos';
+import financeiroRoutes from './financeiro';
+import documentosRoutes from './documentos';
 
 const router = Router();
 
 // Rotas de autenticação
 router.use('/auth', authRoutes);
 
-// Rotas principais
+// Rotas principais da aplicação
 router.use('/membros', membrosRoutes);
-router.use('/eventos', eventosRoutes);
-router.use('/financeiro', financeiroRoutes);
 router.use('/ministerios', ministeriosRoutes);
-router.use('/doacoes', doacoesRoutes);
+router.use('/celulas', celulasRoutes);
+router.use('/agendamentos', agendamentosRoutes);
+router.use('/financeiro', financeiroRoutes);
+router.use('/documentos', documentosRoutes);
 
 // Rota de teste
 router.get('/test', (req, res) => {
@@ -25,24 +27,6 @@ router.get('/test', (req, res) => {
         message: 'API funcionando perfeitamente!',
         timestamp: new Date().toISOString()
     });
-});
-
-// Rota para listar usuários
-router.get('/usuarios', async (req, res) => {
-    try {
-        const pool = require('../config/database').default;
-        const [rows] = await pool.query('SELECT id, nome, email, tipo FROM usuarios LIMIT 10');
-        res.json({
-            success: true,
-            data: rows
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Erro ao buscar usuários',
-            error: error instanceof Error ? error.message : 'Erro desconhecido'
-        });
-    }
 });
 
 export { router };

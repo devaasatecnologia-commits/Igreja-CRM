@@ -8,161 +8,83 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-    <!-- FullCalendar -->
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/locales/pt-br.global.min.js'></script>
-    
     <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif'],serif:['Playfair Display','serif']}}}}</script>
     <link rel="stylesheet" href="../assets/css/sidebar.css">
     <style>
-        :root{--primary:#1a237e;--gold:#f59e0b;--success:#10b981;--danger:#ef4444;--info:#3b82f6;--purple:#8b5cf6}
+        :root{--primary:#1a237e;--gold:#f59e0b}
         .main-content{margin-left:270px;min-height:100vh;background:linear-gradient(135deg,#f8faff 0%,#fffbeb 30%,#f0f4ff 60%,#fefce8 100%)}
         @media(max-width:768px){.main-content{margin-left:0;padding-top:70px}}
         @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
         .animate-slide{animation:slideUp .4s ease forwards}
-        .card-premium{background:white;border-radius:20px;padding:24px;border:1px solid #f1f5f9}
-        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-        .modal-premium{background:white;border-radius:24px;width:95%;max-width:650px;max-height:85vh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.2);animation:modalIn .3s ease}
-        .input-premium{width:100%;padding:12px 16px;border:2px solid #e2e8f0;border-radius:12px;font-size:13px;font-family:'Inter',sans-serif;background:#f8fafc;transition:all .2s}
-        .input-premium:focus{outline:none;border-color:#1a237e;box-shadow:0 0 0 3px rgba(26,35,126,.08);background:white}
-        .select-premium{width:100%;padding:12px 16px;border:2px solid #e2e8f0;border-radius:12px;font-size:13px;font-family:'Inter',sans-serif;background:#f8fafc;cursor:pointer}
+        .card-premium{background:white;border-radius:20px;padding:22px;border:1px solid #f1f5f9;transition:all .3s}
         .btn-premium{padding:10px 22px;border-radius:12px;font-weight:600;font-size:13px;cursor:pointer;border:none;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
         .btn-premium:hover{transform:translateY(-1px);box-shadow:0 6px 15px rgba(0,0,0,.1)}
         .btn-sm{padding:6px 12px;font-size:11px;border-radius:8px}
         .tab-btn{padding:8px 16px;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:#f1f5f9;color:#64748b;transition:all .2s}
         .tab-btn.active{background:#1a237e;color:white}
-        .badge{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600}
-        
-        /* FullCalendar Custom */
-        .fc { font-family: 'Inter', sans-serif; }
-        .fc-toolbar-title { font-family: 'Playfair Display', serif; color: #1a237e; font-size: 1.3rem !important; }
-        .fc-button-primary { background: #1a237e !important; border-color: #1a237e !important; border-radius: 10px !important; font-weight: 600 !important; font-size: 13px !important; padding: 8px 16px !important; }
-        .fc-button-primary:hover { background: #283593 !important; }
-        .fc-button-active { background: #f59e0b !important; border-color: #f59e0b !important; color: #000 !important; }
-        .fc-daygrid-event { border-radius: 8px !important; padding: 4px 8px !important; font-size: 12px !important; font-weight: 500 !important; cursor: pointer; }
-        .fc-day-today { background: rgba(26,35,126,0.03) !important; }
-        .fc-scrollgrid { border-radius: 16px !important; overflow: hidden; }
-        .fc-theme-standard td, .fc-theme-standard th { border-color: #f1f5f9 !important; }
-        .fc-theme-standard .fc-scrollgrid { border-color: #f1f5f9 !important; }
-        
-        @media(max-width:768px) {
-            .fc-toolbar { flex-direction: column; gap: 8px; }
-            .fc-toolbar-title { font-size: 1rem !important; }
-        }
+        .evento-card{background:white;border-radius:12px;padding:16px;border-left:4px solid var(--primary);margin-bottom:10px;transition:all .3s;cursor:pointer}
+        .evento-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.08);transform:translateX(4px)}
     </style>
 </head>
 <body class="font-sans">
+
+    <div id="sidebar-container"></div>
+
     <div class="app-layout">
         <main class="main-content">
-            
-            <!-- HEADER -->
+
             <header class="sticky top-0 z-20 px-4 lg:px-8 py-3 lg:py-5 bg-white/85 backdrop-blur-xl border-b flex items-center justify-between flex-wrap gap-3">
                 <div>
                     <h1 class="text-xl lg:text-3xl font-serif font-bold flex items-center gap-2 lg:gap-3" style="color:var(--primary)">
-                        <i data-lucide="calendar-days" class="w-6 h-6 lg:w-8 lg:h-8"></i> Agenda
+                        <i data-lucide="calendar" class="w-6 h-6 lg:w-8 lg:h-8"></i> Agenda
                     </h1>
                     <p class="text-xs lg:text-sm mt-1 font-medium" style="color:var(--gold)">Calendário de eventos da igreja</p>
                 </div>
-                <div class="flex gap-2 flex-wrap">
-                    <button onclick="mostrarLista()" class="btn-premium btn-sm bg-white border text-gray-600" id="btnLista"><i data-lucide="list" class="w-3.5 h-3.5"></i> Lista</button>
-                    <button onclick="mostrarCalendario()" class="btn-premium btn-sm text-white" style="background:#1a237e" id="btnCalendario"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> Calendário</button>
-                    <button onclick="abrirModalAta()" class="btn-premium btn-sm bg-purple-50 text-purple-700"><i data-lucide="file-text" class="w-3.5 h-3.5"></i> Ata</button>
-                    <button onclick="abrirModal()" class="btn-premium text-white" style="background:linear-gradient(135deg,#1a237e,#283593)"><i data-lucide="calendar-plus" class="w-4 h-4"></i> Novo Evento</button>
+                <div class="flex gap-2">
+                    <button onclick="abrirModal()" class="btn-premium text-white" style="background:linear-gradient(135deg,#1a237e,#283593)"><i data-lucide="plus-circle" class="w-4 h-4"></i> Novo Evento</button>
                 </div>
             </header>
             
             <div class="p-4 lg:p-8 space-y-4 lg:space-y-6">
-                
-                <!-- FILTROS RÁPIDOS -->
-                <div class="flex gap-2 flex-wrap" id="filtrosRapidos">
-                    <button class="tab-btn active" onclick="filtrarEventos('')">📋 Todos</button>
-                    <button class="tab-btn" onclick="filtrarEventos('CULTO')">🛐 Cultos</button>
-                    <button class="tab-btn" onclick="filtrarEventos('REUNIAO')">📋 Reuniões</button>
-                    <button class="tab-btn" onclick="filtrarEventos('CIRCULO_ORACAO')">🙏 Oração</button>
-                    <button class="tab-btn" onclick="filtrarEventos('EVENTO')">🎉 Eventos</button>
+
+                <!-- STATS -->
+                <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
+                    <div class="card-premium animate-slide">
+                        <div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center" style="background:rgba(26,35,126,.1)"><i data-lucide="calendar" class="w-4 h-4 lg:w-5 lg:h-5" style="color:#1a237e"></i></div></div>
+                        <div class="text-xl lg:text-3xl font-extrabold" style="color:var(--primary)" id="statTotal">0</div>
+                        <div class="text-xs lg:text-sm text-gray-500">Total de Eventos</div>
+                    </div>
+                    <div class="card-premium animate-slide" style="animation-delay:.1s">
+                        <div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center" style="background:rgba(16,185,129,.1)"><i data-lucide="check-circle" class="w-4 h-4 lg:w-5 lg:h-5 text-green-600"></i></div></div>
+                        <div class="text-xl lg:text-3xl font-extrabold text-green-600" id="statAgendados">0</div>
+                        <div class="text-xs lg:text-sm text-gray-500">Agendados</div>
+                    </div>
+                    <div class="card-premium animate-slide" style="animation-delay:.2s">
+                        <div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center" style="background:rgba(239,68,68,.1)"><i data-lucide="x-circle" class="w-4 h-4 lg:w-5 lg:h-5 text-red-600"></i></div></div>
+                        <div class="text-xl lg:text-3xl font-extrabold text-red-600" id="statCancelados">0</div>
+                        <div class="text-xs lg:text-sm text-gray-500">Cancelados</div>
+                    </div>
                 </div>
-                
-                <!-- VISUALIZAÇÃO: CALENDÁRIO -->
-                <div id="viewCalendario" class="card-premium" style="padding:16px">
-                    <div id="calendar"></div>
+
+                <!-- FILTROS -->
+                <div class="flex gap-2 flex-wrap">
+                    <button class="tab-btn active" onclick="filtrar('')">Todos</button>
+                    <button class="tab-btn" onclick="filtrar('CULTO')">Cultos</button>
+                    <button class="tab-btn" onclick="filtrar('REUNIAO')">Reuniões</button>
+                    <button class="tab-btn" onclick="filtrar('EVENTO')">Eventos</button>
                 </div>
-                
-                <!-- VISUALIZAÇÃO: LISTA -->
-                <div id="viewLista" class="space-y-3" style="display:none">
-                    <p class="text-center py-12 text-gray-400"><i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto mb-2"></i> Carregando eventos...</p>
+
+                <!-- LISTA DE EVENTOS -->
+                <div id="listaEventos">
+                    <div class="text-center py-12 text-gray-400">
+                        <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto mb-3"></i>
+                        <p>Carregando eventos...</p>
+                    </div>
                 </div>
                 
             </div>
-            
             <footer class="text-center py-6 text-xs text-gray-400 border-t bg-white/50" id="footerText"></footer>
         </main>
-    </div>
-
-    <!-- MODAL EVENTO (MESMO QUE ANTES) -->
-    <div class="modal-overlay" id="modalEvento" style="display:none">
-        <div class="modal-premium">
-            <div class="sticky top-0 bg-white z-10 px-6 lg:px-8 py-4 lg:py-6 border-b flex justify-between rounded-t-3xl">
-                <h2 class="text-lg lg:text-xl font-bold flex items-center gap-2" id="modalTitle"><i data-lucide="calendar-plus" class="w-5 h-5 lg:w-6 lg:h-6" style="color:var(--primary)"></i> Novo Evento</h2>
-                <button onclick="fecharModal()" class="w-8 h-8 lg:w-10 lg:h-10 rounded-full border-2 flex items-center justify-center hover:bg-gray-50"><i data-lucide="x" class="w-4 h-4 lg:w-5 lg:h-5"></i></button>
-            </div>
-            <div class="p-6 lg:p-8 space-y-4">
-                <input type="hidden" id="eventoId">
-                <input type="text" id="titulo" placeholder="Título do evento *" class="input-premium" required>
-                <textarea id="descricao" placeholder="Descrição" rows="2" class="input-premium"></textarea>
-                <div class="grid grid-cols-2 gap-3">
-                    <input type="datetime-local" id="data_inicio" class="input-premium">
-                    <input type="datetime-local" id="data_fim" class="input-premium">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <select id="tipo" class="select-premium">
-                        <option value="CULTO">🛐 Culto</option><option value="REUNIAO">📋 Reunião</option>
-                        <option value="CIRCULO_ORACAO">🙏 Oração</option><option value="ENSAIO">🎵 Ensaio</option>
-                        <option value="CASAMENTO">💒 Casamento</option><option value="BATISMO">💧 Batismo</option>
-                        <option value="EVENTO">🎉 Evento</option><option value="OUTRO">📌 Outro</option>
-                    </select>
-                    <select id="visibilidade" class="select-premium">
-                        <option value="PUBLICO">🌍 Público</option><option value="MEMBROS">👥 Membros</option>
-                        <option value="LIDERES">👑 Líderes</option><option value="PRIVADO">🔒 Privado</option>
-                    </select>
-                </div>
-                <input type="text" id="local_evento" placeholder="Local" class="input-premium">
-                <div class="grid grid-cols-2 gap-3">
-                    <input type="text" id="sala" placeholder="Sala (opcional)" class="input-premium">
-                    <input type="number" id="capacidade" placeholder="Capacidade" class="input-premium">
-                </div>
-                <textarea id="material" placeholder="Material necessário" rows="2" class="input-premium"></textarea>
-                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                    <input type="checkbox" id="transmissao" class="w-5 h-5">
-                    <label class="text-sm font-semibold">📡 Transmissão ao vivo</label>
-                </div>
-                <input type="url" id="url_transmissao" placeholder="URL da transmissão" class="input-premium" style="display:none">
-            </div>
-            <div class="sticky bottom-0 bg-white z-10 px-6 lg:px-8 py-4 lg:py-5 border-t flex justify-end gap-3 rounded-b-3xl">
-                <button onclick="fecharModal()" class="btn-premium bg-gray-100 text-gray-600"><i data-lucide="x" class="w-4 h-4"></i> Cancelar</button>
-                <button onclick="salvarEvento()" class="btn-premium text-white" style="background:var(--primary)"><i data-lucide="save" class="w-4 h-4"></i> Salvar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL ATA (MESMO) -->
-    <div class="modal-overlay" id="modalAta" style="display:none">
-        <div class="modal-premium" style="max-width:550px">
-            <div class="sticky top-0 bg-white z-10 px-6 py-4 border-b flex justify-between rounded-t-3xl">
-                <h2 class="text-lg font-bold flex items-center gap-2"><i data-lucide="file-text" class="w-5 h-5 text-purple-600"></i> Nova Ata</h2>
-                <button onclick="fecharModalAta()" class="w-8 h-8 rounded-full border-2 flex items-center justify-center"><i data-lucide="x" class="w-4 h-4"></i></button>
-            </div>
-            <div class="p-6 space-y-3">
-                <select id="ata_evento_id" class="select-premium"><option value="">Selecione um evento</option></select>
-                <input type="text" id="ata_titulo" placeholder="Título da ata" class="input-premium">
-                <textarea id="ata_conteudo" placeholder="Conteúdo da ata..." rows="5" class="input-premium"></textarea>
-            </div>
-            <div class="px-6 py-4 border-t flex justify-end gap-3">
-                <button onclick="fecharModalAta()" class="btn-premium bg-gray-100 text-gray-600">Cancelar</button>
-                <button onclick="salvarAta()" class="btn-premium text-white" style="background:var(--purple)"><i data-lucide="save" class="w-4 h-4"></i> Salvar Ata</button>
-            </div>
-        </div>
     </div>
 
     <script src="../assets/js/config.js"></script>
@@ -170,531 +92,112 @@
     <script src="../assets/js/api.js"></script>
     <script src="../assets/js/sidebar.js"></script>
     <script>
-        // ============ VARIÁVEIS ============
-        let filtroAtual = '';
-        let calendar;
-        let visualizacaoAtual = 'calendario'; // 'calendario' ou 'lista'
         let todosEventos = [];
+        let filtroTipo = '';
         
-        // ============ INIT ============
         document.addEventListener('DOMContentLoaded', () => {
-            if (!window.api || !window.api.isAuthenticated()) { window.location.href = '../login.html'; return; }
+            if (!window.api || !window.api.isAuthenticated()) { 
+                window.location.href = '../login.html'; 
+                return; 
+            }
             document.getElementById('footerText').textContent = `${window.APP_NAME} v3.0 • AASA Tecnologia © 2026`;
             lucide.createIcons();
-            
-            document.getElementById('transmissao').addEventListener('change', function(){
-                document.getElementById('url_transmissao').style.display = this.checked ? 'block' : 'none';
-            });
-            
-            carregarTodosEventos();
+            carregarEventos();
         });
         
-        // ============ CARREGAR EVENTOS ============
-        async function carregarTodosEventos() {
+        async function carregarEventos() {
             try {
-                let url = '/agenda?limite=200';
-                if (filtroAtual) url += `&tipo=${filtroAtual}`;
-                todosEventos = await window.api.get(url) || [];
+                const token = localStorage.getItem('auth_token');
+                const igrejaId = localStorage.getItem('igreja_id') || 1;
                 
-                if (visualizacaoAtual === 'calendario') {
-                    renderizarCalendario();
-                } else {
-                    renderizarLista();
-                }
-            } catch (e) { console.error(e); }
-        }
-        
-        // ============ CALENDÁRIO ============
-        function renderizarCalendario() {
-            const calendarEl = document.getElementById('calendar');
-            
-            // Cores por tipo
-            const coresEvento = {
-                CULTO: '#1a237e',
-                REUNIAO: '#f59e0b',
-                CIRCULO_ORACAO: '#8b5cf6',
-                BATISMO: '#06b6d4',
-                CASAMENTO: '#ec4899',
-                EVENTO: '#10b981',
-                OUTRO: '#6366f1'
-            };
-            
-            if (calendar) calendar.destroy();
-            
-            calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                locale: 'pt-br',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,listMonth'
-                },
-                buttonText: {
-                    today: 'Hoje',
-                    month: 'Mês',
-                    week: 'Semana',
-                    list: 'Lista'
-                },
-                events: todosEventos.map(e => ({
-                    id: e.id,
-                    title: e.titulo,
-                    start: e.data_inicio,
-                    end: e.data_fim,
-                    backgroundColor: coresEvento[e.tipo] || '#6366f1',
-                    borderColor: coresEvento[e.tipo] || '#6366f1',
-                    textColor: '#ffffff',
-                    extendedProps: e
-                })),
-                eventClick: function(info) {
-                    verEvento(info.event.extendedProps);
-                },
-                height: 'auto',
-                firstDay: 0,
-                dayMaxEvents: 3
-            });
-            
-            calendar.render();
-        }
-        
-        // ============ LISTA ============
-        function renderizarLista() {
-            let html = '';
-            if (todosEventos.length > 0) {
-                todosEventos.forEach(e => {
-                    const tipoClass = e.tipo === 'CULTO' ? 'culto' : e.tipo === 'REUNIAO' ? 'reuniao' : e.tipo === 'CIRCULO_ORACAO' ? 'oracao' : e.tipo === 'BATISMO' ? 'batismo' : e.tipo === 'CASAMENTO' ? 'casamento' : 'evento';
-                    html += `
-                    <div class="evento-card ${tipoClass} animate-slide" onclick="verEvento(${JSON.stringify(e).replace(/"/g,'&quot;')})" style="cursor:pointer">
-                        <div class="flex justify-between items-start flex-wrap gap-3">
-                            <div class="flex-1">
-                                <h3 class="font-semibold text-lg">${e.titulo}</h3>
-                                <p class="text-sm text-gray-500">${e.descricao || ''}</p>
-                                <div class="flex gap-4 mt-3 text-xs text-gray-400">
-                                    <span><i data-lucide="clock" class="w-3 h-3 inline"></i> ${new Date(e.data_inicio).toLocaleString('pt-BR')}</span>
-                                    <span><i data-lucide="map-pin" class="w-3 h-3 inline"></i> ${e.local_evento || 'N/A'}</span>
-                                </div>
-                            </div>
-                            <span class="badge ${e.status==='AGENDADO'?'bg-blue-100 text-blue-700':'bg-green-100 text-green-700'}">${e.status}</span>
-                        </div>
-                    </div>`;
+                const response = await fetch(`${window.API_URL}/agendamentos`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'x-igreja-id': igrejaId
+                    }
                 });
-            } else {
-                html = '<p class="text-center py-12 text-gray-400">Nenhum evento encontrado</p>';
+                
+                if (!response.ok) throw new Error('Erro ao carregar eventos');
+                
+                const data = await response.json();
+                todosEventos = data.data || [];
+                
+                atualizarEstatisticas(todosEventos);
+                renderizarEventos(todosEventos);
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                document.getElementById('listaEventos').innerHTML = `<div class="text-center py-12 text-red-400">Erro ao carregar dados: ${error.message}</div>`;
             }
-            document.getElementById('viewLista').innerHTML = html;
-            lucide.createIcons();
         }
         
-        // ============ ALTERNAR VISUALIZAÇÃO ============
-        function mostrarCalendario() {
-            visualizacaoAtual = 'calendario';
-            document.getElementById('viewCalendario').style.display = 'block';
-            document.getElementById('viewLista').style.display = 'none';
-            document.getElementById('btnCalendario').style.background = '#1a237e';
-            document.getElementById('btnCalendario').style.color = 'white';
-            document.getElementById('btnLista').style.background = 'white';
-            document.getElementById('btnLista').style.color = '#64748b';
-            renderizarCalendario();
-        }
-        
-        function mostrarLista() {
-            visualizacaoAtual = 'lista';
-            document.getElementById('viewCalendario').style.display = 'none';
-            document.getElementById('viewLista').style.display = 'block';
-            document.getElementById('btnLista').style.background = '#1a237e';
-            document.getElementById('btnLista').style.color = 'white';
-            document.getElementById('btnCalendario').style.background = 'white';
-            document.getElementById('btnCalendario').style.color = '#64748b';
-            renderizarLista();
-        }
-        
-        // ============ FILTRAR ============
-        function filtrarEventos(tipo) {
-            filtroAtual = tipo;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            if (event && event.target) event.target.classList.add('active');
-            carregarTodosEventos();
-        }
-        
-        // ============ MODAL CRIAR/EDITAR ============
-        function abrirModal() {
-            document.getElementById('modalTitle').innerHTML = '<i data-lucide="calendar-plus" class="w-5 h-5" style="color:var(--primary)"></i> Novo Evento';
-            document.getElementById('eventoId').value = '';
-            ['titulo','descricao','local_evento','sala','capacidade','material','url_transmissao'].forEach(id => document.getElementById(id).value = '');
-            document.getElementById('data_inicio').value = '';
-            document.getElementById('data_fim').value = '';
-            document.getElementById('tipo').value = 'CULTO';
-            document.getElementById('visibilidade').value = 'PUBLICO';
-            document.getElementById('transmissao').checked = false;
-            document.getElementById('url_transmissao').style.display = 'none';
-            document.getElementById('modalEvento').style.display = 'flex';
-            lucide.createIcons();
-        }
-        
-        function fecharModal() { document.getElementById('modalEvento').style.display = 'none'; }
-        
-        function editarEvento(evento) {
-            Swal.close();
-            document.getElementById('modalTitle').innerHTML = '<i data-lucide="pencil" class="w-5 h-5" style="color:var(--primary)"></i> Editar Evento';
-            document.getElementById('eventoId').value = evento.id;
-            document.getElementById('titulo').value = evento.titulo || '';
-            document.getElementById('descricao').value = evento.descricao || '';
-            document.getElementById('data_inicio').value = evento.data_inicio ? evento.data_inicio.substring(0, 16) : '';
-            document.getElementById('data_fim').value = evento.data_fim ? evento.data_fim.substring(0, 16) : '';
-            document.getElementById('tipo').value = evento.tipo || 'CULTO';
-            document.getElementById('visibilidade').value = evento.visibilidade || 'PUBLICO';
-            document.getElementById('local_evento').value = evento.local_evento || '';
-            document.getElementById('sala').value = evento.sala || '';
-            document.getElementById('capacidade').value = evento.capacidade || '';
-            document.getElementById('material').value = evento.material || '';
-            document.getElementById('transmissao').checked = evento.transmicao_ao_vivo || false;
-            document.getElementById('url_transmissao').value = evento.url_transmissao || '';
-            document.getElementById('url_transmissao').style.display = evento.transmicao_ao_vivo ? 'block' : 'none';
-            document.getElementById('modalEvento').style.display = 'flex';
-            lucide.createIcons();
-        }
-        
-        async function salvarEvento() {
-            const id = document.getElementById('eventoId').value;
-            const d = {
-                titulo: document.getElementById('titulo').value,
-                descricao: document.getElementById('descricao').value,
-                data_inicio: document.getElementById('data_inicio').value,
-                data_fim: document.getElementById('data_fim').value,
-                tipo: document.getElementById('tipo').value,
-                visibilidade: document.getElementById('visibilidade').value,
-                local_evento: document.getElementById('local_evento').value,
-                sala: document.getElementById('sala').value,
-                capacidade: document.getElementById('capacidade').value || null,
-                material: document.getElementById('material').value,
-                transmicao_ao_vivo: document.getElementById('transmissao').checked,
-                url_transmissao: document.getElementById('url_transmissao').value
-            };
+        function atualizarEstatisticas(eventos) {
+            const total = eventos.length;
+            const agendados = eventos.filter(e => e.status === 'AGENDADO').length;
+            const cancelados = eventos.filter(e => e.status === 'CANCELADO').length;
             
-            if (!d.titulo || !d.data_inicio || !d.data_fim) {
-                Swal.fire({icon:'error',title:'Campos obrigatórios'});
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statAgendados').textContent = agendados;
+            document.getElementById('statCancelados').textContent = cancelados;
+        }
+        
+        function renderizarEventos(eventos) {
+            const container = document.getElementById('listaEventos');
+            
+            if (eventos.length === 0) {
+                container.innerHTML = '<div class="text-center py-12 text-gray-400">Nenhum evento encontrado</div>';
                 return;
             }
             
-            try {
-                if (id) { await window.api.put('/agenda/' + id, d); }
-                else { await window.api.post('/agenda', d); }
-                fecharModal();
-                carregarTodosEventos();
-                Swal.fire({toast:true,position:'top-end',icon:'success',title:id?'Atualizado! ✨':'Criado! 📅',showConfirmButton:false,timer:3000});
-            } catch (e) { Swal.fire({icon:'error',title:'Erro',text:e.message}); }
+            let html = '';
+            eventos.forEach(e => {
+                const cores = {
+                    CULTO: '#1a237e',
+                    REUNIAO: '#f59e0b',
+                    EVENTO: '#10b981',
+                    CIRCULO_ORACAO: '#8b5cf6',
+                    ENSAIO: '#3b82f6'
+                };
+                const cor = cores[e.tipo] || '#6366f1';
+                const statusClass = e.status === 'AGENDADO' ? 'bg-green-100 text-green-700' : 
+                                   e.status === 'CANCELADO' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700';
+                
+                html += `
+                <div class="evento-card animate-slide" style="border-left-color:${cor}">
+                    <div class="flex justify-between items-start flex-wrap gap-2">
+                        <div>
+                            <h3 class="font-bold text-sm lg:text-base" style="color:var(--primary)">${e.titulo || 'Sem título'}</h3>
+                            <p class="text-xs text-gray-500 mt-1">${e.descricao || 'Sem descrição'}</p>
+                            <div class="flex gap-3 mt-2 text-xs text-gray-400">
+                                <span><i data-lucide="calendar" class="w-3 h-3 inline"></i> ${Utils.formatDateTime(e.data_inicio)}</span>
+                                <span><i data-lucide="map-pin" class="w-3 h-3 inline"></i> ${e.local_evento || 'N/A'}</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-end gap-1">
+                            <span class="px-2 py-1 rounded-full text-xs font-semibold ${statusClass}">${e.status || 'N/A'}</span>
+                            <span class="text-xs text-gray-400">${e.tipo || 'OUTRO'}</span>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            
+            container.innerHTML = html;
+            lucide.createIcons();
         }
         
-        // ============ VER DETALHES (SWAL) ============
-    // ============ VER DETALHES DO EVENTO (COMPLETO) ============
-        async function verEvento(evento) {
-            Swal.fire({ title: 'Carregando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        function filtrar(tipo) {
+            filtroTipo = tipo;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if (event && event.target) event.target.classList.add('active');
             
-            try {
-                const detalhes = await window.api.get('/agenda/' + (evento.id || evento));
-                Swal.close();
-                
-                if (!detalhes) {
-                    Swal.fire({ icon: 'error', title: 'Erro', text: 'Evento não encontrado' });
-                    return;
-                }
-                
-        // Cores por tipo
-                const cores = {
-                    CULTO: { bg: '#eef2ff', text: '#1a237e', border: '#1a237e', icon: '🏛️' },
-                    REUNIAO: { bg: '#fffbeb', text: '#d97706', border: '#f59e0b', icon: '📋' },
-                    CIRCULO_ORACAO: { bg: '#f5f3ff', text: '#7c3aed', border: '#8b5cf6', icon: '🙏' },
-                    BATISMO: { bg: '#ecfeff', text: '#0891b2', border: '#06b6d4', icon: '💧' },
-                    CASAMENTO: { bg: '#fdf2f8', text: '#db2777', border: '#ec4899', icon: '💒' },
-                    EVENTO: { bg: '#ecfdf5', text: '#059669', border: '#10b981', icon: '🎉' }
-                };
-                const cor = cores[detalhes.tipo] || cores.EVENTO;
-                
-        // Verificar permissão
-                const usuarioLogado = JSON.parse(localStorage.getItem('usuario') || '{}');
-                const podeEditar = usuarioLogado.nivel === 'ADMIN_MASTER' || usuarioLogado.nivel === 'ADMIN' || detalhes.criado_por === usuarioLogado.id;
-                
-        // ============ PARTICIPANTES ============
-                let participantesHtml = '';
-                if (detalhes.participantes && detalhes.participantes.length > 0) {
-                    participantesHtml = `
-            <div style="text-align:left;margin-top:16px">
-                <h4 style="font-weight:bold;color:#1a237e;margin-bottom:10px;display:flex;justify-content:space-between">
-                    👥 Participantes (${detalhes.participantes.length})
-                        ${detalhes.capacidade ? `<span style="font-size:12px;color:#94a3b8">${detalhes.participantes.length}/${detalhes.capacidade} vagas</span>` : ''}
-                </h4>
-                <div style="max-height:250px;overflow-y:auto;display:flex;flex-direction:column;gap:6px">
-                        ${detalhes.participantes.map(p => `
-                        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:#f8fafc;border-radius:12px">
-                            <div style="display:flex;align-items:center;gap:10px">
-                                <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1a237e,#283593);color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:13px">${p.nome[0]}</div>
-                                <div>
-                                    <strong style="font-size:13px">${p.nome}</strong>
-                                    <p style="font-size:11px;color:#94a3b8">${p.celular || 'Sem celular'}</p>
-                                </div>
-                            </div>
-                            <span style="font-size:11px;padding:4px 10px;border-radius:20px;background:${p.status==='PRESENTE'?'#d1fae5':p.status==='CONFIRMADO'?'#e0e7ff':'#fef3c7'};color:${p.status==='PRESENTE'?'#059669':p.status==='CONFIRMADO'?'#1a237e':'#d97706'}">${p.status}</span>
-                        </div>
-                            `).join('')}
-                </div>
-                    </div>`;
-                } else {
-                    participantesHtml = `
-            <div style="text-align:left;margin-top:16px">
-                <h4 style="font-weight:bold;color:#1a237e;margin-bottom:10px">👥 Participantes</h4>
-                <p style="color:#94a3b8;font-size:13px;text-align:center;padding:20px">Nenhum participante confirmado ainda.</p>
-                    </div>`;
-                }
-                
-        // ============ CHECK-INS ============
-                let checkinsHtml = '';
-                if (detalhes.checkins && detalhes.checkins.length > 0) {
-                    checkinsHtml = `
-            <div style="text-align:left;margin-top:16px">
-                <h4 style="font-weight:bold;color:#10b981;margin-bottom:10px">✅ Check-ins (${detalhes.checkins.length})</h4>
-                <div style="display:flex;flex-wrap:wrap;gap:6px">
-                        ${detalhes.checkins.map(c => `<span style="font-size:11px;padding:4px 10px;background:#d1fae5;color:#059669;border-radius:20px">✓ ${c.nome}</span>`).join('')}
-                </div>
-                    </div>`;
-                }
-                
-        // ============ QR CODE (APENAS EVENTOS PÚBLICOS) ============
-                let qrCodeHtml = '';
-                if (detalhes.visibilidade === 'PUBLICO') {
-                    const qrData = `${window.SITE_URL || 'http://localhost/igreja-crm/frontend'}/membro/evento.html?id=${detalhes.id}`;
-                    qrCodeHtml = `
-            <div style="text-align:center;margin-top:16px;padding:16px;background:#f8fafc;border-radius:12px">
-                <h4 style="font-weight:bold;color:#1a237e;margin-bottom:10px">📱 QR Code do Evento</h4>
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(qrData)}" 
-                     alt="QR Code" style="margin:0 auto;border-radius:12px;background:white;padding:8px">
-                <p style="font-size:10px;color:#94a3b8;margin-top:8px;word-break:break-all">${qrData}</p>
-                <button onclick="copiarLink('${qrData}')" style="margin-top:6px;padding:6px 14px;background:#1a237e;color:white;border:none;border-radius:8px;font-size:11px;cursor:pointer">📋 Copiar Link</button>
-                    </div>`;
-                }
-                
- // ============ CONVIDADOS (PRIVADO/MEMBROS/LIDERES) ============
-                let convidadosHtml = '';
-                if (detalhes.visibilidade !== 'PUBLICO' && podeEditar) {
-                    convidadosHtml = `
-    <div style="text-align:left;margin-top:16px;padding:16px;background:#fef3c7;border-radius:12px">
-        <h4 style="font-weight:bold;color:#d97706;margin-bottom:10px">✉️ Convidar Membros</h4>
-        <div style="display:flex;gap:8px">
-            <select id="convidarMembroSelect" style="flex:1;padding:8px;border:1px solid #e2e8f0;border-radius:8px;font-size:12px">
-                <option value="">Carregando membros...</option>
-            </select>
-            <button onclick="convidarMembroParaEvento(${detalhes.id})" style="padding:8px 16px;background:#d97706;color:white;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">➕ Convidar</button>
-        </div>
-                    </div>`;
-                    }</div>`;
-                }
-                
-                // ============ ATA ============
-                let ataHtml = '';
-                if (detalhes.ata) {
-                    ataHtml = `
-            <div style="text-align:left;margin-top:16px;padding:16px;background:#f5f3ff;border-radius:12px;border-left:4px solid #7c3aed">
-                <h4 style="font-weight:bold;color:#7c3aed;margin-bottom:8px">📝 Ata da Reunião</h4>
-                <p style="font-size:13px;color:#4b5563"><strong>${detalhes.ata.titulo}</strong></p>
-                <p style="font-size:12px;color:#64748b;margin-top:5px">${detalhes.ata.conteudo || 'Sem conteúdo'}</p>
-                    </div>`;
-                }
-                
-        // ============ MONTAR HTML COMPLETO ============
-                const html = `
-            <div style="text-align:left">
-                <!-- Cabeçalho -->
-                <div style="background:${cor.bg};padding:20px;border-radius:16px;margin-bottom:16px;border-left:5px solid ${cor.border}">
-                    <div style="font-size:40px;margin-bottom:8px">${cor.icon}</div>
-                    <h2 style="font-size:20px;font-weight:bold;color:${cor.text};margin:0">${detalhes.titulo}</h2>
-                    <p style="color:#64748b;margin-top:6px">${detalhes.descricao || 'Sem descrição'}</p>
-                    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-                        <span style="font-size:11px;padding:4px 10px;background:white;border-radius:20px">${detalhes.tipo}</span>
-                        <span style="font-size:11px;padding:4px 10px;background:white;border-radius:20px">${detalhes.visibilidade}</span>
-                        <span style="font-size:11px;padding:4px 10px;background:white;border-radius:20px">${detalhes.status}</span>
-                    </div>
-                </div>
-                    
-                <!-- Info -->
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-                    <div style="padding:10px;background:#f8fafc;border-radius:10px">
-                        <p style="font-size:10px;color:#94a3b8">📅 Início</p>
-                        <p style="font-weight:bold;font-size:13px">${new Date(detalhes.data_inicio).toLocaleString('pt-BR')}</p>
-                    </div>
-                    <div style="padding:10px;background:#f8fafc;border-radius:10px">
-                        <p style="font-size:10px;color:#94a3b8">📅 Término</p>
-                        <p style="font-weight:bold;font-size:13px">${new Date(detalhes.data_fim).toLocaleString('pt-BR')}</p>
-                    </div>
-                    <div style="padding:10px;background:#f8fafc;border-radius:10px">
-                        <p style="font-size:10px;color:#94a3b8">📍 Local</p>
-                        <p style="font-weight:bold;font-size:13px">${detalhes.local_evento || 'N/A'} ${detalhes.sala ? '• '+detalhes.sala : ''}</p>
-                    </div>
-                    <div style="padding:10px;background:#f8fafc;border-radius:10px">
-                        <p style="font-size:10px;color:#94a3b8">👥 Capacidade</p>
-                        <p style="font-weight:bold;font-size:13px">${detalhes.capacidade || 'Ilimitada'}</p>
-                    </div>
-                </div>
-                    
-                    ${detalhes.material ? `
-                <div style="margin-top:12px;padding:12px;background:#fffbeb;border-radius:10px">
-                    <p style="font-weight:bold;color:#d97706;font-size:12px">📦 Material</p>
-                    <p style="font-size:12px;color:#4b5563">${detalhes.material}</p>
-                        </div>` : ''}
-                        
-                        ${detalhes.transmicao_ao_vivo && detalhes.url_transmissao ? `
-                <div style="margin-top:12px;padding:12px;background:#fef2f2;border-radius:10px;text-align:center">
-                    <p style="font-weight:bold;color:#dc2626;font-size:12px">🔴 Transmissão ao Vivo</p>
-                    <a href="${detalhes.url_transmissao}" target="_blank" style="display:inline-block;padding:6px 16px;background:#dc2626;color:white;border-radius:20px;text-decoration:none;font-weight:bold;font-size:12px;margin-top:6px">📡 Assistir</a>
-                            </div>` : ''}
-                            
-                            ${detalhes.responsavel_nome ? `
-                <div style="margin-top:12px;padding:10px;background:#f8fafc;border-radius:10px;display:flex;align-items:center;gap:10px">
-                    <div style="width:35px;height:35px;border-radius:50%;background:linear-gradient(135deg,#1a237e,#283593);color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px">${detalhes.responsavel_nome[0]}</div>
-                    <div><strong style="font-size:13px">${detalhes.responsavel_nome}</strong><p style="font-size:10px;color:#94a3b8">Responsável</p></div>
-                                </div>` : ''}
-                                
-                ${participantesHtml}
-                ${checkinsHtml}
-                ${qrCodeHtml}
-                ${convidadosHtml}
-                ${ataHtml}
-            </div>
-                            `;
-                            
-        // Mostrar Swal com botões
-                            const swalConfig = {
-                                title: '',
-                                html: html,
-                                width: '650px',
-                                showCloseButton: true,
-                                showCancelButton: true,
-                                cancelButtonText: 'Fechar',
-                                cancelButtonColor: '#64748b',
-                                customClass: { popup: 'rounded-3xl shadow-2xl' }
-                            };
-                            
-                            if (podeEditar) {
-                                swalConfig.showConfirmButton = true;
-                                swalConfig.confirmButtonText = '✏️ Editar';
-                                swalConfig.confirmButtonColor = '#1a237e';
-                                if (detalhes.status === 'AGENDADO') {
-                                    swalConfig.showDenyButton = true;
-                                    swalConfig.denyButtonText = '❌ Cancelar Evento';
-                                    swalConfig.denyButtonColor = '#ef4444';
-                                }
-                            }
-                            
-                            const result = await Swal.fire(swalConfig);
-                            
-                            if (result.isConfirmed) editarEvento(detalhes);
-                            if (result.isDenied) cancelarEvento(detalhes.id);
-                            
-        // Carregar membros para o select de convidar
-                            if (detalhes.visibilidade !== 'PUBLICO' && podeEditar) {
-                                setTimeout(() => carregarMembrosParaConvite(), 300);
-                            }
-                            
-                        } catch (e) {
-                            Swal.close();
-                            Swal.fire({ icon: 'error', title: 'Erro', text: 'Erro ao carregar detalhes' });
-                        }
-    // Depois de montar o Swal, carregar membros para o select
-                        if (detalhes.visibilidade !== 'PUBLICO' && podeEditar) {
-    // Aguardar o DOM do Swal ser criado
-                            setTimeout(async () => {
-                                try {
-                                    const membros = await window.api.get('/membros?limite=200');
-                                    const select = document.getElementById('convidarMembroSelect');
-                                    if (select && membros.membros) {
-                                        select.innerHTML = '<option value="">Selecione um membro...</option>';
-                                        membros.membros.forEach(m => {
-                                            select.innerHTML += `<option value="${m.id}">${m.nome}</option>`;
-                                        });
-                                    }
-                                } catch (e) {
-                                    const select = document.getElementById('convidarMembroSelect');
-                                    if (select) select.innerHTML = '<option value="">Erro ao carregar</option>';
-                                }
-                            }, 500);
-                        }
-                    }
-
-// ============ CARREGAR MEMBROS PARA CONVITE ============
-                    async function carregarMembrosParaConvite() {
-                        try {
-                            const membros = await window.api.get('/membros?limite=200');
-                            const select = document.getElementById('convidarMembro');
-                            if (select && membros.membros) {
-                                select.innerHTML = '<option value="">Selecione um membro...</option>';
-                                membros.membros.forEach(m => {
-                                    select.innerHTML += `<option value="${m.id}">${m.nome}</option>`;
-                                });
-                            }
-                        } catch (e) {}
-                    }
-
-// ============ CONVIDAR MEMBRO ============
-                    async function convidarMembroParaEvento(eventoId) {
-                        const select = document.getElementById('convidarMembroSelect');
-                        const membroId = select?.value;
-                        
-                        if (!membroId) {
-                            Swal.fire({ icon: 'info', title: 'Selecione', text: 'Selecione um membro para convidar.' });
-                            return;
-                        }
-                        
-                        try {
-                            await window.api.post(`/agenda/${eventoId}/confirmar`, { membro_id: membroId });
-                            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Membro convidado! ✉️', showConfirmButton: false, timer: 2000 });
-                            
-        // Recarregar os detalhes do evento para mostrar o novo participante
-                            const eventoAtualizado = await window.api.get('/agenda/' + eventoId);
-                            if (eventoAtualizado) {
-            // Fechar Swal atual e reabrir com dados atualizados
-                                Swal.close();
-                                setTimeout(() => verEvento(eventoAtualizado), 300);
-                            }
-                        } catch (e) {
-                            Swal.fire({ icon: 'error', title: 'Erro', text: 'Erro ao convidar membro' });
-                        }
-                    }
-
-// ============ COPIAR LINK ============
-                    function copiarLink(link) {
-                        navigator.clipboard.writeText(link).then(() => {
-                            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Link copiado! 📋', showConfirmButton: false, timer: 2000 });
-                        });
-                    }
-                    
-                    async function cancelarEvento(id) {
-                        const {isConfirmed} = await Swal.fire({title:'Cancelar?',icon:'warning',showCancelButton:true,confirmButtonColor:'#ef4444',confirmButtonText:'Sim'});
-                        if (!isConfirmed) return;
-                        try {
-                            await window.api.put('/agenda/'+id+'/status',{status:'CANCELADO'});
-                            carregarTodosEventos();
-                            Swal.fire({toast:true,position:'top-end',icon:'success',title:'Cancelado!',showConfirmButton:false,timer:3000});
-                        } catch(e) {}
-                    }
-                    
-        // ============ ATA ============
-                    function abrirModalAta() { document.getElementById('modalAta').style.display = 'flex'; carregarEventosParaAta(); lucide.createIcons(); }
-                    function fecharModalAta() { document.getElementById('modalAta').style.display = 'none'; }
-                    
-                    async function carregarEventosParaAta() {
-                        try {
-                            const eventos = await window.api.get('/agenda?status=REALIZADO');
-                            const select = document.getElementById('ata_evento_id');
-                            select.innerHTML = '<option value="">Selecione...</option>';
-                            if (eventos) eventos.forEach(e => select.innerHTML += `<option value="${e.id}">${e.titulo}</option>`);
-                        } catch(e) {}
-                    }
-                    
-                    async function salvarAta() {
-                        const d = {evento_id:document.getElementById('ata_evento_id').value,titulo:document.getElementById('ata_titulo').value,conteudo:document.getElementById('ata_conteudo').value};
-                        if(!d.evento_id||!d.titulo){Swal.fire({icon:'error',title:'Campos obrigatórios'});return}
-                        try{await window.api.post('/agenda/atas',d);fecharModalAta();Swal.fire({toast:true,position:'top-end',icon:'success',title:'Ata salva!',showConfirmButton:false,timer:3000})}catch(e){}
-                    }
-                    
-                    document.getElementById('modalEvento').addEventListener('click',function(e){if(e.target===this)fecharModal()});
-                    document.getElementById('modalAta').addEventListener('click',function(e){if(e.target===this)fecharModalAta()});
-                </script>
-            </body>
-            </html>
+            let filtrados = todosEventos;
+            if (tipo) filtrados = filtrados.filter(e => e.tipo === tipo);
+            renderizarEventos(filtrados);
+        }
+        
+        function abrirModal() {
+            alert('✏️ Função de cadastro em desenvolvimento');
+        }
+    </script>
+</body>
+</html>

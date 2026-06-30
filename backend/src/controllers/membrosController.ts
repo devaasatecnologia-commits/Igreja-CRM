@@ -1,21 +1,22 @@
 import { Request, Response } from 'express';
 import pool from '../config/database';
 
-export const getMembros = async (req: Request, res: Response) => {
+export const listar = async (req: Request, res: Response) => {
     try {
         const [rows] = await pool.query('SELECT * FROM membros WHERE ativo = 1');
         res.json({ success: true, data: rows });
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Erro ao buscar membros' });
+        console.error('Erro ao listar membros:', error);
+        res.status(500).json({ success: false, message: 'Erro ao listar membros' });
     }
 };
 
-export const createMembro = async (req: Request, res: Response) => {
+export const criar = async (req: Request, res: Response) => {
     try {
         const { nome, email, telefone, data_nascimento, endereco, cargo } = req.body;
         const [result] = await pool.query(
-            'INSERT INTO membros (nome, email, telefone, data_nascimento, endereco, cargo) VALUES (?, ?, ?, ?, ?, ?)',
-            [nome, email, telefone, data_nascimento, endereco, cargo]
+            'INSERT INTO membros (nome, email, telefone, data_nascimento, endereco, cargo, ativo) VALUES (?, ?, ?, ?, ?, ?, 1)',
+            [nome, email, telefone, data_nascimento, endereco, cargo || 'Membro']
         );
         res.status(201).json({ success: true, data: { id: (result as any).insertId } });
     } catch (error) {
@@ -23,7 +24,7 @@ export const createMembro = async (req: Request, res: Response) => {
     }
 };
 
-export const updateMembro = async (req: Request, res: Response) => {
+export const atualizar = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         const { nome, email, telefone, data_nascimento, endereco, cargo } = req.body;
@@ -37,7 +38,7 @@ export const updateMembro = async (req: Request, res: Response) => {
     }
 };
 
-export const deleteMembro = async (req: Request, res: Response) => {
+export const deletar = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         await pool.query('UPDATE membros SET ativo = 0 WHERE id = ?', [id]);

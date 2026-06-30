@@ -3,261 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Células - CRM Igreja</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>Células - AASA SAGRADO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif'],serif:['Playfair Display','serif']}}}}</script>
+    <link rel="stylesheet" href="../assets/css/sidebar.css">
     <style>
-        :root {
-            --primary:#6366f1;--primary-dark:#4f46e5;--primary-bg:rgba(99,102,241,0.08);
-            --success:#10b981;--success-bg:rgba(16,185,129,0.1);
-            --danger:#ef4444;--danger-bg:rgba(239,68,68,0.1);
-            --warning:#f59e0b;--warning-bg:rgba(245,158,11,0.1);
-            --info:#3b82f6;--info-bg:rgba(59,130,246,0.1);
-            --purple:#8b5cf6;--purple-bg:rgba(139,92,246,0.1);
-            --dark:#0f172a;--gray-900:#1e293b;--gray-600:#64748b;--gray-400:#94a3b8;
-            --gray-200:#e2e8f0;--gray-100:#f1f5f9;--gray-50:#f8fafc;--white:#ffffff;--bg:#f1f5f9;
-            --sidebar-w:260px;--radius-sm:10px;--radius:14px;--radius-lg:18px;
-            --shadow:0 4px 6px rgba(0,0,0,0.04);--shadow-lg:0 20px 40px rgba(0,0,0,0.06);
-            --transition:all 0.2s cubic-bezier(0.4,0,0.2,1);
-        }
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--gray-900);-webkit-font-smoothing:antialiased;}
-        ::-webkit-scrollbar{width:5px;}
-        ::-webkit-scrollbar-track{background:transparent;}
-        ::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:20px;}
-        
-        .app-layout{display:flex;min-height:100vh;}
-        
-        /* SIDEBAR */
-        .sidebar{width:var(--sidebar-w);background:var(--white);border-right:1px solid var(--gray-200);position:fixed;top:0;left:0;bottom:0;z-index:100;display:flex;flex-direction:column;}
-        .sidebar-header{padding:20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--gray-100);}
-        .sidebar-logo{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--purple));border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:16px;}
-        .sidebar-brand h3{font-size:14px;font-weight:700;}
-        .sidebar-brand span{font-size:10px;color:var(--gray-400);display:block;}
-        .sidebar-nav{flex:1;overflow-y:auto;padding:12px;}
-        .nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius-sm);text-decoration:none;color:var(--gray-600);font-size:13px;font-weight:500;transition:var(--transition);margin-bottom:2px;}
-        .nav-item:hover{background:var(--gray-50);color:var(--gray-900);}
-        .nav-item.active{background:var(--primary-bg);color:var(--primary);font-weight:600;}
-        .nav-item i{width:18px;height:18px;flex-shrink:0;}
-        .sidebar-footer{padding:14px;border-top:1px solid var(--gray-100);}
-        .user-card{display:flex;align-items:center;gap:8px;padding:8px;border-radius:var(--radius-sm);cursor:pointer;}
-        .user-card:hover{background:var(--gray-50);}
-        .user-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--purple));color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
-        .user-info strong{display:block;font-size:12px;}
-        .user-info span{font-size:10px;color:var(--gray-400);}
-        
-        /* MAIN */
-        .main-content{margin-left:var(--sidebar-w);flex:1;padding:24px;animation:fadeInUp 0.4s ease;}
-        @keyframes fadeInUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
-        
-        .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
-        .topbar h1{font-size:24px;font-weight:800;letter-spacing:-0.5px;}
-        .topbar p{font-size:12px;color:var(--gray-400);margin-top:2px;}
-        
-        .btn{padding:10px 18px;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;transition:var(--transition);display:inline-flex;align-items:center;gap:8px;}
-        .btn-primary{background:var(--primary);color:white;}
-        .btn-primary:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(99,102,241,0.3);}
-        .btn-outline{background:white;border:1px solid var(--gray-200);}
-        .btn-sm{padding:6px 12px;font-size:11px;}
-        
-        /* GRID DE CÉLULAS */
-        .celulas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;}
-        
-        .celula-card{background:white;border:1px solid var(--gray-100);border-radius:var(--radius-lg);padding:24px;transition:var(--transition);cursor:pointer;position:relative;overflow:hidden;}
-        .celula-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px);border-color:transparent;}
-        .celula-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--primary),var(--purple));}
-        
-        .celula-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:16px;}
-        .celula-nome{font-size:17px;font-weight:700;color:var(--gray-900);}
-        .celula-dia{font-size:12px;color:var(--primary);background:var(--primary-bg);padding:4px 10px;border-radius:6px;font-weight:600;}
-        
-        .celula-info{display:flex;flex-direction:column;gap:10px;}
-        .celula-info-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-600);}
-        .celula-info-item i{width:16px;height:16px;color:var(--gray-400);}
-        
-        .celula-footer{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:16px;border-top:1px solid var(--gray-100);}
-        .celula-membros{display:flex;align-items:center;gap:4px;}
-        .celula-avatar-mini{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;margin-left:-8px;border:2px solid white;}
-        .celula-avatar-mini:first-child{margin-left:0;}
-        
-        .badge{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;}
-        .badge-success{background:var(--success-bg);color:var(--success);}
-        .badge-warning{background:var(--warning-bg);color:var(--warning);}
-        .badge-info{background:var(--info-bg);color:var(--info);}
-        
-        /* STATS */
-        .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
-        .stat-card{background:white;border:1px solid var(--gray-100);border-radius:var(--radius);padding:18px;display:flex;align-items:center;gap:12px;transition:var(--transition);}
-        .stat-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px);}
-        .stat-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;}
-        .stat-icon.purple{background:var(--purple-bg);color:var(--purple);}
-        .stat-icon.green{background:var(--success-bg);color:var(--success);}
-        .stat-icon.blue{background:var(--primary-bg);color:var(--primary);}
-        .stat-icon.orange{background:var(--warning-bg);color:var(--warning);}
-        .stat-value{font-size:22px;font-weight:700;}
-        .stat-label{font-size:11px;color:var(--gray-400);}
-        
-        /* MODAL */
-        .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
-        .modal{background:white;border-radius:var(--radius-lg);width:90%;max-width:550px;max-height:85vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,0.2);}
-        .modal-header{padding:20px 24px;border-bottom:1px solid var(--gray-100);display:flex;justify-content:space-between;align-items:center;}
-        .modal-header h2{font-size:18px;font-weight:700;}
-        .modal-close{width:34px;height:34px;border-radius:50%;border:1px solid var(--gray-200);background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;}
-        .modal-body{padding:24px;}
-        .form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
-        .form-group label{font-size:12px;font-weight:600;color:var(--gray-600);}
-        .form-group input,.form-group select{padding:10px 14px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;font-family:inherit;}
-        .form-group input:focus,.form-group select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(99,102,241,0.1);}
-        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-        .modal-footer{padding:16px 24px;border-top:1px solid var(--gray-100);display:flex;justify-content:flex-end;gap:10px;}
-        
-        @media(max-width:768px){
-            .sidebar{width:200px;}.sidebar-brand h3,.sidebar-brand span{display:none;}
-            .main-content{margin-left:200px;padding:14px;}
-            .stats-row{grid-template-columns:1fr 1fr;}
-            .celulas-grid{grid-template-columns:1fr;}
-            .form-row{grid-template-columns:1fr;}
-        }
+        :root{--primary:#1a237e;--gold:#f59e0b;--success:#10b981;--danger:#ef4444}
+        .main-content{margin-left:270px;min-height:100vh;background:linear-gradient(135deg,#f8faff 0%,#fffbeb 30%,#f0f4ff 60%,#fefce8 100%)}
+        @media(max-width:768px){.main-content{margin-left:0;padding-top:70px}}
+        @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .animate-slide{animation:slideUp .4s ease forwards}
+        .card-premium{background:white;border-radius:20px;padding:22px;border:1px solid #f1f5f9;transition:all .3s;cursor:pointer}
+        .card-premium:hover{box-shadow:0 15px 30px rgba(0,0,0,.06);transform:translateY(-3px)}
+        .btn-premium{padding:10px 22px;border-radius:12px;font-weight:600;font-size:13px;cursor:pointer;border:none;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+        .btn-premium:hover{transform:translateY(-1px);box-shadow:0 6px 15px rgba(0,0,0,.1)}
+        .btn-sm{padding:6px 12px;font-size:11px;border-radius:8px}
+        .tab-btn{padding:8px 16px;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:#f1f5f9;color:#64748b;transition:all .2s}
+        .tab-btn.active{background:#1a237e;color:white}
+        .input-premium{width:100%;padding:12px 16px;border:2px solid #e2e8f0;border-radius:12px;font-size:13px;font-family:'Inter',sans-serif;background:#f8fafc;transition:all .2s}
+        .input-premium:focus{outline:none;border-color:#1a237e;box-shadow:0 0 0 3px rgba(26,35,126,.08);background:white}
     </style>
 </head>
-<body>
+<body class="font-sans">
+
+    <div id="sidebar-container"></div>
+
     <div class="app-layout">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">⛪</div>
-                <div class="sidebar-brand"><h3>CRM Igreja</h3><span id="igrejaNome">Carregando...</span></div>
-            </div>
-            <nav class="sidebar-nav">
-                <a href="dashboard.html" class="nav-item"><i data-lucide="layout-dashboard"></i> Dashboard</a>
-                <a href="membros.html" class="nav-item"><i data-lucide="users"></i> Membros</a>
-                <a href="celulas.html" class="nav-item active"><i data-lucide="heart-handshake"></i> Células</a>
-                <a href="#" class="nav-item"><i data-lucide="wallet"></i> Financeiro</a>
-                <a href="#" class="nav-item"><i data-lucide="calendar-days"></i> Agenda</a>
-                <a href="#" class="nav-item"><i data-lucide="file-text"></i> Documentos</a>
-                <a href="#" class="nav-item"><i data-lucide="shopping-cart"></i> Vendas</a>
-            </nav>
-            <div class="sidebar-footer">
-                <div class="user-card" onclick="logout()">
-                    <div class="user-avatar">A</div>
-                    <div class="user-info"><strong>Admin</strong><span>Administrador</span></div>
-                </div>
-            </div>
-        </aside>
-
         <main class="main-content">
-            <div class="topbar">
-                <div><h1>🏠 Células & Grupos</h1><p>Gerencie as células e pequenos grupos</p></div>
-                <button class="btn btn-primary" onclick="abrirModal()"><i data-lucide="plus" style="width:16px;height:16px;"></i> Nova Célula</button>
-            </div>
 
-            <div class="stats-row">
-                <div class="stat-card"><div class="stat-icon purple"><i data-lucide="home" style="width:20px;height:20px;"></i></div><div><div class="stat-value">12</div><div class="stat-label">Células Ativas</div></div></div>
-                <div class="stat-card"><div class="stat-icon green"><i data-lucide="users" style="width:20px;height:20px;"></i></div><div><div class="stat-value">156</div><div class="stat-label">Participantes</div></div></div>
-                <div class="stat-card"><div class="stat-icon blue"><i data-lucide="user-check" style="width:20px;height:20px;"></i></div><div><div class="stat-value">12</div><div class="stat-label">Líderes</div></div></div>
-                <div class="stat-card"><div class="stat-icon orange"><i data-lucide="trending-up" style="width:20px;height:20px;"></i></div><div><div class="stat-value">85%</div><div class="stat-label">Frequência Média</div></div></div>
-            </div>
+            <header class="sticky top-0 z-20 px-4 lg:px-8 py-3 lg:py-5 bg-white/85 backdrop-blur-xl border-b flex items-center justify-between flex-wrap gap-3">
+                <div>
+                    <h1 class="text-xl lg:text-3xl font-serif font-bold flex items-center gap-2 lg:gap-3" style="color:var(--primary)">
+                        <i data-lucide="user-cog" class="w-6 h-6 lg:w-8 lg:h-8"></i> Células
+                    </h1>
+                    <p class="text-xs lg:text-sm mt-1 font-medium" style="color:var(--gold)">Gerencie os grupos de célula da sua igreja</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="exportarCSV()" class="btn-premium btn-sm bg-white border text-gray-600"><i data-lucide="download" class="w-3 h-3"></i> Exportar</button>
+                    <button onclick="abrirModal()" class="btn-premium text-white" style="background:linear-gradient(135deg,#1a237e,#283593)"><i data-lucide="plus-circle" class="w-4 h-4"></i> Nova Célula</button>
+                </div>
+            </header>
+            
+            <div class="p-4 lg:p-8 space-y-4 lg:space-y-6">
 
-            <div class="celulas-grid">
-                <div class="celula-card" onclick="abrirModal()">
-                    <div class="celula-header"><div class="celula-nome">Célula da Fé</div><span class="celula-dia">Terça 19h</span></div>
-                    <div class="celula-info">
-                        <div class="celula-info-item"><i data-lucide="map-pin" style="width:14px;height:14px;"></i> Rua das Flores, 123 - Centro</div>
-                        <div class="celula-info-item"><i data-lucide="user" style="width:14px;height:14px;"></i> Líder: Pr. Carlos Silva</div>
-                        <div class="celula-info-item"><i data-lucide="phone" style="width:14px;height:14px;"></i> (11) 99999-0001</div>
+                <!-- STATS CARDS -->
+                <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
+                    <div class="card-premium animate-slide">
+                        <div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center" style="background:rgba(26,35,126,.1)"><i data-lucide="user-cog" class="w-4 h-4 lg:w-5 lg:h-5" style="color:#1a237e"></i></div></div>
+                        <div class="text-xl lg:text-3xl font-extrabold" style="color:var(--primary)" id="statTotal">0</div>
+                        <div class="text-xs lg:text-sm text-gray-500">Total de Células</div>
                     </div>
-                    <div class="celula-footer">
-                        <div class="celula-membros">
-                            <div class="celula-avatar-mini" style="background:#6366f1;">JS</div>
-                            <div class="celula-avatar-mini" style="background:#10b981;">MS</div>
-                            <div class="celula-avatar-mini" style="background:#f59e0b;">PO</div>
-                            <span style="font-size:11px;color:var(--gray-400);margin-left:8px;">+12</span>
-                        </div>
-                        <span class="badge badge-success">Ativa</span>
+                    <div class="card-premium animate-slide" style="animation-delay:.1s">
+                        <div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center" style="background:rgba(16,185,129,.1)"><i data-lucide="user-check" class="w-4 h-4 lg:w-5 lg:h-5" style="color:#10b981"></i></div></div>
+                        <div class="text-xl lg:text-3xl font-extrabold text-green-600" id="statAtivas">0</div>
+                        <div class="text-xs lg:text-sm text-gray-500">Células Ativas</div>
+                    </div>
+                    <div class="card-premium animate-slide" style="animation-delay:.2s">
+                        <div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center" style="background:rgba(139,92,246,.1)"><i data-lucide="crown" class="w-4 h-4 lg:w-5 lg:h-5" style="color:#8b5cf6"></i></div></div>
+                        <div class="text-xl lg:text-3xl font-extrabold text-purple-600" id="statMembros">0</div>
+                        <div class="text-xs lg:text-sm text-gray-500">Membros em Células</div>
                     </div>
                 </div>
-
-                <div class="celula-card">
-                    <div class="celula-header"><div class="celula-nome">Grupo de Jovens</div><span class="celula-dia">Sábado 18h</span></div>
-                    <div class="celula-info">
-                        <div class="celula-info-item"><i data-lucide="map-pin" style="width:14px;height:14px;"></i> Av. Principal, 500 - Sede</div>
-                        <div class="celula-info-item"><i data-lucide="user" style="width:14px;height:14px;"></i> Líder: Ana Costa</div>
-                        <div class="celula-info-item"><i data-lucide="phone" style="width:14px;height:14px;"></i> (11) 99999-0002</div>
+                
+                <!-- FILTROS -->
+                <div class="flex gap-2 flex-wrap">
+                    <button class="tab-btn active" onclick="filtrar('')">Todas</button>
+                    <button class="tab-btn" onclick="filtrar('ATIVO')">Ativas</button>
+                    <button class="tab-btn" onclick="filtrar('INATIVO')">Inativas</button>
+                </div>
+                
+                <!-- BUSCA -->
+                <div class="flex gap-2">
+                    <input type="text" id="searchInput" placeholder="🔍 Buscar por nome ou líder..." class="input-premium flex-1" onkeyup="if(event.key==='Enter')carregarCelulas()">
+                    <button onclick="carregarCelulas()" class="btn-premium text-white" style="background:var(--primary)"><i data-lucide="search" class="w-4 h-4"></i> Buscar</button>
+                </div>
+                
+                <!-- TABELA -->
+                <div class="card-premium" style="padding:0;overflow:hidden;cursor:default">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead><tr class="bg-gray-50"><th class="text-left px-3 lg:px-6 py-3 text-xs font-bold text-gray-400 uppercase">Célula</th><th class="text-left px-3 lg:px-6 py-3 text-xs font-bold text-gray-400 uppercase hidden md:table-cell">Líder</th><th class="text-left px-3 lg:px-6 py-3 text-xs font-bold text-gray-400 uppercase">Membros</th><th class="text-left px-3 lg:px-6 py-3 text-xs font-bold text-gray-400 uppercase hidden sm:table-cell">Dia/Horário</th><th class="text-left px-3 lg:px-6 py-3 text-xs font-bold text-gray-400 uppercase">Status</th><th class="text-center px-3 lg:px-6 py-3 text-xs font-bold text-gray-400 uppercase">Ações</th></tr></thead>
+                            <tbody id="tabelaCelulas"><tr><td colspan="6" class="text-center py-12 text-gray-400"><i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto mb-2"></i> Carregando...</td></tr></tbody>
+                        </table>
                     </div>
-                    <div class="celula-footer">
-                        <div class="celula-membros">
-                            <div class="celula-avatar-mini" style="background:#8b5cf6;">RL</div>
-                            <div class="celula-avatar-mini" style="background:#ef4444;">TB</div>
-                            <span style="font-size:11px;color:var(--gray-400);margin-left:8px;">+25</span>
-                        </div>
-                        <span class="badge badge-success">Ativa</span>
+                    <div class="flex justify-between items-center px-6 py-3 border-t bg-gray-50 text-sm">
+                        <span class="text-gray-500" id="infoPagina"></span>
                     </div>
                 </div>
-
-                <div class="celula-card">
-                    <div class="celula-header"><div class="celula-nome">Célula Esperança</div><span class="celula-dia">Quinta 20h</span></div>
-                    <div class="celula-info">
-                        <div class="celula-info-item"><i data-lucide="map-pin" style="width:14px;height:14px;"></i> Rua da Paz, 78 - Bairro Sul</div>
-                        <div class="celula-info-item"><i data-lucide="user" style="width:14px;height:14px;"></i> Líder: Maria Santos</div>
-                        <div class="celula-info-item"><i data-lucide="phone" style="width:14px;height:14px;"></i> (11) 99999-0003</div>
-                    </div>
-                    <div class="celula-footer">
-                        <div class="celula-membros">
-                            <div class="celula-avatar-mini" style="background:#06b6d4;">AC</div>
-                            <span style="font-size:11px;color:var(--gray-400);margin-left:8px;">+8</span>
-                        </div>
-                        <span class="badge badge-warning">Poucos membros</span>
-                    </div>
-                </div>
+                
             </div>
+            <footer class="text-center py-6 text-xs text-gray-400 border-t bg-white/50" id="footerText"></footer>
         </main>
     </div>
 
-    <div class="modal-overlay" id="modalCelula" style="display:none;">
-        <div class="modal">
-            <div class="modal-header"><h2>➕ Nova Célula</h2><button class="modal-close" onclick="fecharModal()">✕</button></div>
-            <div class="modal-body">
-                <div class="form-row">
-                    <div class="form-group"><label>Nome da Célula *</label><input type="text" placeholder="Ex: Célula da Fé"></div>
-                    <div class="form-group"><label>Dia da Semana</label><select><option>Domingo</option><option>Segunda</option><option>Terça</option><option>Quarta</option><option>Quinta</option><option>Sexta</option><option>Sábado</option></select></div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>Horário</label><input type="time" value="19:00"></div>
-                    <div class="form-group"><label>Líder</label><select><option>Pr. Carlos Silva</option><option>Ana Costa</option><option>Maria Santos</option></select></div>
-                </div>
-                <div class="form-group"><label>Endereço</label><input type="text" placeholder="Rua, número - Bairro"></div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="fecharModal()">Cancelar</button>
-                <button class="btn btn-primary"><i data-lucide="save" style="width:14px;height:14px;"></i> Criar Célula</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="assets/js/api.js"></script>
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/sidebar.js"></script>
     <script>
-        function init(){if(!api.isAuthenticated()){window.location.href='login.html';return;}document.getElementById('igrejaNome').textContent=localStorage.getItem('igreja_nome')||'Igreja Demo';lucide.createIcons();}
-        function abrirModal(){document.getElementById('modalCelula').style.display='flex';}
-        function fecharModal(){document.getElementById('modalCelula').style.display='none';}
-        document.getElementById('modalCelula').addEventListener('click',function(e){if(e.target===this)fecharModal();});
-        function logout(){if(confirm('Sair?'))api.logout();}
-        init();
-        // Carregar cores personalizadas da igreja
-async function carregarCoresIgreja() {
-    try {
-        const igreja = await api.request('/igrejas/minha');
-        if (igreja.cor_primaria) {
-            document.documentElement.style.setProperty('--primary', igreja.cor_primaria);
+        let todasCelulas = [];
+        let filtroStatus = '';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!window.api || !window.api.isAuthenticated()) { window.location.href = '../login.html'; return; }
+            document.getElementById('footerText').textContent = `${window.APP_NAME} v3.0 • AASA Tecnologia © 2026`;
+            lucide.createIcons();
+            carregarCelulas();
+        });
+        
+        async function carregarCelulas() {
+            const tbody = document.getElementById('tabelaCelulas');
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-12 text-gray-400"><i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto mb-2"></i> Carregando...</td></tr>';
+            
+            try {
+                const token = localStorage.getItem('auth_token');
+                const igrejaId = localStorage.getItem('igreja_id') || 1;
+                
+                const response = await fetch(`${window.API_URL}/celulas`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'x-igreja-id': igrejaId
+                    }
+                });
+                
+                if (!response.ok) throw new Error('Erro ao carregar células');
+                
+                const data = await response.json();
+                todasCelulas = data.data || [];
+                
+                if (todasCelulas.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-12 text-gray-400">Nenhuma célula encontrada</td></tr>';
+                    return;
+                }
+                
+                atualizarEstatisticas(todasCelulas);
+                renderizarTabela(todasCelulas);
+                document.getElementById('infoPagina').textContent = `Total: ${todasCelulas.length} células`;
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-12 text-red-400">Erro ao carregar dados</td></tr>';
+            }
         }
-        if (igreja.cor_secundaria) {
-            document.documentElement.style.setProperty('--accent', igreja.cor_secundaria);
+        
+        function atualizarEstatisticas(celulas) {
+            const total = celulas.length;
+            const ativas = celulas.filter(c => c.status === 'ATIVO').length;
+            let totalMembros = 0;
+            celulas.forEach(c => totalMembros += (c.membros_count || 0));
+            
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statAtivas').textContent = ativas;
+            document.getElementById('statMembros').textContent = totalMembros;
         }
-        if (igreja.logo_url) {
-            document.querySelectorAll('.sidebar-logo').forEach(el => {
-                el.style.backgroundImage = `url(${igreja.logo_url})`;
+        
+        function renderizarTabela(celulas) {
+            const tbody = document.getElementById('tabelaCelulas');
+            let html = '';
+            
+            celulas.forEach((c, i) => {
+                const colors = ['#1a237e','#8b5cf6','#10b981','#f59e0b','#ef4444','#3b82f6','#ec4899'];
+                const colorIndex = i % colors.length;
+                const statusClass = c.status === 'ATIVO' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+                
+                html += `
+                <tr class="border-t hover:bg-gray-50">
+                    <td class="px-3 lg:px-6 py-3">
+                        <div class="flex items-center gap-2 lg:gap-3">
+                            <div class="w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-white font-bold text-xs lg:text-sm shadow" style="background:${colors[colorIndex]}">${c.nome ? c.nome[0] : '?'}</div>
+                            <strong class="text-xs lg:text-sm">${c.nome || 'Sem nome'}</strong>
+                        </div>
+                    </td>
+                    <td class="px-3 lg:px-6 py-3 text-xs lg:text-sm text-gray-600 hidden md:table-cell">${c.lider_nome || 'Não definido'}</td>
+                    <td class="px-3 lg:px-6 py-3 text-xs lg:text-sm text-gray-600"><span class="font-bold">${c.membros_count || 0}</span></td>
+                    <td class="px-3 lg:px-6 py-3 text-xs lg:text-sm text-gray-600 hidden sm:table-cell">${c.dia_semana || '-'} ${c.horario ? 'às ' + c.horario : ''}</td>
+                    <td class="px-3 lg:px-6 py-3"><span class="px-2 py-1 rounded-full text-xs font-semibold ${statusClass}">${c.status || 'N/A'}</span></td>
+                    <td class="px-3 lg:px-6 py-3 text-center">
+                        <div class="flex gap-1 justify-center">
+                            <button onclick="verCelula(${c.id})" class="p-1.5 hover:bg-blue-50 rounded-lg" title="Ver"><i data-lucide="eye" class="w-3.5 h-3.5 text-blue-500"></i></button>
+                            <button onclick="editarCelula(${c.id})" class="p-1.5 hover:bg-gray-100 rounded-lg" title="Editar"><i data-lucide="pencil" class="w-3.5 h-3.5 text-gray-500"></i></button>
+                            <button onclick="excluirCelula(${c.id})" class="p-1.5 hover:bg-red-50 rounded-lg" title="Excluir"><i data-lucide="trash-2" class="w-3.5 h-3.5 text-red-500"></i></button>
+                        </div>
+                    </td>
+                </tr>`;
             });
+            
+            tbody.innerHTML = html;
+            lucide.createIcons();
         }
-    } catch (e) {}
-}
+        
+        function filtrar(status) {
+            filtroStatus = status;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if (event && event.target) event.target.classList.add('active');
+            
+            let filtrados = todasCelulas;
+            if (status) filtrados = filtrados.filter(c => c.status === status);
+            renderizarTabela(filtrados);
+        }
+        
+        function verCelula(id) {
+            const c = todasCelulas.find(c => c.id === id);
+            if (c) {
+                alert(`📋 Detalhes da Célula\n\nNome: ${c.nome}\nLíder: ${c.lider_nome || 'Não definido'}\nMembros: ${c.membros_count || 0}\nDia: ${c.dia_semana || '-'}\nHorário: ${c.horario || '-'}\nLocal: ${c.local || 'Não definido'}\nStatus: ${c.status}`);
+            }
+        }
+        
+        function editarCelula(id) {
+            alert(`✏️ Função de edição em desenvolvimento para a célula ID: ${id}`);
+        }
+        
+        async function excluirCelula(id) {
+            const c = todasCelulas.find(c => c.id === id);
+            if (!c) return;
+            
+            if (!confirm(`Tem certeza que deseja excluir "${c.nome}"?`)) return;
+            
+            try {
+                const token = localStorage.getItem('auth_token');
+                const igrejaId = localStorage.getItem('igreja_id') || 1;
+                
+                const response = await fetch(`${window.API_URL}/celulas/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'x-igreja-id': igrejaId
+                    }
+                });
+                
+                if (response.ok) {
+                    alert('✅ Célula excluída!');
+                    await carregarCelulas();
+                } else {
+                    throw new Error('Erro ao excluir');
+                }
+            } catch (error) {
+                alert('❌ Erro ao excluir célula');
+            }
+        }
+        
+        function abrirModal() {
+            alert('✏️ Função de cadastro em desenvolvimento');
+        }
+        
+        function exportarCSV() {
+            if (todasCelulas.length === 0) {
+                alert('Nenhuma célula para exportar');
+                return;
+            }
+            
+            let csv = 'Nome,Líder,Membros,Dia,Horário,Local,Status\n';
+            todasCelulas.forEach(c => {
+                csv += `"${c.nome || ''}","${c.lider_nome || ''}","${c.membros_count || 0}","${c.dia_semana || ''}","${c.horario || ''}","${c.local || ''}","${c.status || ''}"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `celulas_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+        }
     </script>
 </body>
 </html>
